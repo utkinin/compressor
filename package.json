@@ -14,7 +14,10 @@
     "test": "vitest run --maxWorkers=2",
     "test:e2e": "playwright test",
     "rfq:outbox": "node --env-file-if-exists=.env.local --import tsx src/lib/rfq/outbox-cli.ts",
-    "content:matrix": "tsx scripts/export-semantic-matrix.ts"
+    "content:matrix": "tsx scripts/export-semantic-matrix.ts",
+    "preview:build": "tsx scripts/build-preview.ts",
+    "preview:test": "playwright test --config playwright.preview.config.ts",
+    "preview:serve": "node scripts/serve-preview.mjs"
   },
   "dependencies": {
     "next": "16.4.2",

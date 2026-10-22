@@ -1,0 +1,66 @@
+name: Publish staging preview to GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [work]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages-preview
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the current branch
+        uses: actions/checkout@v4
+      - name: Use the pinned Node version
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Install from lockfile
+        run: npm ci
+      - name: Validate source
+        run: |
+          npm run typecheck
+          npm run lint
+          npm test
+      - name: Install Chromium for acceptance
+        run: |
+          npx playwright install --with-deps chromium
+          printf 'PLAYWRIGHT_CHROMIUM_PATH=%s\n' "$(node --input-type=module -e 'import { chromium } from "@playwright/test"; process.stdout.write(chromium.executablePath())')" >> "$GITHUB_ENV"
+      - name: Build and check the server application
+        run: |
+          npm run build
+          npm run test:e2e
+      - name: Build the browser-only preview
+        run: npm run preview:build
+      - name: Check the exact static deployment package
+        run: npm run preview:test
+      - name: Upload the static site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .local/github-pages
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
