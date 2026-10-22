@@ -12,9 +12,8 @@ export const legacyPaths = {
     manufacturing: "/industries/machine-building/",
     laboratory: "/industries/research-laboratories/",
     testing: "/industries/test-benches/",
-    oem: "/industries/oem-equipment/",
-    // The old engineering link came from the OEM integration solution, not an industry article.
-    engineering: "/industries/oem-equipment/",
+    // The old engineering link described compressor integration in equipment.
+    engineering: "/industries/equipment-manufacturers/",
   },
 } as const;
 

@@ -116,7 +116,7 @@ npm run build
 Главный сценарий проектировать под:
 
 - интегратора;
-- OEM-производителя оборудования;
+- изготовителя оборудования;
 - проектировщика;
 - технолога;
 - главного механика;
@@ -228,7 +228,7 @@ P₂ / Q
    - подача газа в оборудование;
    - возврат / recovery газа;
    - заполнение буфера / ресивера;
-   - OEM-интеграция;
+   - Встраивание компрессора;
    - skid-система;
    - специальные процессы.
 
@@ -299,7 +299,7 @@ SF₆ может существовать только:
 - буферизация;
 - laser cutting;
 - pressure stabilization;
-- OEM equipment.
+- Equipment manufacturers.
 
 Для He:
 
@@ -351,7 +351,7 @@ SF₆ может существовать только:
 - process gas compressor;
 - oil-free gas booster;
 - compressor skid;
-- OEM gas compression module;
+- Gas compressor for equipment integration;
 - gas transfer / gas recovery;
 - buffer / receiver charging.
 
@@ -376,7 +376,7 @@ Equipment
 → Recovery systems
 ```
 
-Семейства UNIGY показывать как **family envelope**.
+Семейства компрессоров показывать как **family envelope**.
 
 Для каждого семейства:
 
@@ -902,7 +902,7 @@ Gas
 7. Hydrogen compression flow.
 8. CO₂ process caution / phase-related scheme.
 9. Instrumentation / valves / cooling detail.
-10. OEM integration drawing.
+10. Equipment integration drawing.
 
 SVG должны быть responsive и визуально единообразны.
 
@@ -923,7 +923,7 @@ SVG должны быть responsive и визуально единообраз�
 - energy;
 - test benches;
 - research / laboratory;
-- OEM equipment;
+- Equipment manufacturers;
 - hydrogen systems;
 - helium recovery;
 - special process plants.
@@ -996,7 +996,7 @@ internal
 - гарантия — только если подтверждена;
 - срок — не выдумывать;
 - страна происхождения / производитель — если корректно;
-- возможность OEM;
+- возможность встраивания компрессора;
 - CAD / drawings;
 - запрос КП.
 
@@ -1034,7 +1034,6 @@ internal
 - Oil-Free;
 - booster;
 - skid;
-- OEM;
 - process gas;
 - working point.
 
@@ -1216,7 +1215,7 @@ published
 
 1. инженер;
 2. технолог;
-3. OEM-интегратор;
+3. интегратор оборудования;
 4. закупщик;
 5. поисковый crawler;
 6. AI-search parser;

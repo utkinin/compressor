@@ -119,7 +119,7 @@ function requestContextLabel(kind: keyof RequestContext, id: string): string {
     "process-gas-compressor": "Компрессор технологического газа",
     "oil-free-gas-booster": "Безмасляный газовый бустер",
     "compressor-skid": "Компрессорная станция на раме",
-    "oem-gas-compression-module": "Компрессор для встраивания в оборудование",
+    "equipment-integration": "Компрессор для встраивания в оборудование",
     "gas-transfer-recovery": "Перекачка и возврат газа",
     "buffer-receiver-charging": "Заполнение буфера и ресивера",
     "oil-free-reciprocating": "Безмасляные поршневые компрессоры",

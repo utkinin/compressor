@@ -43,7 +43,7 @@ describe("original product families and canonical intent preservation", () => {
       ...content.articles.map((item) => `/knowledge/${item.slug}/`),
       ...content.industries.map((item) => `/industries/${item.slug}/`),
     ]);
-    expect(legacyPathPairs).toHaveLength(9);
+    expect(legacyPathPairs).toHaveLength(8);
     const oldPaths = new Set(legacyPathPairs.map((item) => item.source));
     for (const pair of legacyPathPairs) {
       expect(canonical.has(pair.destination)).toBe(true);

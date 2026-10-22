@@ -36,7 +36,7 @@ Keep a short “Technological gases” bridge on sf6rus.ru with a concise explan
 
 ## Cleanup before migration
 - remove inherited SF6-only statements from tech-gas pages
-- separate marketing names from OEM family/source data
+- separate marketing names from manufacturer family/source data
 - add source and verification state internally
 - normalize pressure/flow units and reference conditions
 - replace numeric URLs with human-readable slugs

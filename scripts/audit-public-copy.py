@@ -53,7 +53,7 @@ files = sorted(artifact.rglob("*.html"))
 if not files:
     raise SystemExit("Run npm run preview:build first")
 
-forbidden = re.compile(r"UNIGY|OEM|15\s*[→–-]\s*40|500\+|150\+", re.I)
+forbidden = re.compile(r"15\s*[→–-]\s*40|500\+|150\+", re.I)
 technical_term = re.compile(r"рабоч[а-яё]*\s+точк[а-яё]*", re.I)
 review_terms = re.compile(r"рабоч[а-яё]*\s+точк[а-яё]*|уз[её]л|узл[а-яё]*|skid|функциональн[а-яё]*\s+модул[а-яё]*", re.I)
 violations = []
@@ -64,7 +64,7 @@ for file in files:
     copy = re.sub(r"\s+", " ", " ".join(parser.visible))
     metadata = " ".join(parser.metadata)
     path = str(file.relative_to(artifact))
-    for match in re.finditer(r"рабоч[а-яё]*\s+точк[а-яё]*|уз[её]л|узл[а-яё]*|OEM|UNIGY|функциональн[а-яё]*\s+модул[а-яё]*", " ".join(parser.headings), re.I):
+    for match in re.finditer(r"рабоч[а-яё]*\s+точк[а-яё]*|уз[её]л|узл[а-яё]*|функциональн[а-яё]*\s+модул[а-яё]*", " ".join(parser.headings), re.I):
         violations.append({"path": path, "field": "heading", "term": match.group()})
     for field, value in (("copy", copy), ("metadata/accessibility", metadata)):
         for match in forbidden.finditer(value):

@@ -42,7 +42,7 @@ export const gases: Gas[] = [
     faq:[
       {question:"Можно ли выбрать компрессор только по P₁/P₂/Q?",answer:"Нет. Для водорода нужны как минимум состав, температура, опасная зона, требования к материалам, утечкам, вентиляции и аварийной защите. Эти данные меняют исполнение и границы поставки."},
       {question:"Ex-двигатель означает, что система на общей раме готова к установке?",answer:"Нет. Проверяется весь узел, включая механические источники воспламенения, КИП, электрику, заземление и условия монтажа. Подтверждение выполняется для конкретного проекта."},
-    ],solutionIds:["hydrogen-compression","compressor-skid","oem-gas-compression-module"],equipmentIds:["compressor-modules","compressor-skids"],
+    ],solutionIds:["hydrogen-compression","compressor-skid","equipment-integration"],equipmentIds:["compressor-modules","compressor-skids"],
   },
   {
     id:"o2",slug:"oxygen",title:"Кислород",symbol:"O₂",editorialState:"review",
@@ -81,6 +81,6 @@ export const gases: Gas[] = [
     faq:[
       {question:"Можно указать только торговое название смеси?",answer:"Для начала общения — да, для технического подбора — нет. Нужны компоненты, концентрации, примеси и диапазоны изменения состава. При необходимости состав передают по согласованному защищённому каналу."},
       {question:"Что делать, если расход известен в kg/h?",answer:"Укажите массовую единицу и состав. Пересчёт в объёмный расход возможен только с плотностью при согласованных условиях; для неизвестной смеси автоматически пересчитывать нельзя."},
-    ],solutionIds:["process-gas-compressor","oil-free-gas-booster","oem-gas-compression-module","gas-transfer-recovery"],equipmentIds:["oil-free-reciprocating","compressor-modules","compressor-skids"],
+    ],solutionIds:["process-gas-compressor","oil-free-gas-booster","equipment-integration","gas-transfer-recovery"],equipmentIds:["oil-free-reciprocating","compressor-modules","compressor-skids"],
   },
 ];

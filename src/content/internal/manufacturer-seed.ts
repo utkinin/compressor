@@ -1,6 +1,6 @@
-import type { ProductFamily } from "./unigy-seed-types";
+import type { ProductFamily } from "./manufacturer-seed-types";
 
-// Seed families transcribed from the UNIGY 2026 oil-free gas compressor catalog.
+// Draft family data from the supplied scaffold; supplier identity removed.
 // These are envelopes, not guaranteed operating points. Keep draft until engineering verification.
 export const productFamilies: ProductFamily[] = [
   {
@@ -19,7 +19,7 @@ export const productFamilies: ProductFamily[] = [
     cooling: ["air"],
     transmission: "belt",
     verificationStatus: "draft",
-    sourceNote: "UNIGY Oil-Free Gas Compressor Catalog 2026, family OF2–OF8/DP"
+    sourceNote: "Исходная draft-запись семейства OF2–OF8/DP; первичный каталог не предоставлен"
   },
   {
     slug: "of2-of8-dz",
@@ -37,7 +37,7 @@ export const productFamilies: ProductFamily[] = [
     cooling: ["air"],
     transmission: "direct",
     verificationStatus: "draft",
-    sourceNote: "UNIGY Oil-Free Gas Compressor Catalog 2026, family OF2–OF8/DZ"
+    sourceNote: "Исходная draft-запись семейства OF2–OF8/DZ; первичный каталог не предоставлен"
   },
   {
     slug: "of8-of30-dp",
@@ -55,7 +55,7 @@ export const productFamilies: ProductFamily[] = [
     cooling: ["air"],
     transmission: "belt",
     verificationStatus: "draft",
-    sourceNote: "UNIGY Oil-Free Gas Compressor Catalog 2026, family OF8–OF30/DP"
+    sourceNote: "Исходная draft-запись семейства OF8–OF30/DP; первичный каталог не предоставлен"
   },
   {
     slug: "of30-of500-dp",
@@ -73,7 +73,7 @@ export const productFamilies: ProductFamily[] = [
     cooling: ["air", "water"],
     transmission: "belt",
     verificationStatus: "draft",
-    sourceNote: "UNIGY Oil-Free Gas Compressor Catalog 2026, family OF30–OF500/DP"
+    sourceNote: "Исходная draft-запись семейства OF30–OF500/DP; первичный каталог не предоставлен"
   },
   {
     slug: "of60-of200-dp",
@@ -91,6 +91,6 @@ export const productFamilies: ProductFamily[] = [
     cooling: ["air", "water"],
     transmission: "belt",
     verificationStatus: "draft",
-    sourceNote: "UNIGY Oil-Free Gas Compressor Catalog 2026, family OF60–OF200/DP"
+    sourceNote: "Исходная draft-запись семейства OF60–OF200/DP; первичный каталог не предоставлен"
   }
 ];

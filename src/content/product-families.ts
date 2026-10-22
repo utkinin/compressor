@@ -1,4 +1,4 @@
-import { productFamilies as originalSeed } from "./internal/unigy-seed";
+import { productFamilies as originalSeed } from "./internal/manufacturer-seed";
 import type { ProductFamily, ProductGasSpec } from "./types";
 
 /** No gas-specific performance has been verified in the supplied material. */
@@ -7,7 +7,7 @@ export const productGasSpecs: ProductGasSpec[] = [];
 /**
  * Public identity projection, deliberately excluding all unverified numerical data,
  * gas compatibility, cooling and drive claims from the supplied original seed.
- * Raw source values remain in internal/unigy-seed.ts until the catalogue is supplied.
+ * Raw source values remain in internal/manufacturer-seed.ts until the catalogue is supplied.
  */
 export const productFamilies: ProductFamily[] = originalSeed.map((seed) => ({
   id: seed.slug,

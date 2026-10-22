@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-type DiagramKind = "hero" | "small" | "medium" | "large" | "nitrogen" | "helium" | "hydrogen" | "co2" | "instrumentation" | "oem";
+type DiagramKind = "hero" | "small" | "medium" | "large" | "nitrogen" | "helium" | "hydrogen" | "co2" | "instrumentation" | "integration";
 
 const descriptions: Record<DiagramKind, string> = {
   hero: "Источник газа, давление P₁, компрессор, охлаждение, ресивер и подача в процесс с давлением P₂ и расходом Q.",
@@ -12,14 +12,14 @@ const descriptions: Record<DiagramKind, string> = {
   hydrogen: "Водородный газовый тракт с проверкой состава и зоны, сжатием, охлаждением и защитными блокировками.",
   co2: "Проверка температуры и фазового состояния CO₂ на входе, сжатие и охлаждение с контролем рабочего диапазона.",
   instrumentation: "Давление и температура до и после сжатия, отсечные клапаны, охлаждение и контур управления.",
-  oem: "Встраивание компрессора: вход газа, компрессорный блок и выход газа, интерфейсы питания, охлаждения, сигналов и защит.",
+  integration: "Встраивание компрессора: вход газа, компрессорный блок и выход газа, интерфейсы питания, охлаждения, сигналов и защит.",
 };
 
 const diagramLabels: Record<DiagramKind, string> = {
   hero: "Пример компрессорной системы", small: "Компактная компрессорная часть", medium: "Вариант комплектации компрессора",
   large: "Комплектная система на общей раме", nitrogen: "Азот: от генератора к процессу", helium: "Контур возврата гелия",
   hydrogen: "Контролируемое сжатие H₂", co2: "CO₂: давление, температура, фаза",
-  instrumentation: "КИП, клапаны и охлаждение", oem: "Подключения компрессора для встраивания",
+  instrumentation: "КИП, клапаны и охлаждение", integration: "Подключения компрессора для встраивания",
 };
 
 function Pipe({ d, accent = false, dashed = false }: { d: string; accent?: boolean; dashed?: boolean }) {
@@ -102,7 +102,7 @@ function FlowDiagram({ variant }: { variant: DiagramKind }) {
     <Pipe d="M168 220 V164 H356 V134 M550 220 V164 H356 M356 220 V134" dashed /><Pipe d="M304 322 V380 H492 V322" dashed /><Label x={310} y={410} muted>Контур охлаждения</Label>
     <Label x={65} y={316} muted>P₁ / T₁</Label><Label x={601} y={316} muted>P₂ / T₂</Label>
   </>;
-  if (variant === "oem") return <>
+  if (variant === "integration") return <>
     <rect x="188" y="100" width="382" height="280" rx="3" fill="none" stroke="#8ba490" strokeDasharray="7 6" />
     <Label x={208} y={130} muted small>ГРАНИЦА ПОСТАВКИ КОМПРЕССОРА</Label>
     <Compressor x={264} y={226} small />

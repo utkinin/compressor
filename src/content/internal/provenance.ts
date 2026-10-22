@@ -1,10 +1,10 @@
-/** Supplied source archive metadata; this is not a manufacturer's verification record. */
-export const ORIGINAL_UNIGY_SEED_PROVENANCE = {
+/** Sanitized scaffold metadata; this is not a manufacturer's verification record. */
+export const MANUFACTURER_SEED_PROVENANCE = {
   archiveDirectory: "lanfor-gas-systems-codex",
-  sourcePath: "src/content/products.ts",
-  sourceFileSha256: "7ad67507f68e342e08f4eecb8eea7510558f9ff31e69565ad37d755c4b743536",
+  sourcePath: "src/content/internal/manufacturer-seed.ts",
+  sourceFileSha256: "cc08636523dc579751f154deef9c4f3dbfec686a1f8c16bcf2d42b32f7dc9c7e",
   importedAt: "2026-10-22",
-  transformation: "Original seed array and comments preserved verbatim; only the type import points to the local internal contract.",
+  transformation: "Supplier identity removed from filenames, comments and source notes; draft values retained without verification.",
   manufacturerPdfProvided: false,
   sourcePagesProvided: false,
   numericalValuesVerified: false,

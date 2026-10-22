@@ -6,7 +6,7 @@ import { legacyPathPairs } from "../../src/lib/legacy-paths";
 const mount = "/compressor";
 const origin = "http://127.0.0.1:3100";
 const artifact = path.resolve(".local/github-pages");
-const core = ["/", "/solutions/nitrogen-booster-after-generator/", "/gases/nitrogen/", "/equipment/oil-free-reciprocating/", "/equipment/of2-of8-dp/", "/knowledge/how-to-select-nitrogen-booster/", "/knowledge/what-to-specify-for-gas-compressor/", "/industries/laser-cutting/", "/rfq/"];
+const core = ["/", "/solutions/nitrogen-booster-after-generator/", "/gases/nitrogen/", "/equipment/oil-free-reciprocating/", "/equipment/of2-of8-dp/", "/knowledge/how-to-select-nitrogen-booster/", "/knowledge/what-to-specify-for-gas-compressor/", "/industries/laser-cutting/", "/solutions/equipment-integration/", "/industries/equipment-manufacturers/", "/cases/compressor-integration/", "/rfq/"];
 const gasBranches = [
   { gas: "n2", fields: ["source", "purity", "inletRange", "flowProfile"] },
   { gas: "he", fields: ["mode", "recoveryScheme", "leakageSensitivity"] },

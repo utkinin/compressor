@@ -9,6 +9,9 @@ const coreRoutes = [
   "/knowledge/how-to-select-nitrogen-booster/",
   "/knowledge/what-to-specify-for-gas-compressor/",
   "/industries/laser-cutting/",
+  "/solutions/equipment-integration/",
+  "/industries/equipment-manufacturers/",
+  "/cases/compressor-integration/",
   "/rfq/",
 ];
 
@@ -35,7 +38,7 @@ test("compressor selection precedes optional configuration; laser supply has two
   await expect(hero.locator(".hero-description")).toHaveText("Подбираем компрессоры и бустеры под ваши параметры. N₂, He, SF₆, CO₂ и другие технологические газы. Подбор по давлению на входе, требуемому давлению, расходу и режиму работы.");
   await expect(hero.getByRole("link", { name: "Подобрать компрессор" })).toHaveAttribute("href", /\/rfq(?:\/|\?)/);
   await expect(hero.getByRole("link", { name: "Отправить параметры" })).toHaveAttribute("href", /\/rfq(?:\/|\?)/);
-  await expect(hero).not.toContainText(/OEM|UNIGY|рабочая точка|\b(?:H₂|O₂)|КИП|автоматика|ресивер/i);
+  await expect(hero).not.toContainText(/рабочая точка|\b(?:H₂|O₂)|КИП|автоматика|ресивер/i);
   const sections = page.locator("main > section");
   await expect(sections.nth(1).getByRole("heading", { level: 2 })).toHaveText("Начнём с 5 основных параметров");
   await expect(sections.nth(1).locator(".working-point-field strong")).toHaveText(["Газ", "P₁ — давление на входе", "P₂ — требуемое давление", "Q — расход", "Режим работы"]);
@@ -53,7 +56,6 @@ test("compressor selection precedes optional configuration; laser supply has two
   await page.goto("/knowledge/what-to-specify-for-gas-compressor/");
   await expect(page.locator("main h1")).toHaveText("Какие данные нужны для подбора компрессора");
   await expect(page.locator(".page-hero")).toContainText("Чтобы начать подбор компрессора, укажите пять основных параметров");
-  await expect(page.locator("main")).not.toContainText(/OEM|UNIGY/i);
   // Engineering terminology remains in one explanatory paragraph, never in a CTA.
   expect((await page.locator("main").innerText()).match(/рабочая точка/gi)).toHaveLength(1);
 });

@@ -25,7 +25,7 @@ export function ProductFamilyPage({ family, content }: { family: ProductFamily; 
       <ContentSection title="Источник и технические данные в HTML">
         <div className="table-wrap"><table className="data-table"><caption>Статус полей семейства {family.title}</caption><thead><tr><th scope="col">Поле</th><th scope="col">Публичные данные</th><th scope="col">Статус</th></tr></thead><tbody>
           <tr><th scope="row">Наименование в исходном seed</th><td>{family.title}</td><td>draft</td></tr>
-          <tr><th scope="row">Производитель в исходном seed</th><td>Не раскрывается; первичная документация не предоставлена</td><td>draft</td></tr>
+          <tr><th scope="row">Производитель в исходных данных</th><td>Не указан; первичная документация не предоставлена</td><td>draft</td></tr>
           <tr><th scope="row">Ссылка на источник в исходном проекте</th><td>{family.sourceNote}</td><td>{family.source.status}</td></tr>
           <tr><th scope="row">Страница первоисточника</th><td>{family.source.page || "Не предоставлена. Требуется каталог изготовителя с номером страницы."}</td><td>draft</td></tr>
           {family.technicalRows.map((row) => <tr key={row.label}><th scope="row">{row.label}</th><td>{row.value}</td><td>{row.status}</td></tr>)}

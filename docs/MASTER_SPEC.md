@@ -86,7 +86,7 @@ Priority landing pages:
 1. nitrogen booster after generator
 2. high-pressure nitrogen for laser cutting / industrial consumers
 3. helium recovery and recompression
-4. oil-free process-gas compressor module / OEM skid
+4. oil-free process-gas compressor module / integration package
 5. hydrogen compressor — only with verified engineering/safety data
 6. CO2 recompression / recovery — only with verified phase/temperature constraints
 7. oxygen — only with explicit verification and controlled language
@@ -121,9 +121,9 @@ Tag dimensions:
 - process: laser-cutting, inerting, leak-testing, cryogenic, PET, test-stand
 - pressure band: ≤20, 21–40, 41–100, 101–200, >200 bar
 - flow band: ≤10, 11–30, 31–100, 101–500, >500 Nm3/h
-- architecture: standalone, package, skid, OEM-module
+- architecture: standalone, package, skid, integration module
 - cleanliness: oil-free, low-leakage, special-cleanliness
-- industry: machine-building, food/beverage, laboratory, energy, chemical, OEM/integrator
+- industry: machine-building, food/beverage, laboratory, energy, chemical, equipment-manufacturer/integrator
 
 Tags drive filters, related links and CMS queries. Do not expose `#hashtags` in body copy.
 

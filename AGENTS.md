@@ -7,7 +7,7 @@ Start with the customer's task and a **compressor or booster** selected from
 `gas + inlet pressure + required outlet pressure + flow + duty`.
 Then explain necessary options and complete systems as supply variants. Use plain
 B2B language in heroes, headings, cards and CTAs. Keep "рабочая точка" inside detailed
-technical explanations. Never expose private supplier names or OEM in public copy.
+technical explanations. Remove private supplier names and internal manufacturer acronyms from the complete repository: code, comments, identifiers, tests, documentation and archives. Use neutral equipment and integration names. Original user uploads outside the project are not source files.
 
 ## Non-negotiables
 - Never invent technical values, certificates, delivery terms, pressure ranges or compatible gases.
@@ -45,7 +45,7 @@ Do not send personal data to analytics. Track only event names, page/intent and 
 
 Work in this existing checkout and current branch. Cloud tasks are already isolated; do not create worktrees unless explicitly requested.
 
-The Git checkout initially contained no code. The user subsequently supplied the original scaffold archive and documents, preserved in docs/source. Read docs/SOURCE_RECONCILIATION.md and the newer user brief docs/IMPLEMENTATION_BRIEF.md. The newer user request overrides earlier seed specifications when they conflict.
+The Git checkout initially contained no code. The user subsequently supplied the original scaffold archive and documents, reviewed and retained only as sanitized project documentation. Read docs/SOURCE_RECONCILIATION.md and the newer user brief docs/IMPLEMENTATION_BRIEF.md. The newer user request overrides earlier seed specifications when they conflict.
 
 Preserve engineering honesty: no unverified performance figures, customers, certificates, stock availability or warranties. N2-B is a draft concept. The user-approved homepage and global metadata gas order is N₂, He, SF₆, CO₂ and other process gases; this mention does not approve an SF₆ product specification or expand the RFQ gas model. AI-authored content stays in editorial review until approved by a human.
 

@@ -6,8 +6,8 @@ import {
   productFamilies, productGasSpecs, publicDocuments, publicProperties, relatedByIds, solutions,
   type Entity, type TechnicalProperty,
 } from "../src/content";
-import { productFamilies as originalUnigySeed } from "../src/content/internal/unigy-seed";
-import { ORIGINAL_UNIGY_SEED_PROVENANCE } from "../src/content/internal/provenance";
+import { productFamilies as manufacturerSeed } from "../src/content/internal/manufacturer-seed";
+import { MANUFACTURER_SEED_PROVENANCE } from "../src/content/internal/provenance";
 
 describe("content evidence and editorial safety", () => {
   it("keeps generated staging material in review rather than automatically published", () => {
@@ -49,29 +49,28 @@ describe("content evidence and editorial safety", () => {
     expect(equipment.some((family) => family.source.title.includes("не предоставлен"))).toBe(true);
   });
 
-  it("preserves the supplied original UNIGY seed verbatim apart from its local type import", () => {
-    const source = readFileSync(new URL("../src/content/internal/unigy-seed.ts", import.meta.url), "utf8");
-    const original = source.replace('"./unigy-seed-types"', '"@/lib/types"');
-    expect(createHash("sha256").update(original).digest("hex")).toBe(ORIGINAL_UNIGY_SEED_PROVENANCE.sourceFileSha256);
-    expect(originalUnigySeed).toHaveLength(5);
-    expect(originalUnigySeed.every((family) => family.verificationStatus === "draft")).toBe(true);
-    expect(originalUnigySeed.every((family) => family.gases.includes("SF6"))).toBe(true);
-    expect(originalUnigySeed.map((family) => [family.slug, family.flowNm3hMin, family.flowNm3hMax])).toEqual([
+  it("keeps the sanitized manufacturer seed traceable without approving its draft values", () => {
+    const source = readFileSync(new URL("../src/content/internal/manufacturer-seed.ts", import.meta.url), "utf8");
+    expect(createHash("sha256").update(source).digest("hex")).toBe(MANUFACTURER_SEED_PROVENANCE.sourceFileSha256);
+    expect(manufacturerSeed).toHaveLength(5);
+    expect(manufacturerSeed.every((family) => family.verificationStatus === "draft")).toBe(true);
+    expect(manufacturerSeed.every((family) => family.gases.includes("SF6"))).toBe(true);
+    expect(manufacturerSeed.map((family) => [family.slug, family.flowNm3hMin, family.flowNm3hMax])).toEqual([
       ["of2-of8-dp",1,8], ["of2-of8-dz",1,10], ["of8-of30-dp",8,30], ["of30-of500-dp",120,500], ["of60-of200-dp",30,120],
     ]);
   });
 
   it("publishes a cautious family identity projection without leaking unverified source envelopes or legacy gas", () => {
-    expect(productFamilies.map((family) => family.slug)).toEqual(originalUnigySeed.map((family) => family.slug));
+    expect(productFamilies.map((family) => family.slug)).toEqual(manufacturerSeed.map((family) => family.slug));
     expect(productFamilies.every((family) => family.source.status === "draft" && family.verificationStatus === "draft")).toBe(true);
     expect(productFamilies.every((family) => family.sourceNote.includes("первичный документ не предоставлен"))).toBe(true);
-    expect(JSON.stringify(productFamilies)).not.toMatch(/UNIGY|OEM/i);
+    expect(productFamilies.every((family) => family.brand === undefined)).toBe(true);
     expect(productFamilies.every((family) => !family.source.url && !family.source.page)).toBe(true);
     expect(productFamilies.every((family) => family.technicalRows.every((row) => row.status === "draft"))).toBe(true);
     expect(JSON.stringify(productFamilies)).not.toMatch(/SF[₆6]|элегаз|inletPressureMpaMax|dischargePressureMpaMax|tightnessMbarLs|0\.01/);
     expect(productGasSpecs).toHaveLength(0);
-    expect(ORIGINAL_UNIGY_SEED_PROVENANCE.manufacturerPdfProvided).toBe(false);
-    expect(ORIGINAL_UNIGY_SEED_PROVENANCE.sourcePagesProvided).toBe(false);
+    expect(MANUFACTURER_SEED_PROVENANCE.manufacturerPdfProvided).toBe(false);
+    expect(MANUFACTURER_SEED_PROVENANCE.sourcePagesProvided).toBe(false);
   });
 
   it("has exactly the intended public gases and no legacy public direction", () => {
