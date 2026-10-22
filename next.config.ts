@@ -1,10 +1,17 @@
 import type { NextConfig } from "next";
 import { ANALYTICS_FRAME_CSP } from "./src/lib/analytics-security";
 
+const staticPreview = process.env.LANFOR_STATIC_PREVIEW === "true";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+if (basePath && !/^\/[A-Za-z0-9_-]+(?:\/[A-Za-z0-9_-]+)*$/.test(basePath)) throw new Error("NEXT_PUBLIC_BASE_PATH must be a safe path without a trailing slash");
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingRoot: process.cwd(),
+  basePath,
+  ...(staticPreview ? { output: "export", trailingSlash: true, images: { unoptimized: true } } : {}),
   experimental: { cpus: 2 },
-  async headers() {
+  headers: staticPreview ? undefined : async function headers() {
     const isDevelopment = process.env.NODE_ENV === "development";
     const csp = [
       "default-src 'self'",
