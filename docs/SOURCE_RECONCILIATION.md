@@ -1,5 +1,7 @@
 # Сверка с исходным проектом
 
+Последующий запрос пользователя меняет публичный язык и gas positioning. Актуальные решения: [EDITORIAL_TECHNICAL_REPORT](EDITORIAL_TECHNICAL_REPORT.md); supplier identity остаётся только внутренней, SF₆ разрешён в согласованном списке главной/global metadata. Исторические решения ниже применяются с учётом этого уточнения.
+
 Дата: 22 октября 2026 года. Сначала Git checkout был пуст и работа началась по большому заданию v1.1. Затем пользователь передал `lanfor-gas-systems-codex.zip` и пять отдельных документов. Все пять побайтно совпадают с соответствующими файлами ZIP.
 
 Оригинальный ZIP сохранён в `docs/source/`, SHA-256 — в `docs/source/SHA256SUMS`. Оригинальные документы теперь находятся по ожидаемым путям `docs/MASTER_SPEC.md`, `CODEX_PROMPT.md`, `AUDIT_AND_DECISIONS.md`, `CONTENT_MODEL.md`, `SEO_AI.md`, `ANALYTICS.md`, `IMAGE_PLAN.md`, `MIGRATION_FROM_SF6RUS.md`, `SEMANTIC_MATRIX.csv`. Исходный AGENTS сохранён отдельно и его правила объединены с текущими. Пояснения фактической реализации отделены в IMPLEMENTED_* и IMPLEMENTATION_AUDIT.md.

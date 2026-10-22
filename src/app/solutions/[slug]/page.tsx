@@ -35,7 +35,7 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
   return <>
     <ContentView event="solution_view" id={solution.id} />
     <Breadcrumbs items={[{ label: "Решения", href: "/solutions/" }, { label: solution.title, href: `/solutions/${solution.slug}/` }]} />
-    <PageIntro eyebrow="Функциональный газовый узел" title={solution.title} summary={solution.summary} action={<Link className="button" href={rfqHref}>Обсудить рабочую точку →</Link>} />
+    <PageIntro eyebrow="Подбор компрессора под задачу" title={solution.title} summary={solution.summary} action={<Link className="button" href={rfqHref}>Подобрать компрессор →</Link>} />
     <section className="container"><TechnicalDiagram kind={solution.diagram} title={`Схема решения: ${solution.title}`} /></section>
     <div className="container detail-layout"><article className="prose">
       <ContentSection title="Инженерная задача"><p>{solution.intent}</p></ContentSection>

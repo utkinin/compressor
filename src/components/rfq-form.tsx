@@ -99,11 +99,46 @@ function captureAttribution(): Attribution {
 
 function solutionClass(gas: Gas, details: Record<string, string>): string {
   if (gas === "he" && /recovery|возврат|рекуп|восстанов/i.test(details.mode ?? "")) return "Система возврата и повторного сжатия гелия";
-  if (gas === "h2") return "Безмасляный компрессорный модуль для водорода";
-  if (gas === "o2") return "Компрессорный узел в кислородно-совместимом исполнении";
-  if (gas === "co2") return "Компрессорный модуль CO₂ с проверкой фазового состояния";
-  if (gas === "mixtures") return "Компрессорный модуль для заданного состава газа";
-  return "Безмасляный компрессор / booster с необходимой обвязкой";
+  if (gas === "h2") return "Компрессор для водорода после проверки исполнения";
+  if (gas === "o2") return "Компрессор в кислородно-совместимом исполнении";
+  if (gas === "co2") return "Компрессор CO₂ с проверкой фазового состояния";
+  if (gas === "mixtures") return "Компрессор для заданного состава газа";
+  return "Компрессор или бустер под параметры газа";
+}
+
+function requestContextLabel(kind: keyof RequestContext, id: string): string {
+  const labels: Record<string, string> = {
+    "nitrogen-booster-after-generator": "Бустер азота после генератора",
+    "nitrogen-pressure-boosting": "Повышение давления азота",
+    "nitrogen-for-laser-cutting": "Азот для лазерной резки",
+    "helium-compression": "Сжатие гелия",
+    "helium-recovery": "Возврат и повторное использование гелия",
+    "hydrogen-compression": "Сжатие водорода",
+    "co2-compression": "Сжатие CO₂",
+    "oxygen-compression": "Сжатие кислорода",
+    "process-gas-compressor": "Компрессор технологического газа",
+    "oil-free-gas-booster": "Безмасляный газовый бустер",
+    "compressor-skid": "Компрессорная станция на раме",
+    "oem-gas-compression-module": "Компрессор для встраивания в оборудование",
+    "gas-transfer-recovery": "Перекачка и возврат газа",
+    "buffer-receiver-charging": "Заполнение буфера и ресивера",
+    "oil-free-reciprocating": "Безмасляные поршневые компрессоры",
+    "gas-boosters": "Газовые бустеры",
+    "compressor-modules": "Компрессоры для встраивания",
+    "compressor-skids": "Компрессорные станции на раме",
+    "recovery-systems": "Системы возврата газа",
+    "process-gas-questionnaire": "Опросный лист на газовый компрессор",
+    "configuration-datasheet": "Технический лист конфигурации",
+    "manufacturer-family-catalogue": "Каталог выбранного семейства",
+    "operating-manual": "Руководство по эксплуатации",
+    "pid-interface-drawing": "P&ID и габаритный чертёж",
+    "cad-layout": "CAD для интеграции",
+    "step-model": "STEP-модель компрессора",
+    "conformity-document-list": "Перечень документов соответствия",
+    "working-point-calculation": "Расчётный лист параметров компрессора",
+    "technical-documentation": "Техническая документация",
+  };
+  return labels[id] ?? { solution: "Подбор компрессора для технологической задачи", equipment: "Семейство газовых компрессоров", document: "Документ по выбранной конфигурации" }[kind];
 }
 
 function ErrorText({ id, message }: { id: string; message?: string }) {
@@ -133,7 +168,11 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
   const [consent, setConsent] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const attribution = useRef<Attribution>({ sourcePage: "/rfq", landingPage: "/rfq" });
-  const context = [["Решение", initialRequest.solution], ["Оборудование", initialRequest.equipment], ["Документ", initialRequest.document]].filter((item) => item[1]).map(([label, value]) => `${label}: ${value}`).join(" · ");
+  const context = (["solution", "equipment", "document"] as const).flatMap((kind) => {
+    const id = initialRequest[kind];
+    if (!id) return [];
+    return `${{ solution: "Задача", equipment: "Оборудование", document: "Документ" }[kind]}: ${requestContextLabel(kind, id)}`;
+  }).join(" · ");
   const [errors, setErrors] = useState<Errors>({});
   const [sending, setSending] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -257,7 +296,7 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
   if (success) return (
     <div className="rfq-success" role="status">
       <span className="rfq-success-mark" aria-hidden="true">✓</span>
-      <p className="eyebrow">{success.delivery === "preview" ? "Демонстрация формы RFQ" : "Рабочая точка сохранена"}</p>
+      <p className="eyebrow">{success.delivery === "preview" ? "Демонстрация формы RFQ" : "Параметры подбора сохранены"}</p>
       <h2 ref={heading} tabIndex={-1}>{success.delivery === "preview" ? "Демонстрация пройдена" : success.delivery === "webhook" ? "Заявка передана в инженерный контур" : success.delivery === "local-staging" ? "Тестовая заявка сохранена локально" : "Заявка сохранена в очереди доставки"}</h2>
       <p>{success.delivery === "preview" ? "Заявка не отправлена и не сохранена. Это демонстрация интерфейса на GitHub Pages: сервер приёма заявок и CRM не подключены. Не вводите реальные контакты." : success.delivery === "webhook" ? "Следующий шаг — проверка исходных данных и согласование состава решения. Это ещё не подтверждение характеристик или подбор конкретной модели." : success.delivery === "local-staging" ? "Это проверка staging-сайта. CRM не подключена, инженер не получил уведомление. Используйте только тестовые контактные данные." : "Внешний сервис временно недоступен. Заявка принята в защищённое локальное хранилище; оператору требуется повторить доставку. Подтверждения получения инженером пока нет."}</p>
       <p className="rfq-request-id">{success.delivery === "preview" ? "Маркер демонстрации в этой вкладке" : "Номер заявки"}: <strong>{success.id}</strong></p>
@@ -277,12 +316,12 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
             </li>
           ))}
         </ol>
-        <div className="rfq-sidebar-note"><strong>Рабочая точка, а не артикул</strong><p>Укажем предварительный класс решения. Характеристики и состав поставки подтвердит инженер после проверки исходных данных.</p></div>
+        <div className="rfq-sidebar-note"><strong>Параметры для подбора компрессора</strong><p>Укажем предварительный тип оборудования. Характеристики и состав поставки подтвердит инженер после проверки исходных данных.</p></div>
         {context && <p className="rfq-context">{context}</p>}
       </aside>
       <div className="rfq-main">
-        {mode !== "live" && <div className="notice rfq-mode-notice"><strong>{mode === "preview" ? "GitHub Pages · демонстрационный режим" : mode === "staging" ? "Staging · локальная проверка" : "Приём заявок пока закрыт"}</strong><p>{mode === "preview" ? "Все шаги формы доступны для проверки. Заявка не отправляется и не сохраняется; CRM не подключена. Не вводите реальные контакты — используйте вымышленные данные." : mode === "staging" ? "Заявка сохраняется только в этой тестовой среде и не отправляется в CRM. Введите вымышленные контактные данные." : "Для отправки нужны настроенная доставка и утверждённые реквизиты оператора персональных данных. Рабочую точку можно заполнить и проверить."}</p></div>}
-        <p className="rfq-step-label">{review ? "Проверка рабочей точки" : `Шаг ${step + 1} из 5`}</p>
+        {mode !== "live" && <div className="notice rfq-mode-notice"><strong>{mode === "preview" ? "GitHub Pages · демонстрационный режим" : mode === "staging" ? "Staging · локальная проверка" : "Приём заявок пока закрыт"}</strong><p>{mode === "preview" ? "Все шаги формы доступны для проверки. Заявка не отправляется и не сохраняется; CRM не подключена. Не вводите реальные контакты — используйте вымышленные данные." : mode === "staging" ? "Заявка сохраняется только в этой тестовой среде и не отправляется в CRM. Введите вымышленные контактные данные." : "Для отправки нужны настроенная доставка и утверждённые реквизиты оператора персональных данных. Параметры подбора можно заполнить и проверить."}</p></div>}
+        <p className="rfq-step-label">{review ? "Проверка параметров подбора" : `Шаг ${step + 1} из 5`}</p>
         {!review ? <form onSubmit={next} noValidate>
           <h2 className="rfq-title" ref={heading} tabIndex={-1}>{["С каким газом работаем?", "Какое давление на входе?", "Какое давление нужно на выходе?", "Какой расход требуется?", "Как работает процесс?"][step]}</h2>
           {step === 0 && <>
@@ -295,7 +334,7 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
             </div>
           </>}
           {(step === 1 || step === 2) && <>
-            <p className="rfq-intro">{step === 1 ? "P₁ — давление газа непосредственно перед компрессорным узлом, с учётом потерь в подводящей линии." : "P₂ — требуемое давление на выходе компрессорного узла. Потери в линии к потребителю могут потребовать P₂ выше рабочего давления оборудования. Длину линии, арматуру и требования потребителя укажите в дополнительных требованиях: инженер учтёт их при расчёте."}</p>
+            <p className="rfq-intro">{step === 1 ? "P₁ — давление газа непосредственно перед компрессором, с учётом потерь в подводящей линии." : "P₂ — требуемое давление на выходе компрессора. Потери в линии к потребителю могут потребовать P₂ выше рабочего давления оборудования. Длину линии, арматуру и требования потребителя укажите в дополнительных требованиях: инженер учтёт их при расчёте."}</p>
             <div className="rfq-pressure-row">
               <div className="field"><label htmlFor="pressure-value">{step === 1 ? "Давление на входе P₁" : "Давление на выходе P₂"}</label><input id="pressure-value" inputMode="decimal" autoComplete="off" value={step === 1 ? inlet : outlet} aria-invalid={Boolean(errors[`${step === 1 ? "inlet" : "outlet"}.value`])} aria-describedby="pressure-error pressure-note" onChange={(event) => { changed(); (step === 1 ? setInlet : setOutlet)(event.target.value); }} /><ErrorText id="pressure-error" message={errors[`${step === 1 ? "inlet" : "outlet"}.value`]} /></div>
               <div className="field"><label htmlFor="pressure-unit">Единица давления</label><select id="pressure-unit" value={step === 1 ? inletUnit : outletUnit} onChange={(event) => { changed(); (step === 1 ? setInletUnit : setOutletUnit)(event.target.value as PressureUnit); }}><option value="bar(g)">bar(g) — избыточное</option><option value="bar(a)">bar(a) — абсолютное</option><option value="MPa">MPa</option></select></div>
@@ -316,13 +355,13 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
             <div className="field"><label htmlFor="duty-details">Цикл, пиковая нагрузка и дополнительные требования <span className="rfq-optional">(при наличии)</span></label><textarea id="duty-details" rows={4} maxLength={1000} value={dutyDetails} onChange={(event) => { changed(); setDutyDetails(event.target.value); }} aria-invalid={Boolean(errors.dutyDetails)} aria-describedby="duty-error" /><ErrorText id="duty-error" message={errors.dutyDetails} /></div>
           </>}
           {Object.entries(errors).filter(([path]) => !path.includes(".") && path !== "dutyDetails").map(([path, message]) => <p className="rfq-error" key={path}>{message}</p>)}
-          <div className="rfq-actions">{step > 0 && <button type="button" className="button button-secondary" onClick={() => { setErrors({}); setStep(step - 1); requestAnimationFrame(() => heading.current?.focus()); }}>← Назад</button>}<button type="submit" className="button">{step === 4 ? "Проверить рабочую точку" : "Продолжить"} <span aria-hidden="true">→</span></button></div>
+          <div className="rfq-actions">{step > 0 && <button type="button" className="button button-secondary" onClick={() => { setErrors({}); setStep(step - 1); requestAnimationFrame(() => heading.current?.focus()); }}>← Назад</button>}<button type="submit" className="button">{step === 4 ? "Проверить параметры подбора" : "Продолжить"} <span aria-hidden="true">→</span></button></div>
         </form> : <form onSubmit={submit} noValidate aria-busy={sending}>
           <fieldset className="rfq-submit-fields" disabled={sending}>
-          <h2 className="rfq-title" ref={heading} tabIndex={-1}>Рабочая точка для инженерного подбора</h2>
+          <h2 className="rfq-title" ref={heading} tabIndex={-1}>Параметры для подбора компрессора</h2>
           <div className="rfq-summary"><dl><div><dt>Газ</dt><dd>{gasLabel}</dd></div><div><dt>P₁</dt><dd>{pressureText(inlet, inletUnit, inletReference)}</dd></div><div><dt>P₂</dt><dd>{pressureText(outlet, outletUnit, outletReference)}</dd></div><div><dt>Q</dt><dd>{flow} {flowUnit === "Nm3/h" ? "Nm³/h" : flowUnit === "m3/h" ? "m³/h" : flowUnit}</dd></div><div><dt>Режим</dt><dd>{dutyOptions.find((option) => option.value === duty)?.title}</dd></div></dl>{flowUnit !== "kg/h" && <p className="rfq-help">Условия Q: {flowReference}</p>}<details><summary>Уточняющие параметры газа</summary><dl className="rfq-details-summary">{GAS_FIELDS[gas].map((field) => <div key={field.key}><dt>{field.label}</dt><dd>{details[field.key]}</dd></div>)}</dl>{dutyDetails && <p>{dutyDetails}</p>}</details></div>
           <div className="rfq-preliminary"><p className="eyebrow">Предварительный класс решения</p><h3>{solutionClass(gas, details)}</h3><p>Это направление инженерной проработки, без расчёта и выбора модели. Инженер проверит степень сжатия, температурный режим, материалы, герметичность, регулирование и комплектность.</p></div>
-          <button type="button" className="rfq-edit" onClick={() => { setReview(false); setStep(0); setErrors({}); requestAnimationFrame(() => heading.current?.focus()); }}>← Изменить рабочую точку</button>
+          <button type="button" className="rfq-edit" onClick={() => { setReview(false); setStep(0); setErrors({}); requestAnimationFrame(() => heading.current?.focus()); }}>← Изменить параметры подбора</button>
           <h3 className="rfq-contact-title">{mode === "preview" ? "Тестовые контактные данные" : "Кому направить уточнения?"}</h3>
           {mode === "preview" && <p className="rfq-help">Например: Тестовый инженер, Демо-компания, engineer@example.com. Эти поля показывают будущий сценарий приёма заявки; передача и хранение данных отключены.</p>}
           <div className="field-row"><div className="field"><label htmlFor="contact-name">Имя</label><input id="contact-name" autoComplete={mode === "preview" ? "off" : "name"} value={name} maxLength={120} aria-invalid={Boolean(errors["contact.name"])} aria-describedby="name-error" onChange={(event) => { changed(); setName(event.target.value); }} /><ErrorText id="name-error" message={errors["contact.name"]} /></div><div className="field"><label htmlFor="contact-company">Компания</label><input id="contact-company" autoComplete={mode === "preview" ? "off" : "organization"} value={company} maxLength={200} aria-invalid={Boolean(errors["contact.company"])} aria-describedby="company-error" onChange={(event) => { changed(); setCompany(event.target.value); }} /><ErrorText id="company-error" message={errors["contact.company"]} /></div></div>
@@ -330,9 +369,9 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
           <div className="rfq-honeypot" aria-hidden="true"><label htmlFor="company-website">Не заполняйте это поле</label><input id="company-website" name="website" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(event) => setHoneypot(event.target.value)} /></div>
           <div className="rfq-consent"><label><input type="checkbox" checked={consent} aria-invalid={Boolean(errors["consent.accepted"])} aria-describedby="consent-error" onChange={(event) => { changed(); setConsent(event.target.checked); }} /><span>Я даю <Link href="/legal/consent/" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</Link> для ответа на мой запрос и ознакомлен(а) с <Link href="/legal/privacy/" target="_blank" rel="noopener noreferrer">политикой обработки персональных данных</Link>. Рассылки в это согласие не входят.</span></label><ErrorText id="consent-error" message={errors["consent.accepted"] ?? errors.consent} /><p className="rfq-help">Версия согласия: {CONSENT_VERSION}. {mode === "preview" ? "В этой демонстрации согласие не передаётся серверу и не сохраняется." : "Дата и время фиксируются сервером при получении заявки."}</p></div>
           {serverError && <div className="rfq-server-error" role="alert"><strong>Отправка не подтверждена</strong><p>{serverError}</p><p>Данные остались в форме. Повторная отправка без изменений использует тот же ключ и не создаст дубликат.</p></div>}
-          {Object.keys(errors).length > 0 && <p className="rfq-error" role="alert">Проверьте отмеченные поля. Если ошибка относится к рабочей точке, вернитесь к её редактированию.</p>}
-          <div className="rfq-actions"><button type="submit" className="button" disabled={sending || mode === "disabled"}>{sending ? "Сохраняем запрос…" : mode === "preview" ? "Завершить демонстрацию" : mode === "staging" ? "Сохранить тестовую заявку" : "Передать рабочую точку инженеру"}<span aria-hidden="true">→</span></button></div>
-          <p className="rfq-help">{mode === "preview" ? "Демонстрация завершится в браузере без сетевой отправки и сохранения контактов." : mode === "staging" ? "Проверка полного пути RFQ без внешней отправки." : "Подтверждение приёма заявки не является коммерческим предложением или гарантией рабочей точки."}</p>
+          {Object.keys(errors).length > 0 && <p className="rfq-error" role="alert">Проверьте отмеченные поля. Если ошибка относится к параметрам компрессора, вернитесь к их редактированию.</p>}
+          <div className="rfq-actions"><button type="submit" className="button" disabled={sending || mode === "disabled"}>{sending ? "Сохраняем запрос…" : mode === "preview" ? "Завершить демонстрацию" : mode === "staging" ? "Сохранить тестовую заявку" : "Передать параметры инженеру"}<span aria-hidden="true">→</span></button></div>
+          <p className="rfq-help">{mode === "preview" ? "Демонстрация завершится в браузере без сетевой отправки и сохранения контактов." : mode === "staging" ? "Проверка полного пути RFQ без внешней отправки." : "Подтверждение приёма заявки не является коммерческим предложением или подтверждением параметров компрессора."}</p>
           </fieldset>
         </form>}
       </div>

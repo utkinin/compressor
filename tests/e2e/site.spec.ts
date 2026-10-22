@@ -7,6 +7,8 @@ const coreRoutes = [
   "/gases/nitrogen/",
   "/equipment/oil-free-reciprocating/",
   "/knowledge/how-to-select-nitrogen-booster/",
+  "/knowledge/what-to-specify-for-gas-compressor/",
+  "/industries/laser-cutting/",
   "/rfq/",
 ];
 
@@ -25,6 +27,36 @@ async function fillNitrogen(page: Page) {
   await page.locator("#gas-inletRange").fill("5–7 bar(g)");
   await page.locator("#gas-flowProfile").fill("20 средний / 30 пиковый Nm³/h");
 }
+
+test("compressor selection precedes optional configuration; laser supply has two alternatives", async ({ page }) => {
+  await page.goto("/");
+  const hero = page.locator(".hero");
+  await expect(hero.getByRole("heading", { level: 1 })).toHaveText("Компрессоры для технологических газов");
+  await expect(hero.locator(".hero-description")).toHaveText("Подбираем компрессоры и бустеры под ваши параметры. N₂, He, SF₆, CO₂ и другие технологические газы. Подбор по давлению на входе, требуемому давлению, расходу и режиму работы.");
+  await expect(hero.getByRole("link", { name: "Подобрать компрессор" })).toHaveAttribute("href", /\/rfq(?:\/|\?)/);
+  await expect(hero.getByRole("link", { name: "Отправить параметры" })).toHaveAttribute("href", /\/rfq(?:\/|\?)/);
+  await expect(hero).not.toContainText(/OEM|UNIGY|рабочая точка|\b(?:H₂|O₂)|КИП|автоматика|ресивер/i);
+  const sections = page.locator("main > section");
+  await expect(sections.nth(1).getByRole("heading", { level: 2 })).toHaveText("Начнём с 5 основных параметров");
+  await expect(sections.nth(1).locator(".working-point-field strong")).toHaveText(["Газ", "P₁ — давление на входе", "P₂ — требуемое давление", "Q — расход", "Режим работы"]);
+  await expect(sections.nth(2).getByRole("heading", { level: 2 })).toHaveText("Комплектуем компрессор под задачу");
+  await expect(sections.nth(2).locator(".configuration-flow li")).toHaveText(["КОМПРЕССОР", "+ НЕОБХОДИМЫЕ ОПЦИИ", "КОМПЛЕКТНАЯ СИСТЕМА"]);
+  await expect(sections.nth(2)).toContainText("Не все опции обязательны");
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /N₂, He, SF₆, CO₂/);
+  await page.goto("/industries/laser-cutting/");
+  await expect(page.locator("main h1")).toHaveText("Газоснабжение лазерного станка");
+  const alternatives = page.locator(".laser-supply-options");
+  await expect(alternatives).toContainText("компрессор → ресивер → осушитель → фильтрация → лазер");
+  await expect(alternatives).toContainText("источник N₂ / генератор → бустер → ресивер → лазер");
+  await expect(page.locator("main")).toContainText("Азот не является универсально лучшим вариантом");
+  await expect(page.locator("main")).not.toContainText(/15\s*(?:→|-)\s*40/);
+  await page.goto("/knowledge/what-to-specify-for-gas-compressor/");
+  await expect(page.locator("main h1")).toHaveText("Какие данные нужны для подбора компрессора");
+  await expect(page.locator(".page-hero")).toContainText("Чтобы начать подбор компрессора, укажите пять основных параметров");
+  await expect(page.locator("main")).not.toContainText(/OEM|UNIGY/i);
+  // Engineering terminology remains in one explanatory paragraph, never in a CTA.
+  expect((await page.locator("main").innerText()).match(/рабочая точка/gi)).toHaveLength(1);
+});
 
 for (const width of [360, 390, 768, 1440]) {
   test(`core journeys fit ${width}px and render useful accessible content`, async ({ page }) => {
@@ -184,12 +216,12 @@ test("qualified RFQ completes with explicit consent and honest local-staging rec
   await expect(page.getByLabel("Условия расхода: температура и абсолютное давление", { exact: true })).toHaveValue(/1,01325 bar\(a\)/);
   await page.getByRole("button", { name: "Продолжить" }).click();
   await page.getByRole("radio", { name: /По циклу/ }).check();
-  await page.getByRole("button", { name: "Проверить рабочую точку" }).click();
+  await page.getByRole("button", { name: "Проверить параметры подбора" }).click();
   await expect(page.getByRole("heading", { name: "Как работает процесс?" })).toBeVisible();
   await expect(page.locator("#duty-details")).toHaveAttribute("aria-invalid", "true");
   await page.getByRole("radio", { name: /Непрерывный 24\/7/ }).check();
-  await page.getByRole("button", { name: "Проверить рабочую точку" }).click();
-  await expect(page.getByRole("heading", { name: "Рабочая точка для инженерного подбора" })).toBeVisible();
+  await page.getByRole("button", { name: "Проверить параметры подбора" }).click();
+  await expect(page.getByRole("heading", { name: "Параметры для подбора компрессора" })).toBeVisible();
   await expect(page.getByText("Предварительный класс решения", { exact: true })).toBeVisible();
   await page.getByLabel("Имя", { exact: true }).fill("Тестовый инженер");
   await page.getByLabel("Компания", { exact: true }).fill("Тестовая организация E2E");

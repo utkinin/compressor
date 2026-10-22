@@ -31,7 +31,7 @@ export default async function GasPage({ params }: { params: Promise<{ slug: stri
       <ContentSection title="Исходные данные для подбора"><BulletList items={gas.inputs} /></ContentSection>
       <ContentSection title="Технологические особенности"><BulletList items={gas.features} /></ContentSection>
       <ContentSection title="Ограничения и обязательные проверки"><BulletList items={gas.limitations} /></ContentSection>
-      <ContentSection title="Принципиальная схема"><p>{gas.scheme}</p><p>Это логика процесса, а не рабочая P&amp;ID. Защита, арматура, материалы и алгоритм управления согласуются для конкретной рабочей точки.</p></ContentSection>
+      <ContentSection title="Принципиальная схема"><p>{gas.scheme}</p><p>Это логика процесса, а не рабочая P&amp;ID. Защита, арматура, материалы и алгоритм управления согласуются для заданных параметров процесса.</p></ContentSection>
       <RelatedLinks title="Решения под этот газ" items={solutions.filter((item) => gas.solutionIds.includes(item.id)).map((item) => ({ title: item.title, href: `/solutions/${item.slug}/` }))} />
       <RelatedLinks title="Классы оборудования для рассмотрения" items={equipment.filter((item) => gas.equipmentIds.includes(item.id)).map((item) => ({ title: item.title, href: `/equipment/${item.slug}/` }))} />
       <p className="notice">Связь с классом оборудования означает направление подбора. Совместимость конкретного исполнения с газом должна быть подтверждена инженерной проверкой.</p>
@@ -39,6 +39,6 @@ export default async function GasPage({ params }: { params: Promise<{ slug: stri
       <RelatedLinks title="Типовые постановки задачи" items={cases.filter((item) => item.gasIds.includes(gas.id)).map((item) => ({ title: item.title, href: `/cases/${item.slug}/` }))} />
       <RelatedLinks title="Документы" items={documents.filter((item) => item.access !== "internal" && item.gasIds.includes(gas.id)).map((item) => ({ title: item.title, href: `/documents/${item.slug}/` }))} />
       <Faq items={gas.faq} />
-    </article><RfqPanel href={`/rfq/?gas=${gas.id}`} sourcePage={`/gases/${gas.slug}/`} title={`Рабочая точка для ${gas.symbol}`} /></div>
+    </article><RfqPanel href={`/rfq/?gas=${gas.id}`} sourcePage={`/gases/${gas.slug}/`} title={`Подобрать компрессор для ${gas.symbol}`} /></div>
   </>;
 }

@@ -3,23 +3,23 @@ import type { ReactNode } from "react";
 type DiagramKind = "hero" | "small" | "medium" | "large" | "nitrogen" | "helium" | "hydrogen" | "co2" | "instrumentation" | "oem";
 
 const descriptions: Record<DiagramKind, string> = {
-  hero: "Источник газа, давление P₁, безмасляный компрессор, охлаждение, ресивер и подача в процесс с давлением P₂ и расходом Q.",
-  small: "Принципиальное устройство компактного безмасляного поршневого компрессорного узла: привод, компрессорная часть и газовая обвязка.",
-  medium: "Компрессорный модуль с несколькими ступенями, охлаждением, измерением давления и температуры.",
-  large: "Компрессорный skid: рама, компрессор, привод, охлаждение, буфер, КИП и шкаф управления.",
-  nitrogen: "Генератор азота, буфер на входе, безмасляный booster, охлаждение, ресивер и технологическое оборудование.",
+  hero: "Источник газа, давление P₁, компрессор, охлаждение, ресивер и подача в процесс с давлением P₂ и расходом Q.",
+  small: "Принципиальное устройство компактного поршневого компрессора: привод, компрессорная часть и газовая обвязка.",
+  medium: "Вариант комплектации компрессора с несколькими ступенями, охлаждением, измерением давления и температуры.",
+  large: "Комплектная система на общей раме: рама, компрессор, привод, охлаждение, буфер, КИП и шкаф управления.",
+  nitrogen: "Генератор азота, буфер на входе, бустер, охлаждение, ресивер и технологическое оборудование.",
   helium: "Принцип возврата гелия: сбор отработанного газа, буфер, подготовка, компрессия, хранение и повторная подача в процесс.",
-  hydrogen: "Водородный газовый тракт с проверкой состава и зоны, безмасляным сжатием, охлаждением и защитными блокировками.",
+  hydrogen: "Водородный газовый тракт с проверкой состава и зоны, сжатием, охлаждением и защитными блокировками.",
   co2: "Проверка температуры и фазового состояния CO₂ на входе, сжатие и охлаждение с контролем рабочего диапазона.",
   instrumentation: "Давление и температура до и после сжатия, отсечные клапаны, охлаждение и контур управления.",
-  oem: "Граница OEM-модуля: вход газа, компрессорный блок и выход газа, интерфейсы питания, охлаждения, сигналов и защит.",
+  oem: "Встраивание компрессора: вход газа, компрессорный блок и выход газа, интерфейсы питания, охлаждения, сигналов и защит.",
 };
 
 const diagramLabels: Record<DiagramKind, string> = {
-  hero: "Архитектура компрессорного узла", small: "Компактная компрессорная часть", medium: "Компрессорный модуль",
-  large: "Компрессорный skid", nitrogen: "Азот: от генератора к процессу", helium: "Контур возврата гелия",
+  hero: "Пример компрессорной системы", small: "Компактная компрессорная часть", medium: "Вариант комплектации компрессора",
+  large: "Комплектная система на общей раме", nitrogen: "Азот: от генератора к процессу", helium: "Контур возврата гелия",
   hydrogen: "Контролируемое сжатие H₂", co2: "CO₂: давление, температура, фаза",
-  instrumentation: "КИП, клапаны и охлаждение", oem: "Интерфейсы OEM-интеграции",
+  instrumentation: "КИП, клапаны и охлаждение", oem: "Подключения компрессора для встраивания",
 };
 
 function Pipe({ d, accent = false, dashed = false }: { d: string; accent?: boolean; dashed?: boolean }) {
@@ -80,9 +80,9 @@ function Skid({ variant }: { variant: DiagramKind }) {
     {isSmall && <Pipe d="M343 176 H504 V270 H673" accent />}
     <path d="M216 336 L108 310 M484 337 L473 372 M584 349 L624 379" fill="none" stroke="#6a8272" strokeWidth="1" />
     <Label x={76} y={126} muted small>ИСТОЧНИК ГАЗА</Label><Label x={76} y={150}>P₁ · ВХОД</Label><Label x={604} y={110}>P₂ / Q</Label><Label x={616} y={194} muted small>В ПРОЦЕСС</Label>
-    <Label x={65} y={299} muted small>OIL-FREE</Label><Label x={65} y={315} muted small>КОМПРЕССОР</Label>
+    <Label x={65} y={299} muted small>СЖАТИЕ ГАЗА</Label><Label x={65} y={315} muted small>КОМПРЕССОР</Label>
     {!isSmall && <><Label x={418} y={397} muted small>ОХЛАЖДЕНИЕ</Label><Label x={590} y={400} muted small>БУФЕР</Label></>}
-    <Label x={76} y={469} muted small>{variant === "large" ? "ГАЗОВЫЙ ТРАКТ + КИП + УПРАВЛЕНИЕ + ЕДИНАЯ РАМА" : "КОМПОНОВКА ПОД РАБОЧУЮ ТОЧКУ ПРОЦЕССА"}</Label>
+    <Label x={76} y={469} muted small>{variant === "large" ? "ГАЗОВЫЙ ТРАКТ + КИП + УПРАВЛЕНИЕ + ЕДИНАЯ РАМА" : "ПРИМЕР КОМПОНОВКИ КОМПРЕССОРА"}</Label>
   </>;
 }
 
@@ -96,7 +96,7 @@ function Arrow({ x, y, width = 27 }: { x: number; y: number; width?: number }) {
 
 function FlowDiagram({ variant }: { variant: DiagramKind }) {
   if (variant === "instrumentation") return <>
-    <FlowBox x={270} y={220} width={170} title="Компрессор" detail="контроль рабочего режима" symbol="OIL-FREE" />
+    <FlowBox x={270} y={220} width={170} title="Компрессор" detail="контроль рабочего режима" symbol="ГАЗ / P₁ / P₂" />
     <Pipe d="M68 271 H270 M440 271 H690" accent /><Valve x={111} y={271} /><Gauge x={168} y={237} /><Gauge x={226} y={237} label="TI" /><Gauge x={490} y={237} /><Gauge x={550} y={237} label="TI" /><Valve x={609} y={271} />
     <rect x="274" y="70" width="166" height="64" fill="#22392d" stroke="#8ba490" /><Label x={296} y={97}>УПРАВЛЕНИЕ</Label><Label x={296} y={119} muted small>защиты / сигналы</Label>
     <Pipe d="M168 220 V164 H356 V134 M550 220 V164 H356 M356 220 V134" dashed /><Pipe d="M304 322 V380 H492 V322" dashed /><Label x={310} y={410} muted>Контур охлаждения</Label>
@@ -104,7 +104,7 @@ function FlowDiagram({ variant }: { variant: DiagramKind }) {
   </>;
   if (variant === "oem") return <>
     <rect x="188" y="100" width="382" height="280" rx="3" fill="none" stroke="#8ba490" strokeDasharray="7 6" />
-    <Label x={208} y={130} muted small>ГРАНИЦА ПОСТАВКИ OEM-МОДУЛЯ</Label>
+    <Label x={208} y={130} muted small>ГРАНИЦА ПОСТАВКИ КОМПРЕССОРА</Label>
     <Compressor x={264} y={226} small />
     <Pipe d="M52 218 H188 V187 H258 M552 218 H708" accent />
     <Pipe d="M510 187 H552 V218" accent />
@@ -114,12 +114,12 @@ function FlowDiagram({ variant }: { variant: DiagramKind }) {
     <Label x={202} y={426} muted>Габарит · сервисный доступ · логика защит</Label>
   </>;
   const data = variant === "nitrogen"
-    ? [{ title: "Генератор", detail: "PSA / membrane", symbol: "N₂" }, { title: "Booster", detail: "Oil-Free", symbol: "P₁ → P₂" }, { title: "Ресивер", detail: "пиковый расход", symbol: "БУФЕР" }, { title: "Процесс", detail: "рабочая точка", symbol: "Q / P₂" }]
+    ? [{ title: "Генератор", detail: "PSA / membrane", symbol: "N₂" }, { title: "Booster", detail: "по параметрам газа", symbol: "P₁ → P₂" }, { title: "Ресивер", detail: "пиковый расход", symbol: "БУФЕР" }, { title: "Процесс", detail: "параметры процесса", symbol: "Q / P₂" }]
     : variant === "helium"
-      ? [{ title: "Сбор газа", detail: "возврат из процесса", symbol: "He / RECOVERY" }, { title: "Подготовка", detail: "состав / загрязнения", symbol: "КОНТРОЛЬ" }, { title: "Компрессия", detail: "утечки / охлаждение", symbol: "OIL-FREE" }, { title: "Хранение", detail: "повторная подача", symbol: "БУФЕР" }]
+      ? [{ title: "Сбор газа", detail: "возврат из процесса", symbol: "He / RECOVERY" }, { title: "Подготовка", detail: "состав / загрязнения", symbol: "КОНТРОЛЬ" }, { title: "Компрессия", detail: "утечки / охлаждение", symbol: "СЖАТИЕ" }, { title: "Хранение", detail: "повторная подача", symbol: "БУФЕР" }]
       : variant === "hydrogen"
-        ? [{ title: "Источник H₂", detail: "состав / чистота", symbol: "H₂ / P₁" }, { title: "Компрессия", detail: "материалы / утечки", symbol: "OIL-FREE" }, { title: "Охлаждение", detail: "тепловой режим", symbol: "T / P" }, { title: "Процесс", detail: "согласованный режим", symbol: "P₂ / Q" }]
-        : [{ title: "Источник CO₂", detail: "состав / диапазон", symbol: "CO₂ / P₁ / T₁" }, { title: "Проверка фазы", detail: "газ / жидкость / ?", symbol: "PHASE CHECK" }, { title: "Компрессия", detail: "расчёт ступеней", symbol: "OIL-FREE" }, { title: "Охлаждение", detail: "контроль фазности", symbol: "P₂ / T₂" }];
+        ? [{ title: "Источник H₂", detail: "состав / чистота", symbol: "H₂ / P₁" }, { title: "Компрессия", detail: "материалы / утечки", symbol: "СЖАТИЕ" }, { title: "Охлаждение", detail: "тепловой режим", symbol: "T / P" }, { title: "Процесс", detail: "согласованный режим", symbol: "P₂ / Q" }]
+        : [{ title: "Источник CO₂", detail: "состав / диапазон", symbol: "CO₂ / P₁ / T₁" }, { title: "Проверка фазы", detail: "газ / жидкость / ?", symbol: "PHASE CHECK" }, { title: "Компрессия", detail: "расчёт ступеней", symbol: "СЖАТИЕ" }, { title: "Охлаждение", detail: "контроль фазности", symbol: "P₂ / T₂" }];
   return <>
     {data.map((box, i) => <g key={box.title}><FlowBox x={44 + i * 178} y={186} width={141} {...box} />{i < 3 && <Arrow x={190 + i * 178} y={237} width={27} />}</g>)}
     <Gauge x={218} y={139} /><Pipe d="M218 173 V237" />

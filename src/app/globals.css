@@ -15,3 +15,33 @@
 @media(max-width:389px){.analytics-preferences{padding-inline:16px}.rfq-panel{padding:22px 18px}.rfq-panel>.button{font-size:.75rem;padding-inline:17px}}
 @media(max-width:767px){.task-card p{font-size:.83rem;line-height:1.7}.task-card{min-height:240px}.gas-tile small{font-size:.76rem;line-height:1.6}.engineering-step p{font-size:.86rem;line-height:1.75}.industry-list a{font-size:.86rem}.equipment-row p,.scope-row p,.knowledge-home-item p{font-size:.86rem}.case-home-card p,.document-home-card p{font-size:.88rem}.technical-figure figcaption{font-size:.62rem}.technical-figure figcaption>span:last-child{font-size:.57rem}}
 @media(max-width:389px){.task-card p{font-size:.8rem}.task-card h3{font-size:1rem}.task-card{min-height:260px}.engineering-step h3{font-size:1.09rem}.engineering-step p{font-size:.83rem}.industry-list a{font-size:.83rem}}
+/* Selection starts with the compressor; optional equipment follows the parameters. */
+.selection-parameters .working-point-title{align-items:start;gap:30px}
+.selection-parameters .working-point-title h2{max-width:410px;font-size:clamp(1.6rem,2.5vw,2rem);line-height:1.2}
+.selection-parameters .working-point-title p{font-family:inherit;font-size:.9rem;line-height:1.8;text-align:left;max-width:650px}
+.selection-parameters .working-point-fields{grid-template-columns:repeat(5,minmax(0,1fr))}
+.selection-parameters .working-point-field strong{font-family:inherit;font-size:.92rem;line-height:1.5}
+.selection-parameters .working-point-field span{font-family:inherit;font-size:.76rem;line-height:1.6}
+.selection-parameters-footer{display:flex;justify-content:flex-end;padding:18px 24px;border-top:1px solid var(--line);font-size:.85rem}
+.selection-parameters-footer a{display:flex;gap:30px;align-items:center}
+.configuration-section{background:#edf1e6;border-block:1px solid var(--line)}
+.configuration-flow{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:38px;padding:0;margin:32px 0}
+.configuration-flow li{position:relative;display:flex;align-items:center;justify-content:center;min-height:106px;padding:22px 18px;border:1px solid #a6b89c;background:#fafbf5;text-align:center;font-size:.85rem;line-height:1.6;font-weight:600}
+.configuration-flow li+li{margin-top:0}
+.configuration-flow li:not(:last-child)::after{content:"→";position:absolute;left:calc(100% + 11px);font-size:1.4rem;color:var(--accent)}
+.configuration-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.configuration-options article{border-top:1px solid #b5c3ab;padding-top:20px}
+.configuration-options article>div{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.configuration-options h3{font-size:1.1rem}
+.configuration-options article span{font-size:.65rem;color:var(--muted)}
+.configuration-options p,.configuration-note{font-size:.84rem;line-height:1.8;color:var(--muted);margin-top:12px}
+.configuration-note{margin-top:30px;max-width:870px}
+.home-gas-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.home-gas-grid .gas-tile{min-width:0}
+.home-gas-grid .gas-symbol{font-size:clamp(2rem,3.5vw,3.4rem)}
+.laser-supply-options{display:grid;gap:20px}
+.laser-supply-options section{padding:20px 24px;border:1px solid var(--line);background:#edf1e6}
+.laser-supply-options h3{margin:0 0 12px;font-size:.95rem}
+.laser-supply-options p{line-height:2;overflow-wrap:anywhere}
+@media(max-width:1023px){.home-gas-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.configuration-options{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:767px){.selection-parameters .working-point-title{display:block}.selection-parameters .working-point-title p{margin-top:18px;font-size:.85rem}.selection-parameters .working-point-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.selection-parameters .working-point-field:last-of-type{display:flex;flex-direction:column;align-items:start}.selection-parameters-footer{padding-inline:19px}.configuration-flow{grid-template-columns:1fr;gap:32px}.configuration-flow li{min-height:75px}.configuration-flow li:not(:last-child)::after{content:"↓";left:50%;top:calc(100% + 4px);transform:translateX(-50%);line-height:24px}.configuration-options{grid-template-columns:1fr}.home-gas-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-gas-grid .gas-symbol{font-size:2.5rem}.home-gas-grid .gas-tile:last-child{grid-column:1/-1}.laser-supply-options section{padding:18px}}

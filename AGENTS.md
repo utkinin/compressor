@@ -3,12 +3,15 @@
 This repository is a B2B industrial website for **Lanfor Gas Systems**.
 
 ## Product principle
-The site sells an engineering outcome, not a commodity compressor. The core entity is a **working point**:
-`gas + inlet pressure + outlet pressure + flow + duty`.
+Start with the customer's task and a **compressor or booster** selected from
+`gas + inlet pressure + required outlet pressure + flow + duty`.
+Then explain necessary options and complete systems as supply variants. Use plain
+B2B language in heroes, headings, cards and CTAs. Keep "рабочая точка" inside detailed
+technical explanations. Never expose private supplier names or OEM in public copy.
 
 ## Non-negotiables
 - Never invent technical values, certificates, delivery terms, pressure ranges or compatible gases.
-- Use only fields with `verificationStatus: verified` for definitive technical statements.
+- A verification label alone is not evidence. Definitive technical statements require a real source record, a retrievable document, a page/section and approval for that gas and execution.
 - `draft` values may appear only in internal/admin content or with an explicit project-selection qualifier.
 - Do not auto-publish AI-generated technical copy. AI may draft from structured verified data; a human approves publication.
 - Preserve one canonical URL per intent. Do not generate thousands of thin keyword permutations.
@@ -44,7 +47,7 @@ Work in this existing checkout and current branch. Cloud tasks are already isola
 
 The Git checkout initially contained no code. The user subsequently supplied the original scaffold archive and documents, preserved in docs/source. Read docs/SOURCE_RECONCILIATION.md and the newer user brief docs/IMPLEMENTATION_BRIEF.md. The newer user request overrides earlier seed specifications when they conflict.
 
-Preserve engineering honesty: no unverified performance figures, customers, certificates, stock availability or warranties. N2-B is a draft concept. No public SF₆ direction. AI-authored content stays in editorial review until approved by a human.
+Preserve engineering honesty: no unverified performance figures, customers, certificates, stock availability or warranties. N2-B is a draft concept. The user-approved homepage and global metadata gas order is N₂, He, SF₆, CO₂ and other process gases; this mention does not approve an SF₆ product specification or expand the RFQ gas model. AI-authored content stays in editorial review until approved by a human.
 
 Use strict TypeScript, server components by default, typed content repository and explicit units. Never suppress errors with any, @ts-ignore or broad lint disables. Never log RFQ contact data or commit .env/.local.
 

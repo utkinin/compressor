@@ -177,9 +177,9 @@ export function validateRfqStep(step: number, input: unknown): RfqValidationIssu
 export type RfqInput = z.infer<typeof rfqSchema>;
 
 export function preliminarySolution(input: Pick<RfqInput, "gas" | "duty">): string {
-  if (input.gas === "he") return "Безмасляный компрессорный модуль; схема recovery уточняется инженером";
+  if (input.gas === "he") return "Компрессор для гелия; схема возврата и требования к чистоте уточняются инженером";
   if (input.gas === "o2") return "Специальное кислородное исполнение после проверки совместимости и чистоты";
-  if (input.gas === "h2") return "Компрессорный модуль для водорода с проверкой материалов, утечек и Ex-требований";
-  if (input.gas === "co2") return "Компрессорный узел для CO₂ после проверки фазового состояния";
-  return "Oil-Free booster / компрессорный модуль под рабочую точку процесса";
+  if (input.gas === "h2") return "Компрессор для водорода с проверкой материалов, утечек и Ex-требований";
+  if (input.gas === "co2") return "Компрессор для CO₂ после проверки фазового состояния";
+  return "Компрессор или бустер по параметрам процесса";
 }

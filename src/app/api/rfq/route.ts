@@ -61,7 +61,7 @@ export async function POST(request: Request): Promise<Response> {
     }
     const parsed = rfqSchema.safeParse(body);
     if (!parsed.success) {
-      return failure(422, "Проверьте рабочую точку и обязательные поля", { issues: parsed.error.issues.map((issue) => ({ path: issue.path.join("."), message: issue.message })) });
+      return failure(422, "Проверьте параметры запроса и обязательные поля", { issues: parsed.error.issues.map((issue) => ({ path: issue.path.join("."), message: issue.message })) });
     }
     // The forwarding header is authoritative only when the deployment proxy overwrites it.
     const forwarded = configuration.trustProxy ? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() : undefined;

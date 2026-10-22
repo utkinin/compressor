@@ -19,12 +19,21 @@ class Page(HTMLParser):
         self.canonical = None
         self.heading = []
         self.in_heading = False
+        self.copy = []
+        self.hidden = False
+        self.metadata = {}
         self.feed(body)
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         if tag == "h1":
             self.in_heading = True
+        if tag in {"script", "style"}:
+            self.hidden = True
+        if tag == "meta":
+            key = attrs.get("name") or attrs.get("property")
+            if key in {"description", "og:title", "og:description"}:
+                self.metadata[key] = attrs.get("content")
         if tag == "link" and attrs.get("rel") == "canonical":
             self.canonical = attrs.get("href")
         for name in ("href", "src"):
@@ -34,14 +43,22 @@ class Page(HTMLParser):
     def handle_endtag(self, tag):
         if tag == "h1":
             self.in_heading = False
+        if tag in {"script", "style"}:
+            self.hidden = False
 
     def handle_data(self, value):
         if self.in_heading:
             self.heading.append(value)
+        if not self.hidden:
+            self.copy.append(value)
 
     @property
     def h1(self):
         return re.sub(r"\s+", " ", " ".join(self.heading)).strip()
+
+    @property
+    def text(self):
+        return re.sub(r"\s+", " ", " ".join(self.copy)).strip()
 
 
 def read(url):
@@ -72,8 +89,8 @@ def verify_page(item):
     remote = Page(body.decode("utf-8"))
     if remote.h1 != local.h1 or remote.canonical != local.canonical:
         raise RuntimeError(f"Published heading/canonical differs from tested source: {url}")
-    if "SF6" in body.decode("utf-8") or "SF₆" in body.decode("utf-8"):
-        raise RuntimeError(f"Legacy gas leaked into public HTML: {url}")
+    if remote.text != local.text or remote.metadata != local.metadata:
+        raise RuntimeError(f"Published copy/metadata differs from tested source: {url}")
     links = set()
     for href in remote.links:
         absolute = urldefrag(urljoin(url, href))[0]

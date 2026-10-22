@@ -64,3 +64,5 @@ npm run preview:test
 Экспорт строится в изолированной копии, итог — `.local/github-pages`. Основная `.next`, исходники и `.env.local` не меняются. Для `utkinin/compressor` используется `/compressor` basePath; GitHub Pages получает только публичные HTML/CSS/JS/SVG и TXT-опросник. RFQ в preview — браузерная демонстрация: без API, CRM, хранения контактов и аналитики. Серверная staging-форма и публичное статическое preview имеют разные подтверждения.
 
 Workflow `.github/workflows/pages.yml` собирает и публикует preview при push в текущую `work` либо ручном запуске. На GitHub источник Pages должен быть GitHub Actions. Подробности, реальный статус публикации и границы проверки — [PREVIEW](docs/PREVIEW.md).
+
+Текущий редакционный проход: [отчёт](docs/EDITORIAL_TECHNICAL_REPORT.md), [все результаты поиска](docs/EDITORIAL_SEARCH_RESULTS.md), [реестр чисел и evidence](docs/QUANTITATIVE_EVIDENCE.md). Проверка публичного текста: `python3 scripts/audit-public-copy.py` после `npm run preview:build`.

@@ -9,7 +9,7 @@ import { isStaticPreview } from "@/lib/preview";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  ...pageMetadata("Технологический газ под рабочую точку процесса", "Oil-Free компрессоры, бустеры и skid-системы. Подбор по газу, давлениям P₁/P₂, расходу и режиму работы.", "/"),
+  ...pageMetadata("Безмасляные компрессоры и бустеры для технологических газов", "Безмасляные компрессоры и бустеры для N₂, He, SF₆, CO₂ и других технологических газов. Подбор оборудования для сжатия, повышения давления и перекачки газа.", "/"),
   metadataBase: new URL(siteUrl),
   title: { default: "Lanfor Gas Systems — сжатие технологических газов", template: "%s | Lanfor Gas Systems" },
   applicationName: "Lanfor Gas Systems",
@@ -22,6 +22,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <main id="main">{children}</main>
     <SiteFooter />
     {!isStaticPreview && <><AnalyticsConsent /><AttributionCapture /></>}
-    <JsonLd data={{ "@context": "https://schema.org", "@type": "Organization", name: "Lanfor Gas Systems", url: absoluteUrl("/"), description: "Подбор функциональных компрессорных узлов под рабочую точку технологического газа." }} />
+    <JsonLd data={{ "@context": "https://schema.org", "@type": "Organization", name: "Lanfor Gas Systems", url: absoluteUrl("/"), description: "Безмасляные компрессоры и бустеры для N₂, He, SF₆, CO₂ и других технологических газов. Инженерный подбор оборудования для условий процесса." }} />
   </body></html>;
 }

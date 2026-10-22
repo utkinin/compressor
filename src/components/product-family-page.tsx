@@ -14,18 +14,18 @@ export function ProductFamilyPage({ family, content }: { family: ProductFamily; 
   return <>
     <ContentView event="equipment_view" id={family.id} />
     <Breadcrumbs items={[{ label: "Оборудование", href: "/equipment/" }, ...(category ? [{ label: category.title, href: `/equipment/${category.slug}/` }] : []), { label: family.title, href: path }]} />
-    <PageIntro eyebrow="UNIGY / кандидат для инженерного подбора" title={family.title} summary={family.summary} action={<><Link className="button" href={rfqHref}>Проверить рабочую точку →</Link><Link className="button-secondary" href={`/rfq/?document=manufacturer-family-catalogue&equipment=${family.id}&source=${encodeURIComponent(path)}`}>Запросить первоисточник →</Link></>} />
+    <PageIntro eyebrow="Семейство / требуется проверка данных" title={family.title} summary={family.summary} action={<><Link className="button" href={rfqHref}>Проверить параметры →</Link><Link className="button-secondary" href={`/rfq/?document=manufacturer-family-catalogue&equipment=${family.id}&source=${encodeURIComponent(path)}`}>Запросить первоисточник →</Link></>} />
     <section className="container"><TechnicalDiagram kind={family.diagram} title={`Принципиальная иллюстрация класса ${family.title}`} /></section>
     <div className="container detail-layout"><article className="prose">
       <p className="notice"><strong>Статус данных: draft.</strong> Семейство сохранено из предоставленного исходного проекта. Это не подтверждённый SKU и не результат подбора. Исходные диапазоны, применимые газы, привод и охлаждение требуют проверки по документу изготовителя.</p>
       <ContentSection title="Назначение в инженерном подборе">
         <p>{family.technology}</p>
-        <p>Сначала проверяется состав газа и рабочая точка, затем конкретное исполнение. Название серии и принадлежность к классу Oil-Free не подтверждают пригодность для H₂, O₂ или другого газа, требования по утечкам либо конкретный класс чистоты.</p>
+        <p>Сначала проверяется состав газа, давления, расход и режим, затем конкретное исполнение. Название серии и принадлежность к классу Oil-Free не подтверждают пригодность для H₂, O₂ или другого газа, требования по утечкам либо конкретный класс чистоты.</p>
       </ContentSection>
       <ContentSection title="Источник и технические данные в HTML">
         <div className="table-wrap"><table className="data-table"><caption>Статус полей семейства {family.title}</caption><thead><tr><th scope="col">Поле</th><th scope="col">Публичные данные</th><th scope="col">Статус</th></tr></thead><tbody>
           <tr><th scope="row">Наименование в исходном seed</th><td>{family.title}</td><td>draft</td></tr>
-          <tr><th scope="row">Производитель в исходном seed</th><td>{family.brand}</td><td>draft</td></tr>
+          <tr><th scope="row">Производитель в исходном seed</th><td>Не раскрывается; первичная документация не предоставлена</td><td>draft</td></tr>
           <tr><th scope="row">Ссылка на источник в исходном проекте</th><td>{family.sourceNote}</td><td>{family.source.status}</td></tr>
           <tr><th scope="row">Страница первоисточника</th><td>{family.source.page || "Не предоставлена. Требуется каталог изготовителя с номером страницы."}</td><td>draft</td></tr>
           {family.technicalRows.map((row) => <tr key={row.label}><th scope="row">{row.label}</th><td>{row.value}</td><td>{row.status}</td></tr>)}
@@ -49,7 +49,6 @@ export function ProductFamilyPage({ family, content }: { family: ProductFamily; 
       description: family.summary,
       url: absoluteUrl(path),
       productGroupID: family.id,
-      brand: { "@type": "Brand", name: family.brand },
       additionalProperty: [{ "@type": "PropertyValue", name: "Статус технических данных", value: family.verificationStatus }],
     }} />
   </>;

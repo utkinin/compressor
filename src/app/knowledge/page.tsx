@@ -3,7 +3,7 @@ import { contentRepository } from "@/content";
 import { pageMetadata } from "@/lib/seo";
 import { Breadcrumbs, EntityCard, PageIntro } from "@/components/content-page";
 
-export const metadata = pageMetadata("Инженерная база знаний", "Практические ответы о давлении, расходе, Oil-Free компрессии, режимах, охлаждении и подборе газового узла.", "/knowledge/");
+export const metadata = pageMetadata("Инженерная база знаний", "Практические ответы о давлении, расходе, Oil-Free компрессии, режимах, охлаждении и подборе газового компрессора.", "/knowledge/");
 
 export default async function KnowledgePage() {
   const { articles } = await contentRepository.getSnapshot();

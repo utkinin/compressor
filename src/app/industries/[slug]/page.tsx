@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function IndustryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const target = legacyDestination("industries", slug);
-  if (target) return <LegacyAlias target={target} note={slug === "engineering" ? "В исходном проекте эта ссылка относилась к интеграции компрессорного узла в оборудование. Соответствующий материал находится в разделе OEM." : undefined} />;
+  if (target) return <LegacyAlias target={target} note={slug === "engineering" ? "Материал о встраивании компрессора находится в разделе для изготовителей оборудования." : undefined} />;
   const { industries, gases, solutions, articles } = await contentRepository.getSnapshot();
   const industry = industries.find((item) => item.slug === slug);
   if (!industry) notFound();
@@ -30,13 +30,17 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
     <Breadcrumbs items={[{ label: "Применения", href: "/industries/" }, { label: industry.title, href: `/industries/${industry.slug}/` }]} />
     <PageIntro eyebrow="Процесс / интеграция" title={industry.title} summary={industry.summary} />
     <div className="container detail-layout"><article className="prose">
-      <ContentSection title="Какие газовые задачи возникают"><BulletList items={industry.tasks} /></ContentSection>
+      {industry.id === "laser-cutting" && <ContentSection title="Два варианта газоснабжения"><div className="laser-supply-options">{industry.tasks.slice(0, 2).map((task) => {
+        const separator = task.indexOf(": ");
+        return <section key={task}><h3>{task.slice(0, separator)}</h3><p>{task.slice(separator + 2)}</p></section>;
+      })}</div></ContentSection>}
+      <ContentSection title="Какие газовые задачи возникают"><BulletList items={industry.id === "laser-cutting" ? industry.tasks.slice(2) : industry.tasks} /></ContentSection>
       <ContentSection title="Условия применимости"><BulletList items={industry.constraints} /><p>Эти сценарии описывают возможные задачи для обсуждения. Они не являются подтверждением отраслевой сертификации или реализованных поставок.</p></ContentSection>
       <ContentSection title="Что нужно от владельца процесса"><p>Схема подключения, состав и источник газа, минимальное и максимальное давление на входе, требуемые давление и расход у потребителя, режим, температуры и требования площадки. Для интеграции также важны доступные энергоресурсы и границы системы управления.</p></ContentSection>
       <Procurement />
       <RelatedLinks title="Решения для обсуждения" items={solutions.filter((item) => industry.solutionIds.includes(item.id)).map((item) => ({ title: item.title, href: `/solutions/${item.slug}/` }))} />
       <RelatedLinks title="Газовые требования" items={gases.filter((item) => industry.gasIds.includes(item.id)).map((item) => ({ title: item.title, href: `/gases/${item.slug}/` }))} />
-      <RelatedLinks title="Полезно для задания на узел" items={articles.filter((item) => item.solutionIds.some((id) => industry.solutionIds.includes(id))).slice(0, 5).map((item) => ({ title: item.title, href: `/knowledge/${item.slug}/` }))} />
-    </article><RfqPanel sourcePage={`/industries/${industry.slug}/`} title="Опишем газовый узел для вашего процесса" /></div>
+      <RelatedLinks title="Полезно для подбора компрессора" items={articles.filter((item) => item.solutionIds.some((id) => industry.solutionIds.includes(id))).slice(0, 5).map((item) => ({ title: item.title, href: `/knowledge/${item.slug}/` }))} />
+    </article><RfqPanel sourcePage={`/industries/${industry.slug}/`} title="Подберём компрессор для вашего процесса" /></div>
   </>;
 }

@@ -25,9 +25,20 @@ describe("content evidence and editorial safety", () => {
       {label:"Calculated value",value:"10 Nm³/h",status:"engineering-verified",source:{title:"Approved calculation fixture",status:"engineering-verified"}},
     ];
     const visible = publicProperties(properties);
-    expect(visible.map((property) => property.label)).toEqual(["Manufacturer value","Calculated value"]);
-    expect(visible[0]?.source?.title).toBe("Fixture catalogue");
-    expect(visible[0]?.source?.page).toBe("12");
+    expect(visible).toEqual([]);
+  });
+
+  it("requires an addressable evidence record and locator regardless of verification label", () => {
+    // Synthetic validation fixtures, never production content or verification records.
+    const fixture: TechnicalProperty = { label: "Fixture only", value: "10 bar", status: "engineering-verified", source: { title: "Synthetic evidence fixture", url: "https://evidence.example.test/calculation.pdf", page: "section 2", status: "engineering-verified" } };
+    expect(publicProperties([fixture])).toEqual([fixture]);
+    for (const source of [
+      { ...fixture.source!, page: "" },
+      { ...fixture.source!, url: "not a document URL" },
+      { ...fixture.source!, url: "http://evidence.example.test/calculation.pdf" },
+      { ...fixture.source!, url: "https://user:pass@evidence.example.test/calculation.pdf" },
+      { ...fixture.source!, status: "draft" as const },
+    ]) expect(publicProperties([{ ...fixture, source }])).toEqual([]);
   });
 
   it("does not fabricate manufacturer limits or N2-B verified SKU", () => {
@@ -53,7 +64,8 @@ describe("content evidence and editorial safety", () => {
   it("publishes a cautious family identity projection without leaking unverified source envelopes or legacy gas", () => {
     expect(productFamilies.map((family) => family.slug)).toEqual(originalUnigySeed.map((family) => family.slug));
     expect(productFamilies.every((family) => family.source.status === "draft" && family.verificationStatus === "draft")).toBe(true);
-    expect(productFamilies.every((family, index) => family.sourceNote === originalUnigySeed[index]?.sourceNote)).toBe(true);
+    expect(productFamilies.every((family) => family.sourceNote.includes("первичный документ не предоставлен"))).toBe(true);
+    expect(JSON.stringify(productFamilies)).not.toMatch(/UNIGY|OEM/i);
     expect(productFamilies.every((family) => !family.source.url && !family.source.page)).toBe(true);
     expect(productFamilies.every((family) => family.technicalRows.every((row) => row.status === "draft"))).toBe(true);
     expect(JSON.stringify(productFamilies)).not.toMatch(/SF[₆6]|элегаз|inletPressureMpaMax|dischargePressureMpaMax|tightnessMbarLs|0\.01/);

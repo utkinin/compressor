@@ -75,7 +75,7 @@ export function RelatedLinks({ title, items }: { title: string; items: { title: 
   );
 }
 
-export function RfqPanel({ href = "/rfq/", title = "Начнём с рабочей точки", sourcePage = "/" }: { href?: string; title?: string; sourcePage?: string }) {
+export function RfqPanel({ href = "/rfq/", title = "Подберём компрессор для вашей задачи", sourcePage = "/" }: { href?: string; title?: string; sourcePage?: string }) {
   const target = new URL(href, "https://staging.lanfor.example");
   target.searchParams.set("source", sourcePage);
   const contextualHref = `${target.pathname}${target.search}`;
@@ -83,8 +83,8 @@ export function RfqPanel({ href = "/rfq/", title = "Начнём с рабоче
     <aside className="rfq-panel">
       <p className="eyebrow">Gas · P₁ · P₂ · Q · режим</p>
       <h2>{title}</h2>
-      <p>Укажите газ, давления и расход с единицами. Для расчёта нужны числовые P₁/P₂/Q; неизвестные дополнительные условия отметьте в уточнениях. Итогом будет предварительный класс решения и перечень инженерных проверок.</p>
-      <Link className="button" href={contextualHref}>Передать рабочую точку <span aria-hidden="true">→</span></Link>
+      <p>Расскажите, какой газ нужно сжимать, откуда он поступает и что требуется потребителю. Известные давления, расход и режим помогут уточнить подходящее оборудование.</p>
+      <Link className="button" href={contextualHref}>Подобрать компрессор <span aria-hidden="true">→</span></Link>
       <p className="small-text">Автоматический выбор модели без расчёта не выполняется.</p>
     </aside>
   );
@@ -95,11 +95,11 @@ export function Procurement({ items }: { items?: string[] }) {
     <ContentSection title="Для закупки и согласования поставки">
       <p>Комплектность фиксируется после инженерного расчёта и согласования границ поставки. В запросе полезно отдельно назвать требования проекта и обязательные документы.</p>
       <BulletList items={items?.length ? items : [
-        "Компрессорный блок либо модуль с согласованной обвязкой, охлаждением, КИП и системой управления.",
+        "Компрессор или бустер. Обвязка, охлаждение, КИП и управление могут быть добавлены по требованиям процесса.",
         "Габаритный чертёж, схема подключения и перечень интерфейсов для интеграции; доступность CAD/STEP уточняется для конфигурации.",
         "Паспорт, руководство и комплект разрешительных документов — по конкретному исполнению и применимым требованиям.",
       ]} />
-      <p>Производитель, страна происхождения, срок, условия гарантии, перечень документов и стоимость указываются в предложении на выбранную конфигурацию. Универсальных обещаний для всех исполнений нет.</p>
+      <p>Исполнение, комплектность, документация, сроки, условия гарантии и стоимость указываются в предложении на выбранное оборудование.</p>
       <Link className="link-arrow" href="/documents/">Документы и запрос чертежей →</Link>
     </ContentSection>
   );

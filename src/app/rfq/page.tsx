@@ -5,8 +5,8 @@ import { GAS_OPTIONS } from "@/lib/rfq/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
-  "Подобрать компрессорный узел — инженерный RFQ",
-  "Передайте газ, давление на входе и выходе, расход и режим работы. Уточняющие вопросы для N₂, He, H₂, O₂, CO₂ и газовых смесей.",
+  "Подобрать безмасляный компрессор или бустер",
+  "Опишите задачу для N₂, He, SF₆, CO₂ или другого технологического газа. Газ, требуемые давление, расход и режим помогут уточнить оборудование и комплектацию.",
   "/rfq",
 );
 
@@ -27,8 +27,8 @@ export default async function RfqPage({ searchParams }: { searchParams: Promise<
       <div className="container"><Breadcrumbs items={[{ label: "Инженерный запрос", href: "/rfq" }]} /></div>
       <div className="container rfq-page-intro">
         <p className="eyebrow">Engineering request / RFQ</p>
-        <h1>Начните с рабочей точки</h1>
-        <p>Газ + P₁ + P₂ + Q + режим. Пять параметров, с которых начинается подбор функционального компрессорного узла. Конкретную модель, исполнение и состав поставки определяет инженерный расчёт.</p>
+        <h1>Подберём компрессор для вашей задачи</h1>
+        <p>Расскажите о газе, источнике и потребителе. Укажите известные давления, расход и режим работы — инженер уточнит подходящий компрессор или бустер и необходимую комплектацию.</p>
       </div>
       <div className="container rfq-page-body"><RfqForm mode={mode} initialGas={initialGas} initialRequest={initialRequest} /></div>
     </>

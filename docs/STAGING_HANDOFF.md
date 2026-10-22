@@ -1,5 +1,7 @@
 # Lanfor Gas Systems v1.1 — staging handoff
 
+Актуальный последующий проход: [EDITORIAL_TECHNICAL_REPORT](EDITORIAL_TECHNICAL_REPORT.md). Он обновляет коммерческий язык, приоритет газов и правила публичной проекции; записи ниже описывают исходную передачу версии.
+
 22 октября 2026 года. Работа выполнена в существующей ветке `work`, без новой рабочей ветки/worktree. Первоначально checkout был пуст; переданный позднее оригинальный scaffold сверён и сохранён. Полная сверка: [SOURCE_RECONCILIATION](SOURCE_RECONCILIATION.md).
 
 ## Реализовано

@@ -62,7 +62,8 @@ export interface Equipment extends Entity {
 
 /** Manufacturer family identity from the supplied seed, separate from verified gas-specific performance. */
 export interface ProductFamily extends Entity {
-  brand: "UNIGY";
+  /** Optional approved public brand; private supplier identity stays in the internal seed. */
+  brand?: string;
   categoryId: "oil-free-reciprocating";
   source: Source;
   sourceNote: string;
@@ -122,15 +123,23 @@ export interface Document extends Entity {
   equipmentIds: string[];
 }
 
-/** Draft values must never escape into a public specification table. */
+/**
+ * A status label is not evidence. A publishable property also needs a source
+ * record with a retrievable HTTPS document and a specific page/section.
+ * The record and its applicability still require human engineering review.
+ */
 export function publicProperties(properties: TechnicalProperty[]): TechnicalProperty[] {
   return properties.filter((property) => {
-    if (property.status === "draft") return false;
-    if (property.status === "source-transcribed") {
-      return property.source?.status === "source-transcribed" && Boolean(property.source.title && property.source.page);
+    const source = property.source;
+    if (property.status === "draft" || !source || source.status !== property.status) return false;
+    if (!source.title.trim() || !source.page?.trim() || !source.url) return false;
+    try {
+      const locator = new URL(source.url);
+      return locator.protocol === "https:" && Boolean(locator.hostname) && !locator.username && !locator.password;
+    } catch {
+      return false;
     }
-    return property.source?.status === "engineering-verified" && Boolean(property.source.title);
   });
 }
 
-export const FAMILY_ENVELOPE_DISCLAIMER = "Каталожный диапазон семейства не является гарантированной рабочей точкой. Подбор выполняется с учётом газа, давления на входе, давления нагнетания, расхода, температуры и режима работы.";
+export const FAMILY_ENVELOPE_DISCLAIMER = "Каталожный диапазон семейства не подтверждает характеристики в конкретных условиях. Компрессор подбирается с учётом газа, давления на входе, требуемого давления, расхода, температуры и режима работы.";

@@ -49,6 +49,6 @@ export default async function EquipmentPage({ params }: { params: Promise<{ slug
       <RelatedLinks title="Газовые требования для рассмотрения" items={gases.filter((item) => family.gasIds.includes(item.id)).map((item) => ({ title: item.title, href: `/gases/${item.slug}/` }))} />
       <p className="notice">Ссылки на газы описывают инженерные задачи и не являются подтверждением совместимости всего семейства. Допустимость газа, материалы и требования безопасности должны быть согласованы для конкретной конструкции.</p>
       <RelatedLinks title="Запрос документации" items={documents.filter((item) => item.access !== "internal" && item.equipmentIds.includes(family.id)).map((item) => ({ title: item.title, href: `/documents/${item.slug}/` }))} />
-    </article><RfqPanel href={rfqHref} sourcePage={`/equipment/${family.slug}/`} title="Согласуем границы узла" /></div>
+    </article><RfqPanel href={rfqHref} sourcePage={`/equipment/${family.slug}/`} title="Подберём компрессор и нужные опции" /></div>
   </>;
 }

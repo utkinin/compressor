@@ -13,7 +13,7 @@ export function SiteHeader({ staging = true }: { staging?: boolean }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   return <>
-    {staging && <div className="staging-banner"><div className="container"><span className="status-dot" />Staging · инженерные материалы на согласовании<span className="staging-banner-note">Подбор начинается с рабочей точки</span></div></div>}
+    {staging && <div className="staging-banner"><div className="container"><span className="status-dot" />Staging · инженерные материалы на согласовании<span className="staging-banner-note">Безмасляные компрессоры и бустеры</span></div></div>}
     <header className="site-header">
       <div className="container header-inner">
         <Link href="/" className="brand" aria-label="Lanfor Gas Systems — главная" onClick={() => setOpen(false)}><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span><span className="brand-wordmark">LANFOR<span>GAS SYSTEMS</span></span></Link>

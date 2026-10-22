@@ -33,7 +33,7 @@ export default async function ScenarioPage({ params }: { params: Promise<{ slug:
       <ContentSection title="Постановка задачи"><p>{scenario.input}</p></ContentSection>
       <ContentSection title="Подход к компоновке"><BulletList items={scenario.approach} /></ContentSection>
       <ContentSection title="Что нужно проверить до выбора"><BulletList items={scenario.checks} /></ContentSection>
-      <ContentSection title="Ожидаемый результат инженерного этапа"><p>Согласованная рабочая точка и её диапазон, принципиальная схема узла, границы поставки и список недостающих исходных данных. Конкретная модель и гарантируемые значения появляются после расчёта и проверки источников.</p></ContentSection>
+      <ContentSection title="Ожидаемый результат инженерного этапа"><p>Согласованные параметры компрессора и диапазон режимов, принципиальная схема, границы поставки и список недостающих исходных данных. Конкретная модель и гарантируемые значения появляются после расчёта и проверки источников.</p></ContentSection>
       <RelatedLinks title="Связанные решения" items={relatedSolutions.map((item) => ({ title: item.title, href: `/solutions/${item.slug}/` }))} />
       <RelatedLinks title="Особенности газов" items={gases.filter((item) => scenario.gasIds.includes(item.id)).map((item) => ({ title: item.title, href: `/gases/${item.slug}/` }))} />
     </article><RfqPanel href={`/rfq/?${query.toString()}`} sourcePage={`/cases/${scenario.slug}/`} title="Есть похожая задача?" /></div>
