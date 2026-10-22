@@ -1,13 +1,17 @@
 import { describe, expect, it } from "vitest";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import {
   articles, cases, contentRepository, documents, equipment, gases, industries,
-  publicDocuments, publicProperties, relatedByIds, solutions,
+  productFamilies, productGasSpecs, publicDocuments, publicProperties, relatedByIds, solutions,
   type Entity, type TechnicalProperty,
 } from "../src/content";
+import { productFamilies as originalUnigySeed } from "../src/content/internal/unigy-seed";
+import { ORIGINAL_UNIGY_SEED_PROVENANCE } from "../src/content/internal/provenance";
 
 describe("content evidence and editorial safety", () => {
   it("keeps generated staging material in review rather than automatically published", () => {
-    const all: Entity[] = [...gases, ...solutions, ...equipment, ...articles, ...industries, ...cases, ...documents];
+    const all: Entity[] = [...gases, ...solutions, ...equipment, ...productFamilies, ...articles, ...industries, ...cases, ...documents];
     expect(all.length).toBeGreaterThan(60);
     expect(all.every((entity) => entity.editorialState === "review")).toBe(true);
     expect(all.every((entity) => entity.title.length > 0 && entity.summary.length > 50)).toBe(true);
@@ -32,6 +36,30 @@ describe("content evidence and editorial safety", () => {
     const concept = equipment.flatMap((family) => family.properties).find((property) => property.label.includes("N2-B"));
     expect(concept?.status).toBe("draft");
     expect(equipment.some((family) => family.source.title.includes("не предоставлен"))).toBe(true);
+  });
+
+  it("preserves the supplied original UNIGY seed verbatim apart from its local type import", () => {
+    const source = readFileSync(new URL("../src/content/internal/unigy-seed.ts", import.meta.url), "utf8");
+    const original = source.replace('"./unigy-seed-types"', '"@/lib/types"');
+    expect(createHash("sha256").update(original).digest("hex")).toBe(ORIGINAL_UNIGY_SEED_PROVENANCE.sourceFileSha256);
+    expect(originalUnigySeed).toHaveLength(5);
+    expect(originalUnigySeed.every((family) => family.verificationStatus === "draft")).toBe(true);
+    expect(originalUnigySeed.every((family) => family.gases.includes("SF6"))).toBe(true);
+    expect(originalUnigySeed.map((family) => [family.slug, family.flowNm3hMin, family.flowNm3hMax])).toEqual([
+      ["of2-of8-dp",1,8], ["of2-of8-dz",1,10], ["of8-of30-dp",8,30], ["of30-of500-dp",120,500], ["of60-of200-dp",30,120],
+    ]);
+  });
+
+  it("publishes a cautious family identity projection without leaking unverified source envelopes or legacy gas", () => {
+    expect(productFamilies.map((family) => family.slug)).toEqual(originalUnigySeed.map((family) => family.slug));
+    expect(productFamilies.every((family) => family.source.status === "draft" && family.verificationStatus === "draft")).toBe(true);
+    expect(productFamilies.every((family, index) => family.sourceNote === originalUnigySeed[index]?.sourceNote)).toBe(true);
+    expect(productFamilies.every((family) => !family.source.url && !family.source.page)).toBe(true);
+    expect(productFamilies.every((family) => family.technicalRows.every((row) => row.status === "draft"))).toBe(true);
+    expect(JSON.stringify(productFamilies)).not.toMatch(/SF[₆6]|элегаз|inletPressureMpaMax|dischargePressureMpaMax|tightnessMbarLs|0\.01/);
+    expect(productGasSpecs).toHaveLength(0);
+    expect(ORIGINAL_UNIGY_SEED_PROVENANCE.manufacturerPdfProvided).toBe(false);
+    expect(ORIGINAL_UNIGY_SEED_PROVENANCE.sourcePagesProvided).toBe(false);
   });
 
   it("has exactly the intended public gases and no legacy public direction", () => {
@@ -92,10 +120,17 @@ describe("content graph and repository", () => {
 
   it("has substantive intent pages and a useful engineering article set", () => {
     expect(solutions).toHaveLength(14);
-    expect(articles).toHaveLength(15);
+    expect(articles).toHaveLength(16);
     expect(solutions.every((solution) => solution.approach.length >= 4 && solution.inputs.length >= 4)).toBe(true);
     expect(articles.every((article) => article.sections.length >= 3 && article.sections.every((section) => section.body.length > 180))).toBe(true);
     expect(gases.every((gas) => gas.faq.length >= 2 && gas.limitations.length >= 2)).toBe(true);
+  });
+
+  it("retains the original source-capacity intent as a complete canonical article", () => {
+    const article = contentRepository.findBySlug("articles","booster-vs-source");
+    expect(article?.sections).toHaveLength(4);
+    expect(article?.sections.some((section) => section.title === "Постоянный дефицит расхода")).toBe(true);
+    expect(article?.solutionIds).toContain("nitrogen-booster-after-generator");
   });
 
   it("only links downloads to real public documents and excludes internal material", () => {

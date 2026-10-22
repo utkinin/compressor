@@ -1,64 +1,22 @@
-"entity","path","intent","gas_ids","equipment_ids","editorial_state"
-"gases","/gases/nitrogen/","Азот","n2","oil-free-reciprocating|gas-boosters|compressor-skids","review"
-"gases","/gases/helium/","Гелий","he","oil-free-reciprocating|recovery-systems|compressor-modules","review"
-"gases","/gases/hydrogen/","Водород","h2","compressor-modules|compressor-skids","review"
-"gases","/gases/oxygen/","Кислород","o2","compressor-modules|compressor-skids","review"
-"gases","/gases/carbon-dioxide/","Диоксид углерода","co2","compressor-modules|compressor-skids","review"
-"gases","/gases/process-gas/","Технологические газы и смеси","mixtures","oil-free-reciprocating|compressor-modules|compressor-skids","review"
-"solutions","/solutions/nitrogen-booster-after-generator/","Генератор производит нужный азот, но его давления недостаточно для следующего процесса.","n2","gas-boosters|compressor-modules|compressor-skids","review"
-"solutions","/solutions/nitrogen-pressure-boosting/","В технологической сети есть азот, но давление на границе оборудования ниже требуемого или нестабильно.","n2","gas-boosters|compressor-skids","review"
-"solutions","/solutions/nitrogen-for-laser-cutting/","Обеспечить лазерный станок газом без недопустимых провалов давления во время наиболее расходного режима.","n2","gas-boosters|compressor-skids","review"
-"solutions","/solutions/helium-compression/","Повысить давление свежего либо подготовленного гелия до рабочего уровня испытательной или технологической системы.","he","oil-free-reciprocating|compressor-modules","review"
-"solutions","/solutions/helium-recovery/","Собрать пригодный к повторному использованию гелий после процесса и вернуть его в буфер.","he","recovery-systems|compressor-skids","review"
-"solutions","/solutions/hydrogen-compression/","Повысить давление водорода, сохранив определённые проектом границы безопасности и контроля.","h2","compressor-modules|compressor-skids","review"
-"solutions","/solutions/co2-compression/","Повысить давление CO₂, сохранив допустимое состояние газа и контролируемую температуру в процессе.","co2","compressor-modules|compressor-skids","review"
-"solutions","/solutions/oxygen-compression/","Подать газообразный O₂ в технологический процесс с подтверждёнными материалами и подготовкой оборудования.","o2","compressor-modules|compressor-skids","review"
-"solutions","/solutions/process-gas-compressor/","Согласовать сжатие газа с требованиями технологического процесса, его примесями и границами безопасности.","n2|he|h2|o2|co2|mixtures","oil-free-reciprocating|compressor-modules|compressor-skids","review"
-"solutions","/solutions/oil-free-gas-booster/","Повысить давление существующего газового источника, сохранив согласованные требования к качеству газа.","n2|he|mixtures","gas-boosters|oil-free-reciprocating","review"
-"solutions","/solutions/compressor-skid/","Получить согласованный функциональный узел и сократить число нераспределённых интерфейсов при интеграции.","n2|he|h2|o2|co2|mixtures","compressor-skids","review"
-"solutions","/solutions/oem-gas-compression-module/","Встроить функцию сжатия в чужое оборудование без неопределённости по интерфейсам и ответственности за защиту.","n2|he|h2|o2|co2|mixtures","compressor-modules|compressor-skids","review"
-"solutions","/solutions/gas-transfer-recovery/","Освободить источник либо вернуть газ из процесса за заданное время с приемлемыми потерями.","n2|he|mixtures","recovery-systems|compressor-modules","review"
-"solutions","/solutions/buffer-receiver-charging/","Разделить неравномерное потребление и работу источника, сохранив давление в разрешённом диапазоне.","n2|he|mixtures","gas-boosters|compressor-skids","review"
-"equipment","/equipment/oil-free-reciprocating/","Безмасляные поршневые компрессоры","n2|he|mixtures","oil-free-reciprocating","review"
-"equipment","/equipment/gas-boosters/","Газовые бустеры","n2|he|mixtures","gas-boosters","review"
-"equipment","/equipment/compressor-modules/","Компрессорные модули","n2|he|h2|o2|co2|mixtures","compressor-modules","review"
-"equipment","/equipment/compressor-skids/","Компрессорные skid-системы","n2|he|h2|o2|co2|mixtures","compressor-skids","review"
-"equipment","/equipment/recovery-systems/","Системы возврата газа","n2|he|mixtures","recovery-systems","review"
-"industries","/industries/machine-building/","Машиностроение","n2|he|mixtures","","review"
-"industries","/industries/laser-cutting/","Лазерная резка","n2","","review"
-"industries","/industries/electronics/","Электроника и вспомогательные процессы","n2|he","","review"
-"industries","/industries/chemical-processes/","Химические и специальные процессы","h2|co2|mixtures","","review"
-"industries","/industries/gas-generation/","Производство и генерация газа","n2|o2","","review"
-"industries","/industries/industrial-gas/","Промышленные газы","n2|he|co2","","review"
-"industries","/industries/hydrogen-systems/","Водородные системы","h2","","review"
-"industries","/industries/test-benches/","Испытательные стенды","n2|he|mixtures","","review"
-"industries","/industries/research-laboratories/","Исследовательские установки","he|n2|mixtures","","review"
-"industries","/industries/oem-equipment/","OEM-оборудование","n2|he|h2|o2|co2|mixtures","","review"
-"industries","/industries/helium-recovery/","Контуры возврата гелия","he","","review"
-"knowledge","/knowledge/how-to-select-nitrogen-booster/","Как подобрать бустер азота","n2","","review"
-"knowledge","/knowledge/normal-and-actual-flow/","Чем Nm³/h отличается от m³/h","n2|he|h2|o2|co2|mixtures","","review"
-"knowledge","/knowledge/bar-g-and-bar-a/","bar(g) и bar(a): как не ошибиться с давлением","n2|he|h2|o2|co2|mixtures","","review"
-"knowledge","/knowledge/oil-free-compression/","Зачем нужен Oil-Free compressor","n2|he|o2|mixtures","","review"
-"knowledge","/knowledge/compressor-vs-booster/","Компрессор и booster: в чём разница","n2|he|mixtures","","review"
-"knowledge","/knowledge/what-to-specify-for-gas-compressor/","Что сообщить для подбора газового компрессора","n2|he|h2|o2|co2|mixtures","","review"
-"knowledge","/knowledge/pressure-after-nitrogen-generator/","Давление после генератора азота","n2","","review"
-"knowledge","/knowledge/continuous-vs-intermittent/","Непрерывный и периодический режим","n2|he|h2|o2|co2|mixtures","","review"
-"knowledge","/knowledge/why-a-receiver/","Зачем нужен ресивер в газовой системе","n2|he|mixtures","","review"
-"knowledge","/knowledge/air-vs-water-cooling/","Воздушное или водяное охлаждение","n2|he|h2|o2|co2|mixtures","","review"
-"knowledge","/knowledge/different-gases-different-performance/","Почему N₂, H₂ и He дают разные характеристики","n2|he|h2","","review"
-"knowledge","/knowledge/how-working-point-is-calculated/","Как рассчитывается рабочая точка","n2|he|h2|o2|co2|mixtures","","review"
-"knowledge","/knowledge/what-is-in-compressor-skid/","Что входит в compressor skid","n2|he|h2|o2|co2|mixtures","","review"
-"knowledge","/knowledge/co2-phase-and-compression/","CO₂: почему важны температура и фаза","co2","","review"
-"knowledge","/knowledge/helium-recovery-principles/","Как устроен возврат гелия","he","","review"
-"cases","/cases/nitrogen-generator-to-process/","От генератора азота к рабочему давлению","n2","","review"
-"cases","/cases/helium-test-loop/","Контур возврата гелия после испытания","he","","review"
-"cases","/cases/oem-module-integration/","Компрессорная функция внутри OEM-изделия","n2|he|mixtures","","review"
-"documents","/documents/process-gas-questionnaire/","Опросный лист на газовый компрессорный узел","n2|he|h2|o2|co2|mixtures","oil-free-reciprocating|gas-boosters|compressor-modules|compressor-skids|recovery-systems","review"
-"documents","/documents/configuration-datasheet/","Технический лист выбранной конфигурации","n2|he|h2|o2|co2|mixtures","oil-free-reciprocating|gas-boosters|compressor-modules|compressor-skids","review"
-"documents","/documents/manufacturer-family-catalogue/","Исходный каталог семейства","n2|he|mixtures","oil-free-reciprocating|gas-boosters","review"
-"documents","/documents/operating-manual/","Руководство по эксплуатации","n2|he|h2|o2|co2|mixtures","compressor-modules|compressor-skids|recovery-systems","review"
-"documents","/documents/pid-interface-drawing/","P&ID и габаритный чертёж","n2|he|h2|o2|co2|mixtures","compressor-modules|compressor-skids|recovery-systems","review"
-"documents","/documents/cad-layout/","CAD для интеграции","n2|he|h2|o2|co2|mixtures","compressor-modules|compressor-skids","review"
-"documents","/documents/step-model/","STEP-модель узла","n2|he|h2|o2|co2|mixtures","compressor-modules|compressor-skids","review"
-"documents","/documents/conformity-document-list/","Перечень документов соответствия","n2|he|h2|o2|co2|mixtures","oil-free-reciprocating|compressor-modules|compressor-skids","review"
-"documents","/documents/working-point-calculation/","Расчётный лист рабочей точки","n2|he|h2|o2|co2|mixtures","oil-free-reciprocating|gas-boosters|compressor-modules|compressor-skids|recovery-systems","review"
+priority,cluster,intent,canonical_page,status
+1,nitrogen booster after generator,transactional,/solutions/nitrogen-boosting,launch
+1,high pressure nitrogen compressor,transactional,/gases/nitrogen,launch
+1,oil-free nitrogen booster,transactional,/gases/nitrogen,launch
+1,process gas compressor module,transactional,/solutions/process-gas-skid,launch
+1,oil-free process gas compressor,transactional,/equipment,launch
+1,helium recovery compressor,transactional,/solutions/helium-recovery,launch
+1,helium compressor oil-free,transactional,/gases/helium,launch
+2,hydrogen compressor oil-free,transactional,/gases/hydrogen,after-verification
+2,CO2 compressor recovery,transactional,/gases/carbon-dioxide,after-verification
+2,oxygen gas compressor oil-free,transactional,/gases/oxygen,after-verification
+1,not enough nitrogen pressure after generator,problem,/solutions/nitrogen-boosting,launch
+1,nitrogen pressure drop peak demand,problem,/solutions/nitrogen-boosting,launch
+1,compressor selection P1 P2 flow,informational,/knowledge/how-to-select,launch
+1,booster vs gas source capacity,informational,/knowledge/booster-vs-source,launch
+1,oil-free clean gas meaning,informational,/knowledge/oil-free,launch
+2,nitrogen laser cutting gas supply,application,/solutions/nitrogen-boosting,expand
+2,helium leak testing recovery,application,/solutions/helium-recovery,expand
+2,OEM compressor skid,application,/solutions/process-gas-skid,launch
+2,gas booster skid module,application,/solutions/process-gas-skid,launch
+3,PET oil-free high pressure air,application,/solutions/pet-high-pressure-air,later
+3,dry vacuum degassing,application,/solutions/dry-vacuum,later

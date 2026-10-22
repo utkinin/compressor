@@ -60,6 +60,34 @@ export interface Equipment extends Entity {
   diagram: string;
 }
 
+/** Manufacturer family identity from the supplied seed, separate from verified gas-specific performance. */
+export interface ProductFamily extends Entity {
+  brand: "UNIGY";
+  categoryId: "oil-free-reciprocating";
+  source: Source;
+  sourceNote: string;
+  verificationStatus: "draft";
+  technology: string;
+  checks: string[];
+  technicalRows: { label: string; value: string; status: EvidenceStatus }[];
+  diagram: string;
+}
+
+/** A family envelope cannot stand in for this gas/configuration-specific relation. */
+export interface ProductGasSpec {
+  id: string;
+  productFamilyId: string;
+  gasId: GasId;
+  configuration: string;
+  inlet: { min: number; max: number; unit: "bar" | "MPa"; reference: "gauge" | "absolute" };
+  outlet: { min: number; max: number; unit: "bar" | "MPa"; reference: "gauge" | "absolute" };
+  flow: { min: number; max: number; unit: "Nm3/h" | "m3/h" | "l/min" | "kg/h"; reference: string };
+  inletTemperature: string;
+  duty: string;
+  source: Source;
+  status: EvidenceStatus;
+}
+
 export interface KnowledgeArticle extends Entity {
   sections: { title: string; body: string }[];
   gasIds: GasId[];
