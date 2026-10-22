@@ -1,6 +1,6 @@
 # Предпросмотр Lanfor на GitHub Pages
 
-Подготовлен отдельный статический экспорт по принципу существующего AFARA preview. Целевой адрес — `https://utkinin.github.io/compressor/`. Локальная сборка и публикация на GitHub — разные результаты: внешний HTTPS нельзя считать проверенным по одному успешному export.
+Публичное превью: **https://utkinin.github.io/compressor/**. Публикация подтверждена 22 октября 2026 года: [run 39778491521](https://github.com/utkinin/compressor/actions/runs/39778491521) — completed/success, source commit `879bc623f78f276683a4274f5b629e10f0d8022e`. Внешний HTTPS, 100 HTML и 133 адреса страниц/ресурсов проверены без cache-busting query; все HTTP200. Это отдельный статический просмотр по принципу AFARA.
 
 ## Три режима
 
@@ -34,7 +34,7 @@ npm run preview:test
 
 При автоматизации API нужны доступ к `api.github.com`, существующая GitHub-аутентификация с подходящими правами и проверка успешного deployment. Для проверки опубликованного сайта нужен HTTPS-доступ к `utkinin.github.io`. Новые секреты не следует вводить в чат.
 
-Домены `api.github.com` и `utkinin.github.io` сохранены в черновике среды; текущие обращения к API и HTTPS уже проходят. Код отправлен в `work`, workflow запущен. На момент проверки Pages ещё не был включён (GET /pages: 404); попытка штатного создания POST /pages с build_type=workflow получила GitHub 403 Resource not accessible by integration. Нужна настройка владельцем Source=GitHub Actions по ссылке https://github.com/utkinin/compressor/settings/pages. Это ограничение прав интеграции, не отсутствие кода или Git-доступа. Успешный deployment и внешний HTTP 200 фиксируются отдельно после подтверждения.
+Домены `api.github.com` и `utkinin.github.io` сохранены в черновике среды, API и HTTPS доступны. Владелец включил Pages Source=GitHub Actions после того, как интеграция получила 403 при первоначальном создании сайта. Теперь обычные push в work обновляют настроенный Pages workflow; повторно включать сайт не требуется.
 
 ## Ограничения
 
@@ -42,4 +42,6 @@ npm run preview:test
 
 ## Проверка на GitHub
 
-Run 39777705235: https://github.com/utkinin/compressor/actions/runs/39777705235. Build job успешно выполнил исходные проверки, production build, 20 server browser tests, static export, 15 static browser tests и upload github-pages artifact. Deploy остановился на Configure GitHub Pages: сайт ещё не включён. Это не сбой сборки. После выбора владельцем Source=GitHub Actions можно повторить failed jobs без изменения кода.
+Первоначальный run 39777705235 прошёл build/все проверки и остановился только на выключенном Pages. После настройки владельцем run 39778491521 успешно прошёл оба jobs — build и deploy. На GitHub runner повторно прошли typecheck/lint/62 unit/20 server browser/15 static browser и обе сборки. Команда `python3 scripts/verify-public-preview.py` проверила обычные внешние HTTPS-адреса, H1/canonical относительно проверенного export и ресурсы:100 HTML/133 URL, все 200. Отчёт `.local/public-verification.json`. Новые doc-only commits не меняют проверенный пользовательский интерфейс.
+
+Публичный браузер также проверен:1440px главная и390px полный RFQ с CO₂. Обязательные вопросы, сравнение давлений и отдельное согласие работают; финал без POST/API/контактов в сети и без browser storage/cookies. TLS verification не отключалась. Скриншоты и структурированный результат: .local/screenshots/public/.

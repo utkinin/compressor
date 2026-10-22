@@ -24,7 +24,10 @@
 | npm run build | Успешная production-сборка; 97 prerender outputs и динамические API/RFQ/legal/contacts |
 | npm run test:e2e | 20 passed, 0 failed, 0 skipped; production server, системный Chromium |
 | npm run preview:build | Успешный независимый export: 100 HTML-файлов, 102 prerender outputs с metadata routes |
-| npm run preview:test | 15 passed, 0 failed, 0 skipped; 132 URL страниц/ссылок/ассетов проверены, все HTTP 200 |
+| npm run preview:test | 15 passed, 0 failed, 0 skipped; 132 URL страниц/ссылок/ассетов проверены локально, все HTTP200 |
+| GitHub Actions run 39778491521 | completed/success: обе сборки,62 unit,20 server browser,15 static browser и deploy |
+| python3 scripts/verify-public-preview.py | Внешний сайт:100 HTML/133 HTTPS URL, все 200, H1/canonical соответствуют export |
+| Публичный Chromium через HTTPS | Desktop home1440/mobile RFQ390, CO₂ prefill, validation/consent/full demo;0POST/API/PII/storage/cookies/errors |
 | bash scripts/setup.sh, повторный запуск | Успешно; существующий .env.local побайтно сохранён |
 | npm run rfq:outbox | Успешная безопасная staging-сводка без отправки и без payload в logs |
 | npm audit --omit=dev | 0 vulnerabilities |
@@ -105,7 +108,7 @@ Engineering-verified характеристик оборудования: **0**.
 
 GA4/Яндекс adapters подготовлены и изолированы от parent document; ID отсутствуют, внешняя аналитика не включена. Реальная атрибуция обращения в серверном варианте сохраняет landing/source/UTM/referrer без добавления PII в события.
 
-GitHub Pages workflow подготовлен и запущен. Исходный выпуск из семи логических коммитов отправлен в origin/work; его tip 9ae3cd47ec6cbf83954679a91163c16c151101a9 подтверждён git ls-remote. Последующие doc-only коммиты фиксируют результаты удалённой проверки. Первый workflow: https://github.com/utkinin/compressor/actions/runs/39777705235. На GitHub runner build job завершился успешно (3m57s): typecheck/lint/62 unit/20 browser/15 static browser, обе сборки и upload github-pages artifact. Deploy job остановлен на Configure GitHub Pages из-за отсутствия включённого Pages. API и внешний HTTPS теперь доступны, но Pages ещё не включён (GET /pages:404, внешний адрес404). Попытка штатного включения POST /pages с build_type=workflow вернула 403 Resource not accessible by integration. Нужна настройка владельцем Pages Source=GitHub Actions. Успешный deployment/HTTP200 пока не заявляются. См. PREVIEW.md.
+Публичное превью размещено: **https://utkinin.github.io/compressor/**. Владелец включил Source=GitHub Actions, после чего [run 39778491521](https://github.com/utkinin/compressor/actions/runs/39778491521) для source `879bc623f78f276683a4274f5b629e10f0d8022e` завершился completed/success, включая build/все проверки/deploy. Проверены100 HTML и133 обычных внешних HTTPSURL: все 200, H1/canonical соответствуют проверенному export. Исходный сбой Configure Pages устранён настройкой владельца; повторной настройки не требуется. Код и последующие отчёты сохранены в origin/work. См. PREVIEW.md.
 
 ## Legal
 
@@ -119,7 +122,7 @@ Private directories/files 0700/0600, без PII в console/analytics. Доста
 
 ## Known limitations
 
-- Публичный Pages deployment и внешний HTTP200 пока не подтверждены: Pages не включён, а интеграция не имеет права создать сайт (GitHub403). Сеть работает; владелец должен выбрать Pages Source=GitHub Actions.
+- GitHub Pages — статический просмотр. Он не обрабатывает реальные RFQ; серверный вариант подготовлен отдельно. Публикация и внешний HTTPS подтверждены.
 - Нет утверждённых supplier PDF, расчётов, реальных кейсов и документов исполнения. Статусы не повышались.
 - Нет production CRM endpoint, approved operator details и подтверждения локализации хостинга. Реальная доставка/обработка не выдаётся за выполненную.
 - Файловый адаптер рассчитан на один persistent shared volume; независимые эфемерные диски/serverless требуют другого store. CRM receiver должен дедуплицировать стабильный ID. Горизонт idempotency зависит от retention доставленных копий.
@@ -129,8 +132,12 @@ Private directories/files 0700/0600, без PII в console/analytics. Доста
 
 ## Next actions
 
-1. Владелец включает Pages Source=GitHub Actions в https://github.com/utkinin/compressor/settings/pages. Затем запустить/перезапустить подготовленный workflow и проверить успешный deployment и внешний HTTPS, не только push/build.
+1. Для сохранения подготовленной облачной машины просмотреть и сохранить черновик в настройках среды, затем опубликовать среду. Это отдельно от уже опубликованного GitHub Pages.
 2. До live предоставить реальный сервер/домен, утверждённого оператора, тексты и условия обработки/локализации, CRM endpoint и credentials через защищённые настройки.
 3. Перед публикацией технических характеристик передать каталог UNIGY с номерами страниц, паспорта/расчёты, подтверждения исполнения и утверждённые кейсы/изображения.
 
 Дальнейшие шаги требуют доступа, credentials, утверждения владельцем или новых исходных документов; они не заменены вымышленными данными.
+
+## Подтверждение внешнего браузера
+
+Реальный публичный адрес проверен Chromium с включённой TLS verification: desktop1440 и mobile390 вернули200; CO₂ query-prefill, обязательные уточнения, P₂≤P₁, отдельное согласие с клавиатуры и полный demo flow работают. Результат явно сообщает, что заявка не отправлена и не сохранена. Зафиксировано0POST/API-запросов,0контактных данных в сетевых запросах,0localStorage/sessionStorage/cookies,0ошибок страницы/HTTP. Evidence: .local/screenshots/public/acceptance-result.json и скриншоты. Использован доверенный CA среды, TLS не отключался; временных записей доверия после проверки нет.
