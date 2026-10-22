@@ -34,8 +34,12 @@ npm run preview:test
 
 При автоматизации API нужны доступ к `api.github.com`, существующая GitHub-аутентификация с подходящими правами и проверка успешного deployment. Для проверки опубликованного сайта нужен HTTPS-доступ к `utkinin.github.io`. Новые секреты не следует вводить в чат.
 
-Текущая облачная сеть возвращала CONNECT 403 для GitHub API. Домены `api.github.com` и `utkinin.github.io` сохранены в черновике настроек среды; сохранение черновика само по себе не применяет сетевую политику и не публикует сайт. Публикация и внешний HTTP 200 фиксируются в STAGING_HANDOFF.md только после фактического подтверждения.
+Домены `api.github.com` и `utkinin.github.io` сохранены в черновике среды; текущие обращения к API и HTTPS уже проходят. Код отправлен в `work`, workflow запущен. На момент проверки Pages ещё не был включён (GET /pages: 404); попытка штатного создания POST /pages с build_type=workflow получила GitHub 403 Resource not accessible by integration. Нужна настройка владельцем Source=GitHub Actions по ссылке https://github.com/utkinin/compressor/settings/pages. Это ограничение прав интеграции, не отсутствие кода или Git-доступа. Успешный deployment и внешний HTTP 200 фиксируются отдельно после подтверждения.
 
 ## Ограничения
 
 Все технические материалы на согласовании. Исходные UNIGY записи draft, каталожный PDF и утверждённые расчёты отсутствуют. Нет обещаний рабочей точки, универсальной совместимости, сертификатов, сроков или реальных заказчиков. Preview noindex, без счётчиков и сохранения атрибуции. Для настоящего RFQ нужен серверный сайт с утверждённой юридической конфигурацией.
+
+## Проверка на GitHub
+
+Run 39777705235: https://github.com/utkinin/compressor/actions/runs/39777705235. Build job успешно выполнил исходные проверки, production build, 20 server browser tests, static export, 15 static browser tests и upload github-pages artifact. Deploy остановился на Configure GitHub Pages: сайт ещё не включён. Это не сбой сборки. После выбора владельцем Source=GitHub Actions можно повторить failed jobs без изменения кода.

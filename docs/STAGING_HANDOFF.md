@@ -105,7 +105,7 @@ Engineering-verified характеристик оборудования: **0**.
 
 GA4/Яндекс adapters подготовлены и изолированы от parent document; ID отсутствуют, внешняя аналитика не включена. Реальная атрибуция обращения в серверном варианте сохраняет landing/source/UTM/referrer без добавления PII в события.
 
-GitHub Pages workflow подготовлен. Git read и push dry-run работают. GitHub API в текущей сетевой политике возвращал CONNECT 403, поэтому размещение и внешний HTTPS пока не подтверждены. Состояние deployment не подменяется наличием workflow-файла. См. PREVIEW.md.
+GitHub Pages workflow подготовлен и запущен. Исходный выпуск из семи логических коммитов отправлен в origin/work; его tip 9ae3cd47ec6cbf83954679a91163c16c151101a9 подтверждён git ls-remote. Последующие doc-only коммиты фиксируют результаты удалённой проверки. Первый workflow: https://github.com/utkinin/compressor/actions/runs/39777705235. На GitHub runner build job завершился успешно (3m57s): typecheck/lint/62 unit/20 browser/15 static browser, обе сборки и upload github-pages artifact. Deploy job остановлен на Configure GitHub Pages из-за отсутствия включённого Pages. API и внешний HTTPS теперь доступны, но Pages ещё не включён (GET /pages:404, внешний адрес404). Попытка штатного включения POST /pages с build_type=workflow вернула 403 Resource not accessible by integration. Нужна настройка владельцем Pages Source=GitHub Actions. Успешный deployment/HTTP200 пока не заявляются. См. PREVIEW.md.
 
 ## Legal
 
@@ -119,7 +119,7 @@ Private directories/files 0700/0600, без PII в console/analytics. Доста
 
 ## Known limitations
 
-- Публичный Pages deployment и внешний HTTP 200 не подтверждены, пока GitHub API/домен блокируются и настройки Pages не проверены.
+- Публичный Pages deployment и внешний HTTP200 пока не подтверждены: Pages не включён, а интеграция не имеет права создать сайт (GitHub403). Сеть работает; владелец должен выбрать Pages Source=GitHub Actions.
 - Нет утверждённых supplier PDF, расчётов, реальных кейсов и документов исполнения. Статусы не повышались.
 - Нет production CRM endpoint, approved operator details и подтверждения локализации хостинга. Реальная доставка/обработка не выдаётся за выполненную.
 - Файловый адаптер рассчитан на один persistent shared volume; независимые эфемерные диски/serverless требуют другого store. CRM receiver должен дедуплицировать стабильный ID. Горизонт idempotency зависит от retention доставленных копий.
@@ -129,7 +129,7 @@ Private directories/files 0700/0600, без PII в console/analytics. Доста
 
 ## Next actions
 
-1. Для GitHub Pages применить сохранённые сетевые изменения либо включить Pages Source=GitHub Actions в репозитории и запустить подготовленный workflow. После доступа проверить deployment и внешний HTTPS, не только push/build.
+1. Владелец включает Pages Source=GitHub Actions в https://github.com/utkinin/compressor/settings/pages. Затем запустить/перезапустить подготовленный workflow и проверить успешный deployment и внешний HTTPS, не только push/build.
 2. До live предоставить реальный сервер/домен, утверждённого оператора, тексты и условия обработки/локализации, CRM endpoint и credentials через защищённые настройки.
 3. Перед публикацией технических характеристик передать каталог UNIGY с номерами страниц, паспорта/расчёты, подтверждения исполнения и утверждённые кейсы/изображения.
 
