@@ -176,11 +176,13 @@ GitHub Pages: https://utkinin.github.io/compressor/ . Preview сохраняет
 | `npm run typecheck` | PASS |
 | `npm run lint` | PASS, без предупреждений |
 | `npm test` | PASS: 138 тестов, 6 файлов |
-| `npm run test:e2e` | PASS: 25/25, 58,7 с |
+| `npm run test:e2e` | PASS: 25/25, 57,3 с |
 | `npm run preview:build` | PASS, source/output guards |
 | `python3 scripts/audit-public-copy.py` | PASS: 89 HTML, 0 нарушений |
-| `npm run preview:test` | PASS: 18/18, 45,9 с |
+| `npm run preview:test` | PASS: 18/18, 43,8 с |
 | `npm run content:matrix` | PASS: 60 контентных маршрутов |
 | `git diff --check` | PASS |
 
 Браузеры проверили ширины 360/390/768/1440, весь граф внутренних ссылок и файлы экспорта, настоящие 404 старых equipment/document/news адресов, поиск/фильтры базы знаний, шесть полноценных статей, RFQ/consent и опросный лист. Печать, скачивание и копирование технических данных не включают контакты. Папки артефактов серверных и статических тестов разделены, чтобы параллельная очистка одного набора не удаляла результаты другого.
+
+Дополнительная визуальная приёмка: каталог, бустер, база знаний, шесть статей и опросный лист проверены при 390/1440 px. Схемы статей получили отдельную вертикальную компоновку на телефонах; горизонтальная схема desktop сохранена. Повторная проверка production при 360/390/1440 px подтвердила читаемые подписи (основные 14,6–15,6 px, примечания 12,9–13,7 px) и отсутствие переполнений. Скриншоты и метрики сохранены локально в .local/screenshots/final-editorial/. После этой правки production/static build, guards, typecheck, lint, 138 unit, 25 e2e и 18 preview browser tests вновь прошли.

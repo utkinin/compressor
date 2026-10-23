@@ -1,18 +1,63 @@
 import type { ReactNode } from "react";
 
-type BlockProps = { x: number; y: number; width?: number; title: string; note?: string; accent?: boolean };
-function Block({ x, y, width = 160, title, note, accent = false }: BlockProps) {
+type BlockProps = { x: number; y: number; width?: number; title: string; note?: string; accent?: boolean; noteSize?: number };
+function Block({ x, y, width = 160, title, note, accent = false, noteSize = 13 }: BlockProps) {
   return <g transform={`translate(${x} ${y})`}>
     <rect width={width} height="74" rx="2" fill={accent ? "#e2b995" : "#e9eee1"} stroke={accent ? "#c47c50" : "#91a18a"} />
     <text x={width / 2} y={note ? 31 : 43} textAnchor="middle" fill="#243b2c" fontSize="17" fontWeight="600">{title}</text>
-    {note && <text x={width / 2} y="53" textAnchor="middle" fill="#52654d" fontSize="13">{note}</text>}
+    {note && <text x={width / 2} y="53" textAnchor="middle" fill="#52654d" fontSize={noteSize}>{note}</text>}
   </g>;
 }
 function Arrow({ x, y, width = 38 }: { x: number; y: number; width?: number }) {
   return <g fill="none" stroke="#8da17f" strokeWidth="2"><path d={`M${x} ${y}h${width}`} /><path d={`m${x + width - 6} ${y - 5} 6 5-6 5`} /></g>;
 }
 function Diagram({ label, children }: { label: string; children: ReactNode }) {
-  return <svg viewBox="0 0 760 240" role="img" aria-label={label}><title>{label}</title>{children}</svg>;
+  return <svg className="knowledge-visual-wide" viewBox="0 0 760 240" role="img" aria-label={label}><title>{label}</title>{children}</svg>;
+}
+
+const mobileStages: Record<string, { title: string; note: string }[]> = {
+  "what-to-specify-for-gas-compressor": [
+    { title: "Газ · P₁ · P₂ · Q · режим", note: "пять основных параметров" },
+    { title: "Подбор компрессора", note: "по условиям процесса" },
+    { title: "Исполнение и комплектация", note: "после выбора компрессора" },
+  ],
+  "why-process-gas-compressors-need-task-specific-selection": [
+    { title: "Условия процесса", note: "газ · P₁ · P₂ · Q · режим" },
+    { title: "Подбор", note: "расчёт и совместимость" },
+    { title: "Оборудование", note: "исполнение и необходимые опции" },
+  ],
+  "what-is-in-compressor-skid": [
+    { title: "Компрессор", note: "основное оборудование" },
+    { title: "Необходимые опции", note: "по условиям процесса" },
+    { title: "Комплектная система", note: "согласованный состав" },
+  ],
+  "sf6-compressor-service-life": [
+    { title: "Состояние SF₆ и нагрузка", note: "влага · примеси · температура · режим" },
+    { title: "Клапаны и уплотнения", note: "состояние и герметичность" },
+    { title: "Обслуживание", note: "контроль по документации" },
+  ],
+  "how-to-select-nitrogen-booster": [
+    { title: "Источник азота", note: "доступные давление P₁ и расход Q" },
+    { title: "Бустер", note: "повышение давления" },
+    { title: "Ресивер", note: "по расчёту" },
+    { title: "Потребитель", note: "требуемые давление P₂ и расход Q" },
+  ],
+  "compressors-for-gas-mixtures": [
+    { title: "Состав смеси", note: "компоненты, концентрации и примеси" },
+    { title: "Совместимость", note: "материалы и безопасность" },
+    { title: "Компрессор", note: "подтверждённое исполнение" },
+  ],
+};
+
+function MobileDiagram({ articleId, label }: { articleId: string; label: string }) {
+  const stages = mobileStages[articleId];
+  if (!stages) return null;
+  return <svg className="knowledge-visual-mobile" viewBox={`0 0 380 ${stages.length * 102 + 16}`} role="img" aria-label={label}><title>{label}</title>
+    {stages.map((stage, index) => <g key={stage.title}>
+      <Block x={24} y={20 + index * 102} width={332} title={stage.title} note={stage.note} noteSize={15} accent={index === 1} />
+      {index < stages.length - 1 && <g fill="none" stroke="#8da17f" strokeWidth="2"><path d={`M190 ${101 + index * 102}v14`} /><path d={`m185 ${110 + index * 102} 5 5 5-5`} /></g>}
+    </g>)}
+  </svg>;
 }
 
 const illustrations: Record<string, { label: string; caption: string; content: ReactNode }> = {
@@ -53,6 +98,7 @@ export function KnowledgeVisual({ articleId, compact = false }: { articleId: str
   if (!illustration) return null;
   return <figure className={`knowledge-visual${compact ? " knowledge-visual-compact" : ""}`}>
     <Diagram label={illustration.label}>{illustration.content}</Diagram>
+    {!compact && <MobileDiagram articleId={articleId} label={illustration.label} />}
     {!compact && <figcaption>{illustration.caption}</figcaption>}
   </figure>;
 }
