@@ -102,10 +102,10 @@ describe("working point server schema", () => {
 });
 
 describe("public RFQ catalogue context", () => {
-  it("keeps all six equipment contexts aligned with public directions and their RFQ gas", () => {
-    expect(Object.keys(RFQ_EQUIPMENT_CONTEXTS)).toHaveLength(6);
-    expect(Object.keys(RFQ_EQUIPMENT_CONTEXTS).sort()).toEqual(equipment.map((item) => item.id).sort());
-    for (const item of equipment) {
+  it("keeps five own equipment contexts aligned and excludes the specialist reference", () => {
+    expect(Object.keys(RFQ_EQUIPMENT_CONTEXTS)).toHaveLength(5);
+    expect(Object.keys(RFQ_EQUIPMENT_CONTEXTS).sort()).toEqual(equipment.filter((item) => item.id !== "sf6-compressors").map((item) => item.id).sort());
+    for (const item of equipment.filter((item) => item.id !== "sf6-compressors")) {
       expect(initialRfqSelection(undefined, item.id).gas).toBe(item.rfqGas);
       expect(publicRfqContextLabel("equipment", item.id)).toBeTruthy();
     }
@@ -177,11 +177,12 @@ describe("public RFQ catalogue context", () => {
     expect(sanitizeRfqContext({ equipment: "nitrogen-boosters", solution: {}, document: undefined })).toEqual({ equipment: "nitrogen-boosters" });
   });
 
-  it("prefills SF₆ as an editable composition without adding an unsupported gas branch", () => {
-    const selection = initialRfqSelection(undefined, "sf6-compressors");
-    expect(selection).toEqual({ gas: "mixtures", details: { composition: "SF₆; чистота и примеси требуют уточнения" } });
-    expect(rfqSchema.safeParse({ ...valid("mixtures"), ...selection, requestContext: { equipment: "sf6-compressors" } }).success).toBe(true);
-    expect(initialRfqSelection("he", "sf6-compressors")).toEqual({ gas: "he", details: {} });
+  it("drops the former specialist equipment context without creating an own-product enquiry", () => {
+    expect(publicRfqContextLabel("equipment", "sf6-compressors")).toBeUndefined();
+    expect(sanitizeRfqContext({ equipment: "sf6-compressors" })).toEqual({});
+    expect(rfqSchema.safeParse({ ...valid("mixtures"), requestContext: { equipment: "sf6-compressors" } }).success).toBe(false);
+    expect(initialRfqSelection(undefined, "sf6-compressors")).toEqual({ gas: "n2", details: {} });
+    expect(initialRfqSelection("mixtures", "sf6-compressors")).toEqual({ gas: "mixtures", details: {} });
     expect(initialRfqSelection(undefined, "unknown-public-context")).toEqual({ gas: "n2", details: {} });
   });
 
@@ -197,16 +198,11 @@ describe("public RFQ catalogue context", () => {
     });
   });
 
-  it("updates the preliminary description when the SF₆ composition or selected gas changes", () => {
-    const sf6Context = { equipment: "sf6-compressors" };
-    const selection = initialRfqSelection(undefined, sf6Context.equipment);
-    expect(preliminaryEquipment({ ...selection, requestContext: sf6Context }).type).toBe("Компрессор для SF₆");
-    const changedComposition = preliminaryEquipment({ gas: "mixtures", details: { composition: "Другой состав требует уточнения" }, requestContext: sf6Context });
-    expect(changedComposition.type).toBe("Компрессор для заданного состава газа");
-    expect(changedComposition.purpose).toBe("Сжатие технологического газа после анализа состава");
-    const changedGas = initialRfqSelection("he", sf6Context.equipment);
-    expect(changedGas.details).toEqual({});
-    expect(preliminaryEquipment({ ...changedGas, requestContext: sf6Context }).type).toBe("Компрессор для гелия");
+  it("describes a generic mixture enquiry without claiming an SF₆ model", () => {
+    const result = preliminaryEquipment({ gas: "mixtures", details: { composition: "SF₆; состав и примеси требуют анализа" } });
+    expect(result.type).not.toBe("Компрессор для SF₆");
+    expect(result.configuration).toBe("Уточняется после инженерного расчёта");
+    expect(result.status).toBe("Требуется инженерное подтверждение");
   });
 
   it("does not carry nitrogen equipment or purpose into a helium request", () => {
@@ -270,7 +266,7 @@ describe("durable idempotency and outbox", () => {
   });
   it("rejects different content reusing the same key", async () => {
     await withIdempotency(directory, "key", valid(), async () => "local-staging");
-    await expect(withIdempotency(directory, "key", { ...valid(), duty: "unknown" }, async () => "local-staging")).rejects.toMatchObject({ kind: "payload" });
+    await expect(withIdempotency(directory, "key", { ...valid(), duty: "unknown" as const }, async () => "local-staging")).rejects.toMatchObject({ kind: "payload" });
   });
   it("does not send a simultaneous duplicate twice", async () => {
     let finish: (() => void) | undefined;

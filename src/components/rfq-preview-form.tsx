@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { RfqForm } from "@/components/rfq-form";
+import { RfqIntake } from "@/components/rfq-intake";
 import { GAS_OPTIONS, initialRfqSelection, sanitizeRfqContext } from "@/lib/rfq/schema";
 
 export function RfqPreviewForm() {
@@ -13,6 +13,7 @@ export function RfqPreviewForm() {
     document: query.get("document"),
   });
   const selection = initialRfqSelection(initialGas, initialRequest.equipment);
-  const formKey = [selection.gas, initialRequest.solution, initialRequest.equipment, initialRequest.document].join(":");
-  return <RfqForm key={formKey} mode="preview" initialGas={selection.gas} initialRequest={initialRequest} />;
+  const intake = query.get("intake") === "brief" ? "brief" : "parameters";
+  const formKey = [intake, selection.gas, initialRequest.solution, initialRequest.equipment, initialRequest.document].join(":");
+  return <RfqIntake key={formKey} mode="preview" initialGas={initialGas} initialRequest={initialRequest} initialIntake={intake} />;
 }

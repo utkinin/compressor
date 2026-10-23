@@ -7,9 +7,9 @@ export function RfqPreview() {
   return <>
     <div className="container"><Breadcrumbs items={[{ label: "Инженерный запрос", href: "/rfq" }]} /></div>
     <div className="container rfq-page-intro">
-      <p className="eyebrow">Engineering request / RFQ</p>
-      <h1>Укажите параметры подбора</h1>
-      <p>Газ + P₁ + P₂ + Q + режим. Проверьте весь сценарий инженерного запроса. Эта версия на GitHub Pages демонстрирует интерфейс и не принимает заявки.</p>
+      <p className="eyebrow">Подбор оборудования</p>
+      <h1>Начните с параметров или описания задачи</h1>
+      <p>Укажите газ, известные давления, расход и режим или опишите задачу и выберите файл. Эта демонстрация работает в браузере без отправки заявок и загрузки файлов.</p>
     </div>
     <div className="container rfq-page-body">
       <Suspense fallback={<p className="notice">Подготовка демонстрационной формы…</p>}><RfqPreviewForm /></Suspense>

@@ -1,7 +1,8 @@
 import { createHash, randomUUID } from "node:crypto";
-import { mkdir, readFile, rename, rm, stat, writeFile, readdir } from "node:fs/promises";
+import { chmod, lstat, mkdir, readFile, realpath, rename, rm, stat, writeFile, readdir } from "node:fs/promises";
 import path from "node:path";
-import type { RfqInput } from "./schema";
+import type { RfqSubmission } from "./brief-schema";
+import type { RfqAttachment } from "./attachments";
 import type { Delivery, RfqEnvelope } from "./transport";
 
 export interface StoredRfq {
@@ -27,8 +28,13 @@ function stable(value: unknown): string {
   return JSON.stringify(value) ?? "null";
 }
 
-async function privateDirectory(directory: string): Promise<void> {
+export async function ensurePrivateRfqStorage(directory: string): Promise<void> {
   await mkdir(directory, { recursive: true, mode: 0o700 });
+  if ((await lstat(directory)).isSymbolicLink()) throw new Error("RFQ storage cannot be a symbolic link");
+  const actual = await realpath(directory);
+  const publicRoot = await realpath(path.join(process.cwd(), "public")).catch(() => path.resolve("public"));
+  if (actual === publicRoot || actual.startsWith(`${publicRoot}${path.sep}`)) throw new Error("RFQ storage cannot be public");
+  await chmod(directory, 0o700);
 }
 
 export async function atomicJson(file: string, data: unknown): Promise<void> {
@@ -66,10 +72,11 @@ export interface SubmissionResult {
 export async function withIdempotency(
   directory: string,
   key: string,
-  input: RfqInput,
+  input: RfqSubmission,
   deliver: (envelope: RfqEnvelope) => Promise<Delivery>,
+  attachments: readonly RfqAttachment[] = [],
 ): Promise<SubmissionResult> {
-  await privateDirectory(directory);
+  await ensurePrivateRfqStorage(directory);
   const file = path.join(directory, `${digest(key)}.json`);
   const lock = `${file}.lock`;
   await acquireLock(lock);
@@ -78,13 +85,13 @@ export async function withIdempotency(
     try { existing = JSON.parse(await readFile(file, "utf8")) as StoredRfq; } catch (error) {
       if (!(error instanceof Error) || !("code" in error) || error.code !== "ENOENT") throw error;
     }
-    const payloadHash = digest(stable(input));
+    const payloadHash = digest(stable(attachments.length ? { input, attachments } : input));
     if (existing && existing.payloadHash !== payloadHash) throw new StorageConflict("payload");
     if (existing?.state === "complete" && existing.delivery) {
       return { envelope: existing.envelope, duplicate: true, delivery: existing.delivery };
     }
     const timestamp = new Date().toISOString();
-    const envelope = existing?.envelope ?? { id: randomUUID(), receivedAt: timestamp, consentRecordedAt: timestamp, consentVersion: input.consent.version, rfq: input };
+    const envelope = existing?.envelope ?? { id: randomUUID(), receivedAt: timestamp, consentRecordedAt: timestamp, consentVersion: input.consent.version, rfq: input, ...(attachments.length ? { attachments: [...attachments] } : {}) };
     const record: StoredRfq = { envelope, payloadHash, state: "pending", updatedAt: timestamp };
     await atomicJson(file, record);
     try {
@@ -102,7 +109,7 @@ export async function withIdempotency(
 
 /** Explicitly retry durable queued/failed records. Never emits RFQ contents to logs. */
 export async function retryOutbox(directory: string, deliver: (envelope: RfqEnvelope) => Promise<void>): Promise<{ delivered: number; failed: number }> {
-  await privateDirectory(directory);
+  await ensurePrivateRfqStorage(directory);
   const result = { delivered: 0, failed: 0 };
   for (const name of await readdir(directory)) {
     if (!/^[a-f0-9]{64}\.json$/.test(name)) continue;
@@ -123,7 +130,7 @@ export async function retryOutbox(directory: string, deliver: (envelope: RfqEnve
 }
 
 export async function purgeExpiredRfq(directory: string, retentionDays: number, now = Date.now()): Promise<number> {
-  await privateDirectory(directory);
+  await ensurePrivateRfqStorage(directory);
   let removed = 0;
   for (const name of await readdir(directory)) {
     if (!/^[a-f0-9]{64}\.json$/.test(name)) continue;
