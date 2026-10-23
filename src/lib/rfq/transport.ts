@@ -1,11 +1,14 @@
-import type { RfqInput } from "./schema";
+import type { RfqSubmission } from "./brief-schema";
+import type { RfqAttachment } from "./attachments";
 
 export interface RfqEnvelope {
   id: string;
   receivedAt: string;
   consentRecordedAt: string;
   consentVersion: string;
-  rfq: RfqInput;
+  rfq: RfqSubmission;
+  /** Private receiver contract: validated file bytes are included, never public URLs. */
+  attachments?: RfqAttachment[];
 }
 
 export type Delivery = "webhook" | "local-staging" | "outbox";

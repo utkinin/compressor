@@ -18,7 +18,6 @@ export const RFQ_EQUIPMENT_CONTEXTS = {
   "nitrogen-boosters": { title: "Бустер азота высокого давления", gas: "n2" },
   "helium-compressors": { title: "Компрессор для гелия", gas: "he" },
   "co2-compressors": { title: "Компрессор для CO₂", gas: "co2" },
-  "sf6-compressors": { title: "Компрессор для SF₆", gas: "mixtures" },
   "process-gas-compressors": { title: "Компрессор для технологических газов", gas: "mixtures" },
 } as const satisfies Record<string, { title: string; gas: Gas }>;
 
@@ -98,10 +97,7 @@ export function equipmentRfqContext(id?: string): { title: string; gas: Gas } | 
 
 export function initialRfqSelection(gas: Gas | undefined, equipment?: string): { gas: Gas; details: Record<string, string> } {
   const selectedGas = gas ?? equipmentRfqContext(equipment)?.gas ?? "n2";
-  const details: Record<string, string> = equipment === "sf6-compressors" && selectedGas === "mixtures"
-    ? { composition: "SF₆; чистота и примеси требуют уточнения" }
-    : {};
-  return { gas: selectedGas, details };
+  return { gas: selectedGas, details: {} };
 }
 export interface GasField {
   key: string;
@@ -292,16 +288,14 @@ export function solutionRfqPurpose(id: string | undefined, gas: Gas): string | u
 export function preliminaryEquipment(input: PreliminaryInput): PreliminaryEquipment {
   const details = input.details ?? {};
   const equipment = equipmentRfqContext(input.requestContext?.equipment);
-  const sf6Request = input.gas === "mixtures" && /SF[₆6]|элегаз/i.test(details.composition ?? "");
-  const matchingEquipment = equipment?.gas === input.gas
-    && (input.requestContext?.equipment !== "sf6-compressors" || sf6Request);
+  const matchingEquipment = equipment?.gas === input.gas;
   const defaults: Record<Gas, string> = {
     n2: "Компрессор или бустер для азота",
     he: "Компрессор для гелия",
     h2: "Компрессор для водорода после проверки исполнения",
     o2: "Компрессор для кислорода после проверки совместимости",
     co2: "Компрессор для CO₂",
-    mixtures: sf6Request ? "Компрессор для SF₆" : "Компрессор для заданного состава газа",
+    mixtures: "Компрессор для заданного состава газа",
   };
   const defaultPurposes: Record<Gas, string> = {
     n2: "Сжатие или повышение давления азота",
@@ -309,7 +303,7 @@ export function preliminaryEquipment(input: PreliminaryInput): PreliminaryEquipm
     h2: "Индивидуальная задача сжатия водородсодержащего газа",
     o2: "Индивидуальная задача сжатия кислорода",
     co2: "Сжатие и перекачка CO₂ с проверкой фазового состояния",
-    mixtures: sf6Request ? "Индивидуальная задача сжатия или перекачки SF₆" : "Сжатие технологического газа после анализа состава",
+    mixtures: "Сжатие технологического газа после анализа состава",
   };
   return {
     type: matchingEquipment ? equipment.title : defaults[input.gas],
