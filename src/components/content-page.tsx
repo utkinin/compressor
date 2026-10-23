@@ -76,7 +76,7 @@ export function RelatedLinks({ title, items }: { title: string; items: { title: 
 }
 
 export function RfqPanel({ href = "/rfq/", title = "Подберём компрессор для вашей задачи", sourcePage = "/" }: { href?: string; title?: string; sourcePage?: string }) {
-  const target = new URL(href, "https://staging.lanfor.example");
+  const target = new URL(href, "https://lanfor.example");
   target.searchParams.set("source", sourcePage);
   const contextualHref = `${target.pathname}${target.search}`;
   return (
@@ -85,7 +85,7 @@ export function RfqPanel({ href = "/rfq/", title = "Подберём компр�
       <h2>{title}</h2>
       <p>Расскажите, какой газ нужно сжимать, откуда он поступает и что требуется потребителю. Известные давления, расход и режим помогут уточнить подходящее оборудование.</p>
       <Link className="button" href={contextualHref}>Подобрать компрессор <span aria-hidden="true">→</span></Link>
-      <p className="small-text">Автоматический выбор модели без расчёта не выполняется.</p>
+      <p className="small-text">Исполнение и параметры подтвердит инженер после расчёта.</p>
     </aside>
   );
 }
@@ -100,7 +100,7 @@ export function Procurement({ items }: { items?: string[] }) {
         "Паспорт, руководство и комплект разрешительных документов — по конкретному исполнению и применимым требованиям.",
       ]} />
       <p>Исполнение, комплектность, документация, сроки, условия гарантии и стоимость указываются в предложении на выбранное оборудование.</p>
-      <Link className="link-arrow" href="/documents/">Документы и запрос чертежей →</Link>
+      <Link className="link-arrow" href="/rfq/?document=technical-documentation">Запросить документацию →</Link>
     </ContentSection>
   );
 }

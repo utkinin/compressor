@@ -3,12 +3,20 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { track } from "@/lib/analytics";
+import { formatRfqQuestionnaire } from "@/lib/rfq/questionnaire";
 import {
   CONSENT_VERSION,
   GAS_FIELDS,
   GAS_OPTIONS,
+  PROJECT_FIELDS,
+  initialRfqSelection,
+  preliminaryEquipment,
+  publicRfqContextLabel,
   rfqSchema,
+  sanitizeRfqContext,
   validateRfqStep,
+  type RfqRequestContext,
+  type ProjectRequirements,
 } from "@/lib/rfq/schema";
 import "./rfq-form.css";
 
@@ -17,7 +25,7 @@ type PressureUnit = "bar(g)" | "bar(a)" | "MPa";
 type FlowUnit = "Nm3/h" | "m3/h" | "l/min" | "kg/h";
 type Duty = "continuous" | "intermittent" | "cycle" | "peak" | "unknown";
 type FormMode = "staging" | "live" | "disabled" | "preview";
-type RequestContext = { solution?: string; equipment?: string; document?: string };
+type RequestContext = RfqRequestContext;
 type Attribution = {
   sourcePage: string;
   landingPage: string;
@@ -97,58 +105,24 @@ function captureAttribution(): Attribution {
   return current;
 }
 
-function solutionClass(gas: Gas, details: Record<string, string>): string {
-  if (gas === "he" && /recovery|возврат|рекуп|восстанов/i.test(details.mode ?? "")) return "Система возврата и повторного сжатия гелия";
-  if (gas === "h2") return "Компрессор для водорода после проверки исполнения";
-  if (gas === "o2") return "Компрессор в кислородно-совместимом исполнении";
-  if (gas === "co2") return "Компрессор CO₂ с проверкой фазового состояния";
-  if (gas === "mixtures") return "Компрессор для заданного состава газа";
-  return "Компрессор или бустер под параметры газа";
-}
-
 function requestContextLabel(kind: keyof RequestContext, id: string): string {
-  const labels: Record<string, string> = {
-    "nitrogen-booster-after-generator": "Бустер азота после генератора",
-    "nitrogen-pressure-boosting": "Повышение давления азота",
-    "nitrogen-for-laser-cutting": "Азот для лазерной резки",
-    "helium-compression": "Сжатие гелия",
-    "helium-recovery": "Возврат и повторное использование гелия",
-    "hydrogen-compression": "Сжатие водорода",
-    "co2-compression": "Сжатие CO₂",
-    "oxygen-compression": "Сжатие кислорода",
-    "process-gas-compressor": "Компрессор технологического газа",
-    "oil-free-gas-booster": "Безмасляный газовый бустер",
-    "compressor-skid": "Компрессорная станция на раме",
-    "equipment-integration": "Компрессор для встраивания в оборудование",
-    "gas-transfer-recovery": "Перекачка и возврат газа",
-    "buffer-receiver-charging": "Заполнение буфера и ресивера",
-    "oil-free-reciprocating": "Безмасляные поршневые компрессоры",
-    "gas-boosters": "Газовые бустеры",
-    "compressor-modules": "Компрессоры для встраивания",
-    "compressor-skids": "Компрессорные станции на раме",
-    "recovery-systems": "Системы возврата газа",
-    "process-gas-questionnaire": "Опросный лист на газовый компрессор",
-    "configuration-datasheet": "Технический лист конфигурации",
-    "manufacturer-family-catalogue": "Каталог выбранного семейства",
-    "operating-manual": "Руководство по эксплуатации",
-    "pid-interface-drawing": "P&ID и габаритный чертёж",
-    "cad-layout": "CAD для интеграции",
-    "step-model": "STEP-модель компрессора",
-    "conformity-document-list": "Перечень документов соответствия",
-    "working-point-calculation": "Расчётный лист параметров компрессора",
-    "technical-documentation": "Техническая документация",
-  };
-  return labels[id] ?? { solution: "Подбор компрессора для технологической задачи", equipment: "Семейство газовых компрессоров", document: "Документ по выбранной конфигурации" }[kind];
+  return publicRfqContextLabel(kind, id) ?? {
+    solution: "Подбор компрессора для технологической задачи",
+    equipment: "Подбор компрессора по заданным параметрам",
+    document: "Документ по выбранной конфигурации",
+  }[kind];
 }
 
 function ErrorText({ id, message }: { id: string; message?: string }) {
   return message ? <span className="rfq-error" id={id}>{message}</span> : null;
 }
 
-export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode: FormMode; initialGas?: Gas; initialRequest?: RequestContext }) {
+export function RfqForm({ mode, initialGas, initialRequest = {}, questionnaire = false }: { mode: FormMode; initialGas?: Gas; initialRequest?: RequestContext; questionnaire?: boolean }) {
+  const requestContext = sanitizeRfqContext(initialRequest);
+  const initialSelection = initialRfqSelection(initialGas, requestContext.equipment);
   const [step, setStep] = useState(0);
   const [review, setReview] = useState(false);
-  const [gas, setGas] = useState<Gas>(initialGas);
+  const [gas, setGas] = useState<Gas>(initialSelection.gas);
   const [inlet, setInlet] = useState("");
   const [inletUnit, setInletUnit] = useState<PressureUnit>("bar(g)");
   const [inletReference, setInletReference] = useState<"gauge" | "absolute">("gauge");
@@ -160,7 +134,9 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
   const [flowReference, setFlowReference] = useState("0 °C; 1,01325 bar(a); сухой газ");
   const [duty, setDuty] = useState<Duty>("unknown");
   const [dutyDetails, setDutyDetails] = useState("");
-  const [details, setDetails] = useState<Record<string, string>>({});
+  const [details, setDetails] = useState<Record<string, string>>(initialSelection.details);
+  const [project, setProject] = useState<ProjectRequirements>({});
+  const [exportStatus, setExportStatus] = useState("");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
@@ -169,7 +145,7 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
   const [honeypot, setHoneypot] = useState("");
   const attribution = useRef<Attribution>({ sourcePage: "/rfq", landingPage: "/rfq" });
   const context = (["solution", "equipment", "document"] as const).flatMap((kind) => {
-    const id = initialRequest[kind];
+    const id = requestContext[kind];
     if (!id) return [];
     return `${{ solution: "Задача", equipment: "Оборудование", document: "Документ" }[kind]}: ${requestContextLabel(kind, id)}`;
   }).join(" · ");
@@ -180,6 +156,7 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
   const idempotencyKey = useRef<string | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   const hasStarted = useRef(false);
+  const preliminary = preliminaryEquipment({ gas, details, requestContext });
 
   useEffect(() => {
     if (mode !== "preview") attribution.current = captureAttribution();
@@ -192,13 +169,14 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
   function changed() {
     idempotencyKey.current = null;
     setServerError("");
+    setExportStatus("");
     if (!hasStarted.current) {
       hasStarted.current = true;
       recordEvent("rfq_start", { gas, mode });
     }
   }
 
-  function candidate() {
+  function technicalInputs() {
     return {
       gas,
       inlet: { value: inlet.trim() ? Number(inlet.replace(",", ".")) : Number.NaN, unit: inletUnit, ...(inletUnit === "MPa" ? { reference: inletReference } : {}) },
@@ -206,13 +184,42 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
       flow: { value: flow.trim() ? Number(flow.replace(",", ".")) : Number.NaN, unit: flowUnit, ...(flowUnit !== "kg/h" ? { reference: flowReference.trim() } : {}) },
       duty,
       dutyDetails: dutyDetails.trim(),
-      ...(Object.keys(initialRequest).length ? { requestContext: initialRequest } : {}),
+      ...(Object.keys(requestContext).length ? { requestContext } : {}),
       details,
+      ...(Object.values(project).some((value) => value?.trim()) ? { project } : {}),
+    };
+  }
+
+  function candidate() {
+    return {
+      ...technicalInputs(),
       contact: { name: name.trim(), company: company.trim(), email: email.trim(), ...(phone.trim() ? { phone: phone.trim() } : {}) },
       consent: { accepted: consent, version: CONSENT_VERSION },
       attribution: attribution.current,
       honeypot,
     };
+  }
+
+  async function copyQuestionnaire() {
+    try {
+      await navigator.clipboard.writeText(formatRfqQuestionnaire(technicalInputs()));
+      setExportStatus("Данные скопированы.");
+    } catch {
+      setExportStatus("Выделите текст заполненного листа ниже и скопируйте его.");
+      const text = document.querySelector<HTMLTextAreaElement>("#questionnaire-text");
+      text?.focus();
+      text?.select();
+    }
+  }
+
+  function downloadQuestionnaire() {
+    const url = URL.createObjectURL(new Blob([formatRfqQuestionnaire(technicalInputs())], { type: "text/plain;charset=utf-8" }));
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "lanfor-gas-compressor-questionnaire.txt";
+    anchor.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setExportStatus("Заполненный лист подготовлен для скачивания.");
   }
 
   function validate(currentStep?: number): boolean {
@@ -298,7 +305,7 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
       <span className="rfq-success-mark" aria-hidden="true">✓</span>
       <p className="eyebrow">{success.delivery === "preview" ? "Демонстрация формы RFQ" : "Параметры подбора сохранены"}</p>
       <h2 ref={heading} tabIndex={-1}>{success.delivery === "preview" ? "Демонстрация пройдена" : success.delivery === "webhook" ? "Заявка передана в инженерный контур" : success.delivery === "local-staging" ? "Тестовая заявка сохранена локально" : "Заявка сохранена в очереди доставки"}</h2>
-      <p>{success.delivery === "preview" ? "Заявка не отправлена и не сохранена. Это демонстрация интерфейса на GitHub Pages: сервер приёма заявок и CRM не подключены. Не вводите реальные контакты." : success.delivery === "webhook" ? "Следующий шаг — проверка исходных данных и согласование состава решения. Это ещё не подтверждение характеристик или подбор конкретной модели." : success.delivery === "local-staging" ? "Это проверка staging-сайта. CRM не подключена, инженер не получил уведомление. Используйте только тестовые контактные данные." : "Внешний сервис временно недоступен. Заявка принята в защищённое локальное хранилище; оператору требуется повторить доставку. Подтверждения получения инженером пока нет."}</p>
+      <p>{success.delivery === "preview" ? "Заявка не отправлена и не сохранена. Это демонстрация интерфейса на GitHub Pages: сервер приёма заявок и CRM не подключены. Не вводите реальные контакты." : success.delivery === "webhook" ? "Следующий шаг — проверка исходных данных и согласование состава решения. Это ещё не подтверждение характеристик или подбор конкретной модели." : success.delivery === "local-staging" ? "Это проверка сайта в тестовом режиме. CRM не подключена, инженер не получил уведомление. Используйте только тестовые контактные данные." : "Внешний сервис временно недоступен. Заявка принята в защищённое локальное хранилище; оператору требуется повторить доставку. Подтверждения получения инженером пока нет."}</p>
       <p className="rfq-request-id">{success.delivery === "preview" ? "Маркер демонстрации в этой вкладке" : "Номер заявки"}: <strong>{success.id}</strong></p>
       <Link className="button button-secondary" href="/solutions">Вернуться к решениям <span aria-hidden="true">→</span></Link>
     </div>
@@ -320,7 +327,7 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
         {context && <p className="rfq-context">{context}</p>}
       </aside>
       <div className="rfq-main">
-        {mode !== "live" && <div className="notice rfq-mode-notice"><strong>{mode === "preview" ? "GitHub Pages · демонстрационный режим" : mode === "staging" ? "Staging · локальная проверка" : "Приём заявок пока закрыт"}</strong><p>{mode === "preview" ? "Все шаги формы доступны для проверки. Заявка не отправляется и не сохраняется; CRM не подключена. Не вводите реальные контакты — используйте вымышленные данные." : mode === "staging" ? "Заявка сохраняется только в этой тестовой среде и не отправляется в CRM. Введите вымышленные контактные данные." : "Для отправки нужны настроенная доставка и утверждённые реквизиты оператора персональных данных. Параметры подбора можно заполнить и проверить."}</p></div>}
+        {mode !== "live" && <div className="notice rfq-mode-notice"><strong>{mode === "preview" ? "GitHub Pages · демонстрационный режим" : mode === "staging" ? "Тестовый режим · локальная проверка" : "Приём заявок пока закрыт"}</strong><p>{mode === "preview" ? "Все шаги формы доступны для проверки. Заявка не отправляется и не сохраняется; CRM не подключена. Не вводите реальные контакты — используйте вымышленные данные." : mode === "staging" ? "Заявка сохраняется только в этой тестовой среде и не отправляется в CRM. Введите вымышленные контактные данные." : "Для отправки нужны настроенная доставка и утверждённые реквизиты оператора персональных данных. Параметры подбора можно заполнить и проверить."}</p></div>}
         <p className="rfq-step-label">{review ? "Проверка параметров подбора" : `Шаг ${step + 1} из 5`}</p>
         {!review ? <form onSubmit={next} noValidate>
           <h2 className="rfq-title" ref={heading} tabIndex={-1}>{["С каким газом работаем?", "Какое давление на входе?", "Какое давление нужно на выходе?", "Какой расход требуется?", "Как работает процесс?"][step]}</h2>
@@ -358,10 +365,26 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
           <div className="rfq-actions">{step > 0 && <button type="button" className="button button-secondary" onClick={() => { setErrors({}); setStep(step - 1); requestAnimationFrame(() => heading.current?.focus()); }}>← Назад</button>}<button type="submit" className="button">{step === 4 ? "Проверить параметры подбора" : "Продолжить"} <span aria-hidden="true">→</span></button></div>
         </form> : <form onSubmit={submit} noValidate aria-busy={sending}>
           <fieldset className="rfq-submit-fields" disabled={sending}>
-          <h2 className="rfq-title" ref={heading} tabIndex={-1}>Параметры для подбора компрессора</h2>
+          <h2 className="rfq-title" ref={heading} tabIndex={-1}>Предварительный вариант оборудования</h2>
+          <div className="rfq-preliminary"><dl className="rfq-preliminary-data">
+            <div><dt>Тип</dt><dd>{preliminary.type}</dd></div>
+            <div><dt>Назначение</dt><dd>{preliminary.purpose}</dd></div>
+            <div><dt>Исполнение</dt><dd>{preliminary.configuration}</dd></div>
+            <div><dt>Статус</dt><dd><strong>{preliminary.status}</strong></dd></div>
+          </dl><p>Это предварительное описание запрошенного оборудования. Инженер проверит параметры газа, применимость конструкции, температурный режим, герметичность и необходимую комплектацию. Модель автоматически не выбирается.</p></div>
           <div className="rfq-summary"><dl><div><dt>Газ</dt><dd>{gasLabel}</dd></div><div><dt>P₁</dt><dd>{pressureText(inlet, inletUnit, inletReference)}</dd></div><div><dt>P₂</dt><dd>{pressureText(outlet, outletUnit, outletReference)}</dd></div><div><dt>Q</dt><dd>{flow} {flowUnit === "Nm3/h" ? "Nm³/h" : flowUnit === "m3/h" ? "m³/h" : flowUnit}</dd></div><div><dt>Режим</dt><dd>{dutyOptions.find((option) => option.value === duty)?.title}</dd></div></dl>{flowUnit !== "kg/h" && <p className="rfq-help">Условия Q: {flowReference}</p>}<details><summary>Уточняющие параметры газа</summary><dl className="rfq-details-summary">{GAS_FIELDS[gas].map((field) => <div key={field.key}><dt>{field.label}</dt><dd>{details[field.key]}</dd></div>)}</dl>{dutyDetails && <p>{dutyDetails}</p>}</details></div>
-          <div className="rfq-preliminary"><p className="eyebrow">Предварительный класс решения</p><h3>{solutionClass(gas, details)}</h3><p>Это направление инженерной проработки, без расчёта и выбора модели. Инженер проверит степень сжатия, температурный режим, материалы, герметичность, регулирование и комплектность.</p></div>
           <button type="button" className="rfq-edit" onClick={() => { setReview(false); setStep(0); setErrors({}); requestAnimationFrame(() => heading.current?.focus()); }}>← Изменить параметры подбора</button>
+          <h3 className="rfq-contact-title">Дополнительные требования <span className="rfq-optional">(при наличии)</span></h3>
+          <p className="rfq-help">Укажите известные условия. Если данных пока нет, оставьте поле пустым или напишите «нужно уточнить».</p>
+          <div className="rfq-project-fields">{PROJECT_FIELDS.map((field) => <div className="field" key={field.key}><label htmlFor={`project-${field.key}`}>{field.label}</label><textarea id={`project-${field.key}`} rows={field.key === "other" ? 3 : 2} maxLength={2000} value={project[field.key] ?? ""} onChange={(event) => { changed(); setProject({ ...project, [field.key]: event.target.value }); }} aria-invalid={Boolean(errors[`project.${field.key}`])} aria-describedby={`project-${field.key}-error`} /><ErrorText id={`project-${field.key}-error`} message={errors[`project.${field.key}`]} /></div>)}</div>
+          {questionnaire && <section className="questionnaire-export" aria-labelledby="questionnaire-export-title">
+            <h3 className="rfq-contact-title" id="questionnaire-export-title">Заполненный опросный лист</h3>
+            <p className="rfq-help">Скопируйте, скачайте или распечатайте параметры. Контактные данные в этот лист не включаются.</p>
+            <div className="rfq-actions"><button type="button" className="button button-secondary" onClick={copyQuestionnaire}>Скопировать данные</button><button type="button" className="button button-secondary" onClick={downloadQuestionnaire}>Скачать заполненный лист</button><button type="button" className="button button-secondary" onClick={() => window.print()}>Распечатать</button></div>
+            <p role="status" aria-live="polite">{exportStatus}</p>
+            <div className="field"><label htmlFor="questionnaire-text">Данные для копирования</label><textarea id="questionnaire-text" readOnly rows={12} value={formatRfqQuestionnaire(technicalInputs())} /></div>
+            <pre className="questionnaire-print" aria-hidden="true">{formatRfqQuestionnaire(technicalInputs())}</pre>
+          </section>}
           <h3 className="rfq-contact-title">{mode === "preview" ? "Тестовые контактные данные" : "Кому направить уточнения?"}</h3>
           {mode === "preview" && <p className="rfq-help">Например: Тестовый инженер, Демо-компания, engineer@example.com. Эти поля показывают будущий сценарий приёма заявки; передача и хранение данных отключены.</p>}
           <div className="field-row"><div className="field"><label htmlFor="contact-name">Имя</label><input id="contact-name" autoComplete={mode === "preview" ? "off" : "name"} value={name} maxLength={120} aria-invalid={Boolean(errors["contact.name"])} aria-describedby="name-error" onChange={(event) => { changed(); setName(event.target.value); }} /><ErrorText id="name-error" message={errors["contact.name"]} /></div><div className="field"><label htmlFor="contact-company">Компания</label><input id="contact-company" autoComplete={mode === "preview" ? "off" : "organization"} value={company} maxLength={200} aria-invalid={Boolean(errors["contact.company"])} aria-describedby="company-error" onChange={(event) => { changed(); setCompany(event.target.value); }} /><ErrorText id="company-error" message={errors["contact.company"]} /></div></div>
@@ -370,7 +393,7 @@ export function RfqForm({ mode, initialGas = "n2", initialRequest = {} }: { mode
           <div className="rfq-consent"><label><input type="checkbox" checked={consent} aria-invalid={Boolean(errors["consent.accepted"])} aria-describedby="consent-error" onChange={(event) => { changed(); setConsent(event.target.checked); }} /><span>Я даю <Link href="/legal/consent/" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</Link> для ответа на мой запрос и ознакомлен(а) с <Link href="/legal/privacy/" target="_blank" rel="noopener noreferrer">политикой обработки персональных данных</Link>. Рассылки в это согласие не входят.</span></label><ErrorText id="consent-error" message={errors["consent.accepted"] ?? errors.consent} /><p className="rfq-help">Версия согласия: {CONSENT_VERSION}. {mode === "preview" ? "В этой демонстрации согласие не передаётся серверу и не сохраняется." : "Дата и время фиксируются сервером при получении заявки."}</p></div>
           {serverError && <div className="rfq-server-error" role="alert"><strong>Отправка не подтверждена</strong><p>{serverError}</p><p>Данные остались в форме. Повторная отправка без изменений использует тот же ключ и не создаст дубликат.</p></div>}
           {Object.keys(errors).length > 0 && <p className="rfq-error" role="alert">Проверьте отмеченные поля. Если ошибка относится к параметрам компрессора, вернитесь к их редактированию.</p>}
-          <div className="rfq-actions"><button type="submit" className="button" disabled={sending || mode === "disabled"}>{sending ? "Сохраняем запрос…" : mode === "preview" ? "Завершить демонстрацию" : mode === "staging" ? "Сохранить тестовую заявку" : "Передать параметры инженеру"}<span aria-hidden="true">→</span></button></div>
+          <div className="rfq-actions"><button type="submit" className="button" disabled={sending || mode === "disabled"}>{sending ? "Сохраняем запрос…" : mode === "preview" ? "Завершить демонстрацию" : mode === "staging" ? "Сохранить тестовую заявку" : "Отправить параметры для подбора"}<span aria-hidden="true">→</span></button></div>
           <p className="rfq-help">{mode === "preview" ? "Демонстрация завершится в браузере без сетевой отправки и сохранения контактов." : mode === "staging" ? "Проверка полного пути RFQ без внешней отправки." : "Подтверждение приёма заявки не является коммерческим предложением или подтверждением параметров компрессора."}</p>
           </fieldset>
         </form>}

@@ -4,22 +4,25 @@ import { documents } from "./documents";
 import { equipment } from "./equipment";
 import { gases } from "./gases";
 import { industries } from "./industries";
-import { productFamilies, productGasSpecs } from "./product-families";
+import { news } from "./news";
 import { solutions } from "./solutions";
-import type { Case, Document, Entity, Equipment, Gas, Industry, KnowledgeArticle, ProductFamily, Solution } from "./types";
+import type { News } from "./news-types";
+import type { Case, Document, Entity, Equipment, Gas, Industry, KnowledgeArticle, Solution } from "./types";
 
 export * from "./types";
-export { articles, cases, documents, equipment, gases, industries, productFamilies, productGasSpecs, solutions };
+export * from "./news-types";
+export { publicNews } from "./news";
+export { articles, cases, documents, equipment, gases, industries, news, solutions };
 
 export interface Collections {
   gases: Gas;
   solutions: Solution;
   equipment: Equipment;
-  productFamilies: ProductFamily;
   articles: KnowledgeArticle;
   industries: Industry;
   cases: Case;
   documents: Document;
+  news: News;
 }
 
 export type CollectionName = keyof Collections;
@@ -32,7 +35,7 @@ export interface ContentRepository {
 }
 
 const collections: ContentSnapshot = {
-  gases, solutions, equipment, productFamilies, articles, industries, cases, documents,
+  gases, solutions, equipment, articles, industries, cases, documents, news,
 };
 
 /** The local adapter includes review content for staging; no AI-generated entity is marked published. */

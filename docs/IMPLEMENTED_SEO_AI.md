@@ -1,5 +1,7 @@
 # Поиск и AI discoverability
 
+Исторический документ / отчёт предыдущего прохода. Текущая публичная таксономия оборудования, граница private source data и правила публикации определяются [CATALOG_IMPLEMENTATION](CATALOG_IMPLEMENTATION.md), [EQUIPMENT_MIGRATION](EQUIPMENT_MIGRATION.md) и [IMPLEMENTED_CONTENT_MODEL](IMPLEMENTED_CONTENT_MODEL.md). Прежние public family pages, ProductGroup и проверки числа страниц не являются текущими требованиями.
+
 Основной контент SSR; canonical абсолютный и единый через SITE_URL, уникальные title/description. Есть sitemap.xml, BreadcrumbList, Organization и Article; FAQPage только при видимом FAQ. Нет fake Offer, рейтингов, отзывов, цены 0 и вымышленных Product.
 
 По умолчанию staging noindex, nofollow; robots запрещает обход всем, HTTP X-Robots-Tag дополняет metadata. SEO_INDEXABLE=true применяется только после редакционного согласования и настройки реального SITE_URL. Robots не является механизмом защиты приватных данных; RFQ storage вообще не доступен по HTTP.

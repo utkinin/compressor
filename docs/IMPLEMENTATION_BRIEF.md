@@ -1,5 +1,7 @@
 Даю Codex **одно большое задание на текущую ветку**. Его задача — не обсуждать архитектуру, а довести v1.1 до полноценного staging-сайта.
 
+Исторический документ / отчёт предыдущего прохода. Текущая публичная таксономия оборудования, граница private source data и правила публикации определяются [CATALOG_IMPLEMENTATION](CATALOG_IMPLEMENTATION.md), [EQUIPMENT_MIGRATION](EQUIPMENT_MIGRATION.md) и [IMPLEMENTED_CONTENT_MODEL](IMPLEMENTED_CONTENT_MODEL.md). Прежние public family pages, ProductGroup и проверки числа страниц не являются текущими требованиями.
+
 Работай **в текущей созданной ветке**. Не создавай новую ветку без необходимости.
 
 # Цель

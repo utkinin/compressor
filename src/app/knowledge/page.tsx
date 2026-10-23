@@ -1,15 +1,20 @@
-import Link from "next/link";
 import { contentRepository } from "@/content";
-import { pageMetadata } from "@/lib/seo";
-import { Breadcrumbs, EntityCard, PageIntro } from "@/components/content-page";
+import { absoluteUrl, pageMetadata } from "@/lib/seo";
+import { Breadcrumbs, PageIntro } from "@/components/content-page";
+import { KnowledgeHub } from "@/components/knowledge-hub";
+import { JsonLd } from "@/components/json-ld";
 
-export const metadata = pageMetadata("Инженерная база знаний", "Практические ответы о давлении, расходе, Oil-Free компрессии, режимах, охлаждении и подборе газового компрессора.", "/knowledge/");
+const title = "База знаний";
+const summary = "Практические материалы о компрессорах, технологических газах и подборе оборудования.";
+
+export const metadata = pageMetadata(title, summary, "/knowledge/");
 
 export default async function KnowledgePage() {
   const { articles } = await contentRepository.getSnapshot();
   return <>
     <Breadcrumbs items={[{ label: "База знаний", href: "/knowledge/" }]} />
-    <PageIntro eyebrow="Knowledge / инженерные ответы" title="Разобраться до отправки запроса." summary="Рабочие объяснения величин и решений, которые влияют на выбор компрессора. Не новости компании и не обещания по каталожной модели — материал для постановки инженерной задачи." action={<Link className="button-secondary" href="/engineering/">Маршрут инженерного подбора →</Link>} />
-    <section className="container section"><div className="content-grid">{articles.map((article) => <EntityCard key={article.id} title={article.title} summary={article.summary} href={`/knowledge/${article.slug}/`} />)}</div></section>
+    <PageIntro eyebrow="Экспертный центр" title={title} summary={summary} />
+    <KnowledgeHub articles={articles.map(({ id, slug, title, summary, gasIds, equipmentIds, topic }) => ({ id, slug, title, summary, gasIds, ...(equipmentIds ? { equipmentIds } : {}), ...(topic ? { topic } : {}) }))} />
+    <JsonLd data={{ "@context": "https://schema.org", "@type": "CollectionPage", name: title, description: summary, url: absoluteUrl("/knowledge/"), inLanguage: "ru-RU", mainEntity: { "@type": "ItemList", numberOfItems: articles.length, itemListElement: articles.map((article, index) => ({ "@type": "ListItem", position: index + 1, item: { "@type": "Article", headline: article.title, url: absoluteUrl(`/knowledge/${article.slug}/`) } })) } }} />
   </>;
 }

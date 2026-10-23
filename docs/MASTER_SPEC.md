@@ -1,5 +1,7 @@
 # Lanfor Gas Systems — Master Specification v1.0
 
+Исторический документ / отчёт предыдущего прохода. Текущая публичная таксономия оборудования, граница private source data и правила публикации определяются [CATALOG_IMPLEMENTATION](CATALOG_IMPLEMENTATION.md), [EQUIPMENT_MIGRATION](EQUIPMENT_MIGRATION.md) и [IMPLEMENTED_CONTENT_MODEL](IMPLEMENTED_CONTENT_MODEL.md). Прежние public family pages, ProductGroup и проверки числа страниц не являются текущими требованиями.
+
 ## 1. Purpose
 Build a separate B2B website for process-gas compression and clean-process engineering. The site is not a copy of sf6rus.ru and not a generic compressor catalogue. It converts an engineering problem into a structured RFQ and makes verified technical information easy for engineers, procurement teams, specifiers, search engines and AI search systems to retrieve.
 

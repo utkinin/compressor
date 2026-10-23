@@ -8,7 +8,7 @@ export default async function IndustriesPage() {
   const { industries } = await contentRepository.getSnapshot();
   return <>
     <Breadcrumbs items={[{ label: "Применения", href: "/industries/" }]} />
-    <PageIntro eyebrow="Сначала требования процесса" title="Подбираем компрессор под требования процесса" summary="Одинаковый газ может потребовать разных схем в испытательном стенде, на производственной линии и в оборудовании изготовителя. Ниже — возможные постановки инженерных задач, а не утверждение об уже выполненных поставках." />
+    <PageIntro eyebrow="Применения" title="Компрессоры для производственных и испытательных процессов" summary="Газоснабжение станка, испытательный стенд, возврат газа и производственная линия предъявляют разные требования к давлению, расходу и режиму работы. Выберите применение, чтобы уточнить исходные данные и состав оборудования." />
     <section className="container section"><div className="content-grid">{industries.map((industry) => <EntityCard key={industry.id} title={industry.title} summary={industry.summary} href={`/industries/${industry.slug}/`} />)}</div></section>
     <section className="container section"><RfqPanel sourcePage="/industries/" title="Расскажите о своём процессе" /></section>
   </>;

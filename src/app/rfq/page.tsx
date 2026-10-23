@@ -1,7 +1,7 @@
 import { RfqForm } from "@/components/rfq-form";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { getRfqConfiguration } from "@/lib/rfq/config";
-import { GAS_OPTIONS } from "@/lib/rfq/schema";
+import { GAS_OPTIONS, initialRfqSelection, sanitizeRfqContext } from "@/lib/rfq/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
@@ -15,11 +15,9 @@ export const dynamic = "force-dynamic";
 export default async function RfqPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = await searchParams;
   const initialGas = GAS_OPTIONS.find((option) => option.value === query.gas)?.value;
-  const initialRequest: { solution?: string; equipment?: string; document?: string } = {};
-  for (const key of ["solution", "equipment", "document"] as const) {
-    const value = query[key];
-    if (typeof value === "string" && /^[a-z0-9-]{1,150}$/.test(value)) initialRequest[key] = value;
-  }
+  const initialRequest = sanitizeRfqContext(query);
+  const selection = initialRfqSelection(initialGas, initialRequest.equipment);
+  const formKey = [selection.gas, initialRequest.solution, initialRequest.equipment, initialRequest.document].join(":");
   const configuration = getRfqConfiguration();
   const mode = configuration.staging ? "staging" : configuration.enabled ? "live" : "disabled";
   return (
@@ -30,7 +28,7 @@ export default async function RfqPage({ searchParams }: { searchParams: Promise<
         <h1>Подберём компрессор для вашей задачи</h1>
         <p>Расскажите о газе, источнике и потребителе. Укажите известные давления, расход и режим работы — инженер уточнит подходящий компрессор или бустер и необходимую комплектацию.</p>
       </div>
-      <div className="container rfq-page-body"><RfqForm mode={mode} initialGas={initialGas} initialRequest={initialRequest} /></div>
+      <div className="container rfq-page-body"><RfqForm key={formKey} mode={mode} initialGas={selection.gas} initialRequest={initialRequest} /></div>
     </>
   );
 }

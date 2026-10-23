@@ -7,7 +7,11 @@
   },
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
+    "prebuild": "npm run catalog:check",
     "build": "next build --webpack",
+    "postbuild": "npm run catalog:audit && python3 scripts/audit-public-copy.py .next/server/app",
+    "catalog:check": "tsx scripts/check-public-catalog.ts",
+    "catalog:audit": "tsx scripts/check-public-catalog.ts --output .next",
     "start": "next start --hostname 0.0.0.0",
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint . --max-warnings=0",

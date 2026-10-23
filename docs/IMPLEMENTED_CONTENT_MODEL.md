@@ -1,13 +1,59 @@
-# Типизированный контент и RFQ
+# Типизированный контент, каталог и RFQ
 
-`src/content/types.ts` задаёт normalized entity types. Все сущности содержат id, slug, title, summary, editorialState. Состояния: draft → review → approved → published. Все написанные при этой задаче материалы остаются review.
+Актуальное разделение каталога: [CATALOG_IMPLEMENTATION](CATALOG_IMPLEMENTATION.md). Полная миграция десяти прежних записей: [EQUIPMENT_MIGRATION](EQUIPMENT_MIGRATION.md). Исторический family catalogue не является текущим source of truth.
 
-Экспорты `src/content/index.ts`: gases, solutions, equipment, articles, industries, cases, documents, contentRepository. Связи заданы ID, а не хэштегами. Репозиторий отделяет content storage от шаблонов; новый CMS-адаптер должен вернуть тот же typed snapshot.
+`src/content/types.ts` задаёт normalized entity types. Все публичные сущности содержат id, slug, title, summary, editorialState. Состояния: draft → review → approved → published. Новые материалы остаются review до согласования человеком.
 
-Граф: Gas → Task/Solution → WorkingPoint/RFQ → EquipmentFamily → Industry → Document → Case → KnowledgeArticle. Task — intent solution entity, WorkingPoint — валидируемый объект RFQ. Страницы и related links используют явные связи. Контент не генерирует комбинации город×давление×газ.
+## Три разных слоя
 
-Document.access: public — реальный файл; request — запрос доступности/подготовки, без fake download; internal — не включается в hub и sitemap. Публично доступен собственный текстовый опросный лист. Наличие request entity не означает, что CAD/сертификат уже выдан производителем.
+| Слой | Назначение | Публичность |
+| --- | --- | --- |
+| Equipment | Что покупает заказчик: тип оборудования и назначение | Шесть canonical equipment directions с описательными названиями |
+| Solution | Полная технологическая задача: источник, потребление, подготовка, накопление, управление | Отдельные Solutions intents; не дублируются как оборудование |
+| Source model / capability | Инженерная база для проверки конструкции и исполнения | Только `src/content/internal/`; не public snapshot и не UI |
 
-RFQ schema находится в `src/lib/rfq/schema.ts`: gas, inlet/outlet {value,unit,reference?}, flow {value,unit,reference?}, duty/dutyDetails, details по газу, contact, consent, attribution и requestContext. bar(g)/bar(a) различаются; MPa требует pressure reference. Nm3/h, m3/h и l/min требуют условий приведения/измерения. kg/h хранится без неявного пересчёта в объём. Нормализация давления для предварительного сравнения использует 1.01325 bar атмосферного давления; локальное значение уточняет инженер.
+`Equipment.kind = "equipment-direction"`. Запись хранит gas/rfqGas, applications, inputs, approach, configurations, options, solutionIds, articleIds, verifiedCapabilities и схему. Служебные technology/scope/checks/source/properties сохраняют совместимость с существующим типизированным слоем; сами по себе они не создают техническую гарантию или публичный Product.
 
-Сервер добавляет RFQ id, receivedAt, consentRecordedAt, consentVersion. Idempotency key не равен ID CRM; стабильный ID передаётся получателю для дедупликации. Ответ раскрывает только идентификатор и состояние доставки, без контактных данных.
+`verifiedCapabilities` не заполняется из source envelopes автоматически. `publicProperties()` требует совпадающие статусы, реальный HTTPS locator без credentials и страницу/раздел; подлинность и применимость требуют инженерной проверки. При отсутствии evidence страница объясняет подбор и параметры, а не показывает таблицу фиктивных диапазонов.
+
+Публичные экспорты `src/content/index.ts`: gases, solutions, equipment, articles, industries, cases, documents, news, publicNews и contentRepository. Source families не входят в `ContentSnapshot` и не экспортируются через публичный barrel. Репозиторий отделяет storage от шаблонов; CMS-адаптер должен сохранять эту границу.
+
+Граф: Gas ↔ EquipmentDirection ↔ Solution ↔ Industry ↔ Document ↔ Case ↔ KnowledgeArticle; RFQ переносит публичный контекст. За EquipmentDirection внутри может стоять несколько source models, а одна source model может быть кандидатом для нескольких направлений. Такая many-to-many связь не является утверждением применимости, пока остаётся draft.
+
+Private registry находится в `src/content/internal/source-model-registry.ts`, исходные draft-поля — в `manufacturer-seed.ts`, миграция — в `equipment-migration.ts`. Построенный из registry denylist используется инструментами проверки сборки. Public templates и client islands не импортируют private registry.
+
+## Публичные intents
+
+Каталог содержит nitrogen-compressors, nitrogen-boosters, helium-compressors, co2-compressors, sf6-compressors и process-gas-compressors. Общие варианты «отдельный компрессор / агрегат / исполнение с опциями / система на общей раме» раскрываются внутри, а не превращаются автоматически в товары.
+
+«Система подачи азота для лазерной резки» — `/solutions/nitrogen-for-laser-cutting/`. Equipment связывается с этим intent, но не создаёт вторую страницу с тем же процессным текстом. Knowledge сохраняет информационный intent, отдельную архитектуру и существующие canonical адреса.
+
+GasId по-прежнему описывает шесть веток инженерного опроса. Публичное оборудование для SF₆ использует индивидуальный запрос через `mixtures` с явно заданным составом; это не создание скрытого допуска к газу или новой подтверждённой модели.
+
+## Structured data и маршруты
+
+Equipment directions используют CollectionPage/ItemList и breadcrumbs по видимому содержимому. Product/ProductGroup не создаются для категорий или source-серий. Старые source-family URL исключены из sitemap, related content и генерации страниц; возвращают 404. Пять прежних общих equipment URL также возвращают 404 без aliases: они не являются историческими адресами основного production сайта.
+
+В `documents` остался только реальный опросный лист. Восемь прежних записей потенциальных файлов удалены, включая запись исходного каталога: их URL возвращают 404, служебная история остаётся только во внутренней документации. Отдельный `/documents/` не создаёт пустую библиотеку. Публичная страница опросного листа позволяет подготовить данные запроса; TXT-опросник остаётся реальным файлом. Возможная документация выбранного исполнения перечисляется компактно на странице оборудования и запрашивается через RFQ, без отдельных страниц-заглушек.
+
+## Редакционная архитектура
+
+Навигация: «Оборудование», «Решения», «Технологические газы», «База знаний», «О компании», «Контакты». Отдельная CTA — «Подобрать компрессор». Пункта «Документы» нет до появления реальной библиотеки, пункта «Новости» — до накопления достаточного числа подтверждённых событий.
+
+Первый кластер Базы знаний содержит шесть самостоятельных материалов: исходные данные для подбора; подбор под конкретную задачу; состав комплектной системы; срок службы компрессора SF₆; подбор бустера азота; газовые смеси. Существующие материалы проходят проверку overlap и решение CREATE / UPDATE / MERGE / REJECT. Следующие темы сохраняются как внутренний backlog, а не публичные пустые страницы. Исследовательские факты и claims проверяются перед самостоятельной статьёй Lanfor; буквальные переводы не публикуются.
+
+## News
+
+`src/content/news-types.ts` определяет `News extends Entity`: реальное событие Lanfor, тип события, даты события/публикации/обновления, проверка источника, секции статьи и связи с Equipment/Solutions/Gas. `src/content/news.ts` содержит пустую типизированную коллекцию и `publicNews()`.
+
+Публикационный фильтр требует `kind: lanfor-event`, организацию Lanfor, подтверждение, редакционное одобрение, согласовавшего человека, HTTPS source с конкретным locator, корректные даты и непустое содержание. Будущая дата публикации не становится публичной раньше времени. Внешняя техническая новость используется для исследования статьи, а не как событие Lanfor.
+
+Шаблон `/news/[slug]/` использует только `publicNews()`, выводит видимый текст, реальные связанные страницы и NewsArticle JSON-LD. Сейчас статические параметры пусты; неизвестный URL возвращает 404. `NewsSection` внутри About возвращает null при пустой коллекции, поэтому не создаёт заглушку. Служебные сведения о подтверждении не выводятся в пользовательский текст.
+
+## RFQ
+
+`src/lib/rfq/schema.ts`: gas, inlet/outlet {value,unit,reference?}, flow {value,unit,reference?}, duty/dutyDetails, details по газу, contact, consent, attribution и requestContext. bar(g)/bar(a) различаются; MPa требует pressure reference. Nm3/h, m3/h и l/min требуют условий; kg/h не пересчитывается неявно в объём. Предварительное сравнение давления использует явно указанную стандартную атмосферу; фактическое давление площадки уточняет инженер.
+
+Ввод: газ, P₁, P₂, Q, режим; затем дополнительные условия. Вывод: «Предварительный вариант оборудования», понятный тип и назначение, исходные параметры, исполнение, требующее расчёта, и статус «Требуется инженерное подтверждение». Проверенного автоматического выбора конкретной source model нет, поэтому она не показывается и не обещается.
+
+Сервер добавляет id, receivedAt, consentRecordedAt и consentVersion. Idempotency key не равен ID CRM; стабильный ID нужен получателю для дедупликации. Ответ раскрывает только идентификатор и delivery state без контактов. На GitHub Pages RFQ остаётся демонстрацией без отправки и хранения контактных данных.

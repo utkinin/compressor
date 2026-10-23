@@ -1,8 +1,9 @@
+import { publicNews } from "../src/content/news";
 import { writeFile } from "node:fs/promises";
-import { articles, cases, documents, equipment, gases, industries, solutions, productFamilies } from "../src/content/index";
+import { articles, cases, documents, equipment, gases, industries, solutions } from "../src/content/index";
 
 const rows: string[][] = [["entity", "path", "intent", "gas_ids", "equipment_ids", "editorial_state"]];
-for (const [group, entities] of Object.entries({ gases, solutions, equipment: [...equipment, ...productFamilies], industries, knowledge: articles, cases, documents })) {
+for (const [group, entities] of Object.entries({ gases, solutions, equipment, industries, knowledge: articles, cases, documents, news: publicNews() })) {
   for (const entity of entities) {
     if ("access" in entity && entity.access === "internal") continue;
     rows.push([
@@ -10,7 +11,7 @@ for (const [group, entities] of Object.entries({ gases, solutions, equipment: [.
       `/${group}/${entity.slug}/`,
       "intent" in entity ? entity.intent : entity.title,
       "gasIds" in entity ? entity.gasIds.join("|") : group === "gases" ? entity.id : "",
-      "equipmentIds" in entity ? entity.equipmentIds.join("|") : group === "equipment" ? entity.id : "",
+      "equipmentIds" in entity ? entity.equipmentIds?.join("|") ?? "" : group === "equipment" ? entity.id : "",
       entity.editorialState,
     ]);
   }

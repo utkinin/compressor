@@ -114,12 +114,12 @@ function FlowDiagram({ variant }: { variant: DiagramKind }) {
     <Label x={202} y={426} muted>Габарит · сервисный доступ · логика защит</Label>
   </>;
   const data = variant === "nitrogen"
-    ? [{ title: "Генератор", detail: "PSA / membrane", symbol: "N₂" }, { title: "Booster", detail: "по параметрам газа", symbol: "P₁ → P₂" }, { title: "Ресивер", detail: "пиковый расход", symbol: "БУФЕР" }, { title: "Процесс", detail: "параметры процесса", symbol: "Q / P₂" }]
+    ? [{ title: "Генератор", detail: "PSA / мембрана", symbol: "N₂" }, { title: "Бустер", detail: "по параметрам газа", symbol: "P₁ → P₂" }, { title: "Ресивер", detail: "пиковый расход", symbol: "БУФЕР" }, { title: "Процесс", detail: "параметры процесса", symbol: "Q / P₂" }]
     : variant === "helium"
-      ? [{ title: "Сбор газа", detail: "возврат из процесса", symbol: "He / RECOVERY" }, { title: "Подготовка", detail: "состав / загрязнения", symbol: "КОНТРОЛЬ" }, { title: "Компрессия", detail: "утечки / охлаждение", symbol: "СЖАТИЕ" }, { title: "Хранение", detail: "повторная подача", symbol: "БУФЕР" }]
+      ? [{ title: "Сбор газа", detail: "возврат из процесса", symbol: "He / ВОЗВРАТ" }, { title: "Подготовка", detail: "состав / загрязнения", symbol: "КОНТРОЛЬ" }, { title: "Компрессия", detail: "утечки / охлаждение", symbol: "СЖАТИЕ" }, { title: "Хранение", detail: "повторная подача", symbol: "БУФЕР" }]
       : variant === "hydrogen"
         ? [{ title: "Источник H₂", detail: "состав / чистота", symbol: "H₂ / P₁" }, { title: "Компрессия", detail: "материалы / утечки", symbol: "СЖАТИЕ" }, { title: "Охлаждение", detail: "тепловой режим", symbol: "T / P" }, { title: "Процесс", detail: "согласованный режим", symbol: "P₂ / Q" }]
-        : [{ title: "Источник CO₂", detail: "состав / диапазон", symbol: "CO₂ / P₁ / T₁" }, { title: "Проверка фазы", detail: "газ / жидкость / ?", symbol: "PHASE CHECK" }, { title: "Компрессия", detail: "расчёт ступеней", symbol: "СЖАТИЕ" }, { title: "Охлаждение", detail: "контроль фазности", symbol: "P₂ / T₂" }];
+        : [{ title: "Источник CO₂", detail: "состав / диапазон", symbol: "CO₂ / P₁ / T₁" }, { title: "Проверка фазы", detail: "газ / жидкость / ?", symbol: "ФАЗА" }, { title: "Компрессия", detail: "расчёт ступеней", symbol: "СЖАТИЕ" }, { title: "Охлаждение", detail: "контроль фазности", symbol: "P₂ / T₂" }];
   return <>
     {data.map((box, i) => <g key={box.title}><FlowBox x={44 + i * 178} y={186} width={141} {...box} />{i < 3 && <Arrow x={190 + i * 178} y={237} width={27} />}</g>)}
     <Gauge x={218} y={139} /><Pipe d="M218 173 V237" />
@@ -132,7 +132,7 @@ export function TechnicalDiagram({ kind = "hero", compact = false, title }: { ki
   const variant: DiagramKind = Object.hasOwn(descriptions, kind) ? kind as DiagramKind : "hero";
   const isSkid = ["hero", "small", "medium", "large"].includes(variant);
   return <figure className={`technical-figure${compact ? " technical-figure-compact" : ""}`}>
-    <div className="diagram-heading"><span>LANFOR / ENGINEERING</span><span>{variant === "hero" ? "01 — PROCESS" : "SCHEMATIC"}</span></div>
+    <div className="diagram-heading"><span>LANFOR / ГАЗОВЫЕ СИСТЕМЫ</span><span>{variant === "hero" ? "ПРИМЕР КОМПОНОВКИ" : "ПРИНЦИПИАЛЬНАЯ СХЕМА"}</span></div>
     <svg viewBox="0 0 760 510" role="img" aria-label={title ?? diagramLabels[variant]} xmlns="http://www.w3.org/2000/svg">
       <title>{title ?? diagramLabels[variant]}</title><desc>{descriptions[variant]}</desc>
       {[80, 160, 240, 320, 400, 480, 560, 640, 720].map((x) => <path key={`v${x}`} d={`M${x} 24 V488`} stroke="#2e4436" strokeWidth=".6" />)}

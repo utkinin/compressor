@@ -50,49 +50,36 @@ export interface Solution extends Entity {
 }
 
 export interface Equipment extends Entity {
+  kind: "equipment-direction";
+  gas: GasId | "sf6";
   technology: string;
   scope: string[];
   checks: string[];
   source: Source;
   properties: TechnicalProperty[];
+  applications: string[];
+  inputs: string[];
+  approach: string[];
+  configurations: string[];
+  options: string[];
+  solutionIds: string[];
+  articleIds: string[];
+  verifiedCapabilities: TechnicalProperty[];
+  rfqGas: GasId;
   /** Navigation associations are engineering topics, not an approval of gas compatibility. */
   gasIds: GasId[];
   diagram: string;
 }
 
-/** Manufacturer family identity from the supplied seed, separate from verified gas-specific performance. */
-export interface ProductFamily extends Entity {
-  /** Optional approved public brand; private supplier identity stays in the internal seed. */
-  brand?: string;
-  categoryId: "oil-free-reciprocating";
-  source: Source;
-  sourceNote: string;
-  verificationStatus: "draft";
-  technology: string;
-  checks: string[];
-  technicalRows: { label: string; value: string; status: EvidenceStatus }[];
-  diagram: string;
-}
-
-/** A family envelope cannot stand in for this gas/configuration-specific relation. */
-export interface ProductGasSpec {
-  id: string;
-  productFamilyId: string;
-  gasId: GasId;
-  configuration: string;
-  inlet: { min: number; max: number; unit: "bar" | "MPa"; reference: "gauge" | "absolute" };
-  outlet: { min: number; max: number; unit: "bar" | "MPa"; reference: "gauge" | "absolute" };
-  flow: { min: number; max: number; unit: "Nm3/h" | "m3/h" | "l/min" | "kg/h"; reference: string };
-  inletTemperature: string;
-  duty: string;
-  source: Source;
-  status: EvidenceStatus;
-}
+export type KnowledgeTopic = "selection" | "gas-properties" | "configuration" | "operation";
 
 export interface KnowledgeArticle extends Entity {
   sections: { title: string; body: string }[];
   gasIds: GasId[];
   solutionIds: string[];
+  equipmentIds?: string[];
+  relatedArticleIds?: string[];
+  topic?: KnowledgeTopic;
   updated: string;
 }
 
@@ -141,5 +128,3 @@ export function publicProperties(properties: TechnicalProperty[]): TechnicalProp
     }
   });
 }
-
-export const FAMILY_ENVELOPE_DISCLAIMER = "Каталожный диапазон семейства не подтверждает характеристики в конкретных условиях. Компрессор подбирается с учётом газа, давления на входе, требуемого давления, расхода, температуры и режима работы.";

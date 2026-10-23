@@ -4,6 +4,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { validateBasePath } from "../src/lib/preview";
+import { checkPublicCatalogOutput, checkPublicCatalogSource } from "./check-public-catalog";
+import { publicNews } from "../src/content/news";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const localRoot = path.join(repositoryRoot, ".local");
@@ -103,6 +105,7 @@ function buildEnvironment(basePath: string, origin: string): NodeJS.ProcessEnv {
 }
 
 async function buildPreview() {
+  await checkPublicCatalogSource();
   const repository = process.env.GITHUB_REPOSITORY || "utkinin/compressor";
   if (!/^[A-Za-z0-9-]+\/[A-Za-z0-9_.-]+$/.test(repository)) throw new Error("Invalid GITHUB_REPOSITORY");
   const [owner, name] = repository.split("/");
@@ -133,6 +136,10 @@ async function buildPreview() {
   }
   await symlink(path.join(repositoryRoot, "node_modules"), path.join(buildRoot, "node_modules"), "dir");
   await rm(path.join(buildRoot, "src", "app", "api"), { recursive: true, force: true });
+  // Static export requires a concrete path for every dynamic route. With no
+  // approved events, omit its template from the isolated export rather than
+  // inventing a news page. The server template stays in the real checkout.
+  if (!publicNews().length) await rm(path.join(buildRoot, "src", "app", "news"), { recursive: true, force: true });
 
   await writeFile(path.join(buildRoot, "src", "app", "rfq", "page.tsx"), `import { RfqPreview } from "@/components/rfq-preview";
 import { pageMetadata } from "@/lib/seo";
@@ -170,16 +177,18 @@ export default async function PreviewLegalRoute({ params }: { params: Promise<{ 
   }
   console.log(`Building browser-only preview for ${origin.origin}${basePath}/`);
   await runNextBuild(buildEnvironment(basePath, origin.origin));
+  await checkPublicCatalogOutput(path.join(buildRoot, ".next"));
 
   const output = path.join(buildRoot, "out");
   const home = await readFile(path.join(output, "index.html"), "utf8");
   if (!home.includes(`${basePath}/_next/`) || !home.includes('content="noindex, nofollow"')) throw new Error("Preview asset prefix or noindex guard is missing");
-  for (const route of ["rfq", "solutions", "gases", "equipment", "contacts", "legal/privacy", "legal/consent", "legal/cookies"]) await access(path.join(output, route, "index.html"), constants.R_OK);
+  for (const route of ["rfq", "solutions", "gases", "equipment", "documents/process-gas-questionnaire", "contacts", "legal/privacy", "legal/consent", "legal/cookies"]) await access(path.join(output, route, "index.html"), constants.R_OK);
   await access(path.join(output, "404.html"), constants.R_OK);
   if (await exists(path.join(output, "api"))) throw new Error("Static preview unexpectedly contains API routes");
   await prepareOwnedDirectory(exportRoot);
   await cp(output, exportRoot, { recursive: true });
   await writeFile(path.join(exportRoot, ".nojekyll"), "");
+  await checkPublicCatalogOutput(exportRoot);
   console.log(`Static preview ready: ${path.relative(repositoryRoot, exportRoot)} (no API, CRM, analytics or environment files)`);
   } finally {
     await releaseLock();

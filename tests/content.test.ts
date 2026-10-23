@@ -3,16 +3,18 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import {
   articles, cases, contentRepository, documents, equipment, gases, industries,
-  productFamilies, productGasSpecs, publicDocuments, publicProperties, relatedByIds, solutions,
+  publicDocuments, publicProperties, relatedByIds, solutions,
   type Entity, type TechnicalProperty,
 } from "../src/content";
 import { productFamilies as manufacturerSeed } from "../src/content/internal/manufacturer-seed";
 import { MANUFACTURER_SEED_PROVENANCE } from "../src/content/internal/provenance";
+import { equipmentCapabilityLinks, sourceModels } from "../src/content/internal/source-model-registry";
+import { equipmentMigrationManifest } from "../src/content/internal/equipment-migration";
 
 describe("content evidence and editorial safety", () => {
   it("keeps generated staging material in review rather than automatically published", () => {
-    const all: Entity[] = [...gases, ...solutions, ...equipment, ...productFamilies, ...articles, ...industries, ...cases, ...documents];
-    expect(all.length).toBeGreaterThan(60);
+    const all: Entity[] = [...gases, ...solutions, ...equipment, ...articles, ...industries, ...cases, ...documents];
+    expect(all.length).toBeGreaterThanOrEqual(60);
     expect(all.every((entity) => entity.editorialState === "review")).toBe(true);
     expect(all.every((entity) => entity.title.length > 0 && entity.summary.length > 50)).toBe(true);
   });
@@ -41,12 +43,23 @@ describe("content evidence and editorial safety", () => {
     ]) expect(publicProperties([{ ...fixture, source }])).toEqual([]);
   });
 
-  it("does not fabricate manufacturer limits or N2-B verified SKU", () => {
-    expect(equipment.every((family) => family.source.status === "draft")).toBe(true);
-    expect(equipment.every((family) => publicProperties(family.properties).length === 0)).toBe(true);
-    const concept = equipment.flatMap((family) => family.properties).find((property) => property.label.includes("N2-B"));
-    expect(concept?.status).toBe("draft");
-    expect(equipment.some((family) => family.source.title.includes("не предоставлен"))).toBe(true);
+  it("publishes six equipment directions without unsupported performance claims", () => {
+    expect(equipment.map((item) => [item.id, item.title])).toEqual([
+      ["nitrogen-compressors", "Компрессоры для азота"],
+      ["nitrogen-boosters", "Бустеры азота высокого давления"],
+      ["helium-compressors", "Компрессоры для гелия"],
+      ["co2-compressors", "Компрессоры для CO₂"],
+      ["sf6-compressors", "Компрессоры для SF₆"],
+      ["process-gas-compressors", "Компрессоры для технологических газов"],
+    ]);
+    expect(equipment.every((item) => item.kind === "equipment-direction" && item.id === item.slug)).toBe(true);
+    expect(equipment.every((item) => item.source.status === "draft")).toBe(true);
+    expect(equipment.every((item) => item.properties.length === 0 && item.verifiedCapabilities.length === 0)).toBe(true);
+    expect(equipment.every((item) => publicProperties(item.verifiedCapabilities).length === 0)).toBe(true);
+    const sulfurDirection = equipment.find((item) => item.id === "sf6-compressors");
+    expect(sulfurDirection?.gas).toBe("sf6");
+    expect(sulfurDirection?.rfqGas).toBe("mixtures");
+    expect(sulfurDirection?.gasIds).toEqual([]);
   });
 
   it("keeps the sanitized manufacturer seed traceable without approving its draft values", () => {
@@ -55,25 +68,83 @@ describe("content evidence and editorial safety", () => {
     expect(manufacturerSeed).toHaveLength(5);
     expect(manufacturerSeed.every((family) => family.verificationStatus === "draft")).toBe(true);
     expect(manufacturerSeed.every((family) => family.gases.includes("SF6"))).toBe(true);
-    expect(manufacturerSeed.map((family) => [family.slug, family.flowNm3hMin, family.flowNm3hMax])).toEqual([
-      ["of2-of8-dp",1,8], ["of2-of8-dz",1,10], ["of8-of30-dp",8,30], ["of30-of500-dp",120,500], ["of60-of200-dp",30,120],
+    expect(manufacturerSeed.map((family) => [family.flowNm3hMin, family.flowNm3hMax])).toEqual([
+      [1,8], [1,10], [8,30], [120,500], [30,120],
     ]);
   });
 
-  it("publishes a cautious family identity projection without leaking unverified source envelopes or legacy gas", () => {
-    expect(productFamilies.map((family) => family.slug)).toEqual(manufacturerSeed.map((family) => family.slug));
-    expect(productFamilies.every((family) => family.source.status === "draft" && family.verificationStatus === "draft")).toBe(true);
-    expect(productFamilies.every((family) => family.sourceNote.includes("первичный документ не предоставлен"))).toBe(true);
-    expect(productFamilies.every((family) => family.brand === undefined)).toBe(true);
-    expect(productFamilies.every((family) => !family.source.url && !family.source.page)).toBe(true);
-    expect(productFamilies.every((family) => family.technicalRows.every((row) => row.status === "draft"))).toBe(true);
-    expect(JSON.stringify(productFamilies)).not.toMatch(/SF[₆6]|элегаз|inletPressureMpaMax|dischargePressureMpaMax|tightnessMbarLs|0\.01/);
-    expect(productGasSpecs).toHaveLength(0);
+  it("keeps source identities and complete draft envelopes private", async () => {
+    const snapshot = await contentRepository.getSnapshot();
+    expect(Object.keys(snapshot).sort()).toEqual(["articles", "cases", "documents", "equipment", "gases", "industries", "news", "solutions"]);
+    expect(sourceModels).toHaveLength(manufacturerSeed.length);
+    for (const seed of manufacturerSeed) {
+      const model = sourceModels.find((item) => item.sourceSlugs.includes(seed.slug));
+      expect(model).toBeDefined();
+      expect(model?.modelName).toBe(seed.name);
+      expect(model?.verificationStatus).toBe("draft");
+      expect(model?.source.status).toBe("draft");
+      expect(model?.source.primaryDocumentProvided).toBe(false);
+      expect(model?.capabilities).toEqual({
+        candidateGasCodes: seed.gases,
+        inletPressureMpaMax: seed.inletPressureMpaMax,
+        dischargePressureMpaMax: seed.dischargePressureMpaMax,
+        flowNm3hMin: seed.flowNm3hMin,
+        flowNm3hMax: seed.flowNm3hMax,
+        motorKwMin: seed.motorKwMin,
+        motorKwMax: seed.motorKwMax,
+        tightnessMbarLs: seed.tightnessMbarLs,
+        cooling: seed.cooling,
+        transmission: seed.transmission,
+      });
+    }
+    const publicText = JSON.stringify(snapshot).toLowerCase();
+    for (const model of sourceModels) {
+      for (const identity of [model.id, model.modelName, ...model.sourceSlugs, ...model.aliases]) {
+        expect(publicText).not.toContain(identity.toLowerCase());
+      }
+    }
     expect(MANUFACTURER_SEED_PROVENANCE.manufacturerPdfProvided).toBe(false);
     expect(MANUFACTURER_SEED_PROVENANCE.sourcePagesProvided).toBe(false);
   });
 
-  it("has exactly the intended public gases and no legacy public direction", () => {
+  it("uses many-to-many research links without asserting verified model selection", () => {
+    const publicIds = new Set(equipment.map((item) => item.id));
+    const sourceIds = new Set(sourceModels.map((item) => item.id));
+    expect(equipmentCapabilityLinks).toHaveLength(5);
+    expect(equipmentCapabilityLinks.every((link) => link.status === "draft" && link.selectionStatus === "requires-engineering-review")).toBe(true);
+    expect(equipmentCapabilityLinks.flatMap((link) => link.publicEquipmentIds).sort()).toEqual([...publicIds].sort());
+    for (const link of equipmentCapabilityLinks) {
+      expect(link.publicEquipmentIds.every((id) => publicIds.has(id))).toBe(true);
+      expect(link.sourceModelIds.every((id) => sourceIds.has(id))).toBe(true);
+      expect(link.rationale.length).toBeGreaterThan(50);
+    }
+    const nitrogenLink = equipmentCapabilityLinks.find((link) => link.publicEquipmentIds.includes("nitrogen-boosters"));
+    expect(nitrogenLink?.publicEquipmentIds).toContain("nitrogen-compressors");
+    expect(nitrogenLink?.sourceModelIds.length).toBeGreaterThan(1);
+    expect(equipmentCapabilityLinks.find((link) => link.publicEquipmentIds.includes("sf6-compressors"))?.sourceModelIds).toEqual([]);
+    expect(equipmentCapabilityLinks.find((link) => link.publicEquipmentIds.includes("process-gas-compressors"))?.sourceModelIds).toEqual([]);
+  });
+
+  it("accounts for all ten removed public entries without inventing replacement models", () => {
+    const publicPaths = new Set(equipment.map((item) => `/equipment/${item.slug}/`));
+    expect(equipmentMigrationManifest).toHaveLength(10);
+    expect(new Set(equipmentMigrationManifest.map((record) => record.currentSlug)).size).toBe(10);
+    expect(equipmentMigrationManifest.every((record) => record.previousRoute === "404" && !record.publicLanforModel && !record.verified)).toBe(true);
+    const merged = equipmentMigrationManifest.filter((record) => record.action === "MERGE");
+    const internal = equipmentMigrationManifest.filter((record) => record.action === "CONVERT TO INTERNAL");
+    expect(merged).toHaveLength(5);
+    expect(internal).toHaveLength(5);
+    for (const record of merged) {
+      expect(record.currentSourceModel).toBeNull();
+      expect(record.newPublicPaths.length).toBeGreaterThan(0);
+      expect(record.newPublicPaths.every((path) => publicPaths.has(path))).toBe(true);
+      expect(record.newPublicNames.length).toBe(record.newPublicPaths.length);
+    }
+    expect(internal.map((record) => record.currentSourceModel).sort()).toEqual(sourceModels.map((model) => model.id).sort());
+    expect(internal.every((record) => record.newPublicNames.length === 0 && record.newPublicPaths.length === 0)).toBe(true);
+  });
+
+  it("keeps the gas-pillar taxonomy separate from the SF₆ equipment direction", () => {
     expect(gases.map((gas) => gas.id)).toEqual(["n2","he","h2","o2","co2","mixtures"]);
     expect(JSON.stringify(gases)).not.toMatch(/SF[₆6]|элегаз/i);
   });
@@ -81,7 +152,7 @@ describe("content evidence and editorial safety", () => {
   it("distinguishes typical scenarios from implemented customer projects", () => {
     expect(cases.length).toBeGreaterThanOrEqual(3);
     expect(cases.every((scenario) => scenario.kind === "typical-engineering-scenario")).toBe(true);
-    expect(cases.every((scenario) => /Типовая инженерная задача/.test(scenario.summary))).toBe(true);
+    expect(cases.every((scenario) => /Пример расчётной задачи/.test(scenario.summary))).toBe(true);
   });
 });
 
@@ -105,6 +176,12 @@ describe("content graph and repository", () => {
     for (const gas of gases) {
       expect(gas.solutionIds.every((id) => identifiers.solutions.has(id))).toBe(true);
       expect(gas.equipmentIds.every((id) => identifiers.equipment.has(id))).toBe(true);
+    }
+    for (const item of equipment) {
+      expect(item.gasIds.every((id) => identifiers.gases.has(id))).toBe(true);
+      expect(identifiers.gases.has(item.rfqGas)).toBe(true);
+      expect(item.solutionIds.every((id) => identifiers.solutions.has(id))).toBe(true);
+      expect(item.articleIds.every((id) => identifiers.articles.has(id))).toBe(true);
     }
     for (const solution of solutions) {
       expect(solution.gasIds.every((id) => identifiers.gases.has(id))).toBe(true);
@@ -130,8 +207,13 @@ describe("content graph and repository", () => {
   });
 
   it("has substantive intent pages and a useful engineering article set", () => {
+    expect(equipment).toHaveLength(6);
+    expect(equipment.every((item) => item.applications.length >= 3 && item.inputs.length >= 5 && item.approach.length >= 3)).toBe(true);
+    expect(equipment.every((item) => item.configurations.length >= 3 && item.options.length >= 3)).toBe(true);
     expect(solutions).toHaveLength(14);
-    expect(articles).toHaveLength(16);
+    expect(solutions.find((item) => item.id === "nitrogen-for-laser-cutting")?.title).toBe("Система подачи азота для лазерной резки");
+    expect(equipment.some((item) => item.title === "Система подачи азота для лазерной резки")).toBe(false);
+    expect(articles).toHaveLength(19);
     expect(solutions.every((solution) => solution.approach.length >= 4 && solution.inputs.length >= 4)).toBe(true);
     expect(articles.every((article) => article.sections.length >= 3 && article.sections.every((section) => section.body.length > 180))).toBe(true);
     expect(gases.every((gas) => gas.faq.length >= 2 && gas.limitations.length >= 2)).toBe(true);
@@ -150,5 +232,7 @@ describe("content graph and repository", () => {
     expect(publicFiles[0]?.href).toBe("/documents/process-gas-questionnaire.txt");
     expect(documents.filter((document) => document.access === "request").every((document) => !document.href)).toBe(true);
     expect(publicDocuments().some((document) => document.access === "internal")).toBe(false);
+    expect(documents).toHaveLength(1);
+    expect(documents.every(document => document.type === "Questionnaire")).toBe(true);
   });
 });

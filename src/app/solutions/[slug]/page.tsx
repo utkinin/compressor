@@ -16,7 +16,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const target = legacyDestination("solutions", slug);
-  if (target) return { ...pageMetadata("Материал перенесён", "Канонический адрес инженерного решения Lanfor.", target), robots: { index: false, follow: true } };
+  if (target) return { ...pageMetadata("Материал перенесён", "Актуальная страница решения Lanfor.", target), robots: { index: false, follow: true } };
   const { solutions } = await contentRepository.getSnapshot();
   const solution = solutions.find((item) => item.slug === slug);
   return solution ? pageMetadata(solution.title, solution.summary, `/solutions/${solution.slug}/`) : {};
@@ -38,16 +38,16 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
     <PageIntro eyebrow="Подбор компрессора под задачу" title={solution.title} summary={solution.summary} action={<Link className="button" href={rfqHref}>Подобрать компрессор →</Link>} />
     <section className="container"><TechnicalDiagram kind={solution.diagram} title={`Схема решения: ${solution.title}`} /></section>
     <div className="container detail-layout"><article className="prose">
-      <ContentSection title="Инженерная задача"><p>{solution.intent}</p></ContentSection>
+      <ContentSection title="Задача"><p>{solution.intent}</p></ContentSection>
       <ContentSection title="Какие исходные данные нужны"><BulletList items={solution.inputs} /></ContentSection>
       <ContentSection title="Как выстраивается решение"><BulletList items={solution.approach} /></ContentSection>
       <ContentSection title="Что ограничивает выбор"><BulletList items={solution.constraints} /></ContentSection>
       <Procurement items={solution.supply} />
       <RelatedLinks title="Газы и их особенности" items={gases.filter((item) => solution.gasIds.includes(item.id)).map((item) => ({ title: item.title, href: `/gases/${item.slug}/` }))} />
-      <RelatedLinks title="Классы оборудования" items={equipment.filter((item) => solution.equipmentIds.includes(item.id)).map((item) => ({ title: item.title, href: `/equipment/${item.slug}/` }))} />
+      <RelatedLinks title="Оборудование" items={equipment.filter((item) => solution.equipmentIds.includes(item.id)).map((item) => ({ title: item.title, href: `/equipment/${item.slug}/` }))} />
       <RelatedLinks title="Материалы для подготовки запроса" items={articles.filter((item) => solution.articleIds.includes(item.id)).map((item) => ({ title: item.title, href: `/knowledge/${item.slug}/` }))} />
-      <RelatedLinks title="Типовые инженерные сценарии" items={cases.filter((item) => item.solutionIds.includes(solution.id)).map((item) => ({ title: item.title, href: `/cases/${item.slug}/` }))} />
-      <RelatedLinks title="Документы по конфигурации" items={documents.filter((item) => item.access !== "internal" && (item.equipmentIds.some((id) => solution.equipmentIds.includes(id)) || item.type === "Questionnaire")).map((item) => ({ title: item.title, href: `/documents/${item.slug}/` }))} />
+      <RelatedLinks title="Примеры расчётных задач" items={cases.filter((item) => item.solutionIds.includes(solution.id)).map((item) => ({ title: item.title, href: `/cases/${item.slug}/` }))} />
+      <RelatedLinks title="Опросный лист" items={documents.filter((item) => item.access === "public" && item.href && item.type === "Questionnaire").map((item) => ({ title: item.title, href: `/documents/${item.slug}/` }))} />
     </article><RfqPanel href={rfqHref} sourcePage={`/solutions/${solution.slug}/`} /></div>
   </>;
 }

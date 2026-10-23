@@ -1,5 +1,7 @@
 # Аудит и решения 2026-10-22
 
+Исторический документ / отчёт предыдущего прохода. Текущая публичная таксономия оборудования, граница private source data и правила публикации определяются [CATALOG_IMPLEMENTATION](CATALOG_IMPLEMENTATION.md), [EQUIPMENT_MIGRATION](EQUIPMENT_MIGRATION.md) и [IMPLEMENTED_CONTENT_MODEL](IMPLEMENTED_CONTENT_MODEL.md). Прежние public family pages, ProductGroup и проверки числа страниц не являются текущими требованиями.
+
 Исходное состояние: /workspace/compressor — пустой unborn checkout work, remote GitHub доступен, refs отсутствуют, fetch main сообщает couldn't find remote ref main. Пользователь после этого прямо разрешил создать всё необходимое и передал полное задание. Поэтому исходники созданы; это авторизованная реализация, а не изменение защищённых файлов во время первоначального onboarding.
 
 Стек: Next App Router/React, strict TypeScript, Zod, Vitest, Playwright. TypeScript 6 и ES2024 library нужны для актуальных Next declarations; skipLibCheck=false. React server components по умолчанию, client islands только для меню, RFQ, событий и browser storage. Внешние UI/animation библиотеки не нужны.

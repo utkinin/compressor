@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return <html lang="ru"><body>
     <a className="skip-link" href="#main">Перейти к содержимому</a>
-    <SiteHeader staging={!isIndexable} />
+    <SiteHeader preview={!isIndexable} />
     <main id="main">{children}</main>
     <SiteFooter />
     {!isStaticPreview && <><AnalyticsConsent /><AttributionCapture /></>}

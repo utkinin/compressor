@@ -1,5 +1,7 @@
 # Lanfor Gas Systems v1.1 — staging handoff
 
+Исторический документ / отчёт предыдущего прохода. Текущая публичная таксономия оборудования, граница private source data и правила публикации определяются [CATALOG_IMPLEMENTATION](CATALOG_IMPLEMENTATION.md), [EQUIPMENT_MIGRATION](EQUIPMENT_MIGRATION.md) и [IMPLEMENTED_CONTENT_MODEL](IMPLEMENTED_CONTENT_MODEL.md). Прежние public family pages, ProductGroup и проверки числа страниц не являются текущими требованиями.
+
 Последующий проход по всей рабочей версии репозитория: [REPOSITORY_CLEANUP](REPOSITORY_CLEANUP.md). Старые результаты приёмки ниже относятся к исходной передаче, а не к текущему повторному прогону.
 
 Актуальный последующий проход: [EDITORIAL_TECHNICAL_REPORT](EDITORIAL_TECHNICAL_REPORT.md). Он обновляет коммерческий язык, приоритет газов и правила публичной проекции; записи ниже описывают исходную передачу версии.

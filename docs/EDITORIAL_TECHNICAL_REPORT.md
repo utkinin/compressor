@@ -1,5 +1,7 @@
 # Редакционный и технический проход compressor / process gas
 
+Исторический документ / отчёт предыдущего прохода. Текущая публичная таксономия оборудования, граница private source data и правила публикации определяются [CATALOG_IMPLEMENTATION](CATALOG_IMPLEMENTATION.md), [EQUIPMENT_MIGRATION](EQUIPMENT_MIGRATION.md) и [IMPLEMENTED_CONTENT_MODEL](IMPLEMENTED_CONTENT_MODEL.md). Прежние public family pages, ProductGroup и проверки числа страниц не являются текущими требованиями.
+
 Полная последующая очистка исходников: [REPOSITORY_CLEANUP](REPOSITORY_CLEANUP.md). Прежние исключения для внутренних ключей, комментариев и архивов отменены.
 
 Изменения внесены в существующую ветку `work`. Next.js App Router, content repository, semantic graph, canonical URL, 16 статей Knowledge Hub, related content и RFQ attribution сохранены. Новых маршрутов, зависимостей или изменений storage/transport архитектуры нет.

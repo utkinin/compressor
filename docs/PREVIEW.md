@@ -1,5 +1,7 @@
 # Предпросмотр Lanfor на GitHub Pages
 
+Исторический документ / отчёт предыдущего прохода. Текущая публичная таксономия оборудования, граница private source data и правила публикации определяются [CATALOG_IMPLEMENTATION](CATALOG_IMPLEMENTATION.md), [EQUIPMENT_MIGRATION](EQUIPMENT_MIGRATION.md) и [IMPLEMENTED_CONTENT_MODEL](IMPLEMENTED_CONTENT_MODEL.md). Прежние public family pages, ProductGroup и проверки числа страниц не являются текущими требованиями.
+
 Последующая ревизия исходников и актуальная проверка публикации: [REPOSITORY_CLEANUP](REPOSITORY_CLEANUP.md). Записи прежних публикаций ниже являются историей проверки.
 
 Публичное превью: **https://utkinin.github.io/compressor/**. Публикация подтверждена 22 октября 2026 года: [run 39778491521](https://github.com/utkinin/compressor/actions/runs/39778491521) — completed/success, source commit `879bc623f78f276683a4274f5b629e10f0d8022e`. Внешний HTTPS, 100 HTML и 133 адреса страниц/ресурсов проверены без cache-busting query; все HTTP200. Это отдельный статический просмотр по принципу AFARA.

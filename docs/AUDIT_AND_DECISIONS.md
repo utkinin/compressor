@@ -1,5 +1,7 @@
 # Audit and decisions — 2026-10-22
 
+Исторический документ / отчёт предыдущего прохода. Текущая публичная таксономия оборудования, граница private source data и правила публикации определяются [CATALOG_IMPLEMENTATION](CATALOG_IMPLEMENTATION.md), [EQUIPMENT_MIGRATION](EQUIPMENT_MIGRATION.md) и [IMPLEMENTED_CONTENT_MODEL](IMPLEMENTED_CONTENT_MODEL.md). Прежние public family pages, ProductGroup и проверки числа страниц не являются текущими требованиями.
+
 ## What is already strong on sf6rus.ru
 - The N2-B page is problem-led: source → booster → buffer → consumer.
 - It explains that a booster solves pressure, not inadequate source capacity.

@@ -1,17 +1,52 @@
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { expect, test, type Page } from "@playwright/test";
+import { sourceModels } from "../../src/content/internal/source-model-registry";
+
+const equipmentRoutes = ["nitrogen-compressors", "nitrogen-boosters", "helium-compressors", "co2-compressors", "sf6-compressors", "process-gas-compressors"].map((slug) => `/equipment/${slug}/`);
+const sourceTerms = [...new Set(sourceModels.flatMap((model) => [model.modelName, ...model.aliases, ...model.sourceSlugs]))];
+const sourceRoutes = [...new Set(sourceModels.flatMap((model) => model.sourceSlugs))].map((slug) => `/equipment/${slug}/`);
+const retiredRoutes = [...sourceRoutes, ...["oil-free-reciprocating", "gas-boosters", "compressor-modules", "compressor-skids", "recovery-systems"].map((slug) => `/equipment/${slug}/`)];
+const removedDocumentRoutes = ["configuration-datasheet", "manufacturer-family-catalogue", "operating-manual", "pid-interface-drawing", "cad-layout", "step-model", "conformity-document-list", "working-point-calculation"].map((slug) => `/documents/${slug}/`);
+const featuredArticles = [
+  ["what-to-specify-for-gas-compressor", "Какие данные нужны для подбора компрессора"],
+  ["why-process-gas-compressors-need-task-specific-selection", "Почему компрессор для технологического газа подбирают под конкретную задачу"],
+  ["what-is-in-compressor-skid", "Из чего состоит комплектная компрессорная система"],
+  ["sf6-compressor-service-life", "От чего зависит срок службы компрессора SF₆"],
+  ["how-to-select-nitrogen-booster", "Как подобрать бустер азота по давлению и расходу"],
+  ["compressors-for-gas-mixtures", "Компрессоры для газовых смесей и сложных технологических газов"],
+] as const;
+const developerLanguage = ["staging", "repository", "source family", "source model", "family envelope", "manufacturer family catalogue", "supplier", "engineering-verified", "source-supported", "draft", "компримирование", "рабочая точка процесса", "согласуем весь узел", "кнопка не означает наличие файла", "knowledge / инженерные ответы", "разобраться до отправки запроса", "маршрут инженерного подбора", "рабочие объяснения величин"];
+const optionalProjectData = {
+  temperature: "Температура по данным заказчика", composition: "Состав и чистота по анализу газа", placement: "Закрытое помещение",
+  cooling: "Охлаждение согласуется с площадкой", power: "Питание по техническим условиям", automation: "Дистанционный контроль по требованиям проекта", other: "Условия обслуживания уточнить",
+};
+
+function expectCustomerLanguage(html: string, route: string) {
+  const metadata = [...html.matchAll(/<meta\b[^>]*>/gi)].filter(([tag]) => /\b(?:name|property)="(?:description|og:title|og:description|twitter:title|twitter:description)"/i.test(tag)).map(([tag]) => tag.match(/\bcontent="([^"]*)"/i)?.[1] || "").join(" ");
+  const accessibleCopy = [...html.matchAll(/\b(?:aria-label|aria-description|alt|title)="([^"]*)"/gi)].map((match) => match[1]).join(" ");
+  const text = html.replace(/<(?:script|style)\b[^>]*>[\s\S]*?<\/(?:script|style)>/gi, " ").replace(/<[^>]*>/g, " ");
+  const publicCopy = `${metadata} ${accessibleCopy} ${text}`.replace(/\s+/g, " ").toLowerCase();
+  for (const term of developerLanguage) expect(publicCopy, `${route}: internal development language`).not.toContain(term);
+}
+
+function expectPublicCatalogCopy(html: string, route: string) {
+  for (const term of sourceTerms) expect(html.toLowerCase(), `${route}: internal source term`).not.toContain(term.toLowerCase());
+  expect(html, route).not.toMatch(/"@type"\s*:\s*"(?:Product|ProductGroup|IndividualProduct|Offer)"/);
+}
 
 const coreRoutes = [
   "/",
   "/solutions/nitrogen-booster-after-generator/",
   "/gases/nitrogen/",
-  "/equipment/oil-free-reciprocating/",
+  "/equipment/",
+  ...equipmentRoutes,
   "/knowledge/how-to-select-nitrogen-booster/",
   "/knowledge/what-to-specify-for-gas-compressor/",
   "/industries/laser-cutting/",
   "/solutions/equipment-integration/",
   "/industries/equipment-manufacturers/",
   "/cases/compressor-integration/",
+  "/documents/process-gas-questionnaire/",
   "/rfq/",
 ];
 
@@ -88,8 +123,8 @@ for (const width of [360, 390, 768, 1440]) {
   });
 }
 
-test("published navigation has no broken internal links or empty HTML pages", async ({ request }) => {
-  const pending = ["/", "/solutions/", "/gases/", "/equipment/", "/industries/", "/engineering/", "/knowledge/", "/cases/", "/documents/", "/about/", "/contacts/", "/legal/"];
+test("published navigation has no broken internal links, development language or empty HTML pages", async ({ request }) => {
+  const pending = ["/", "/solutions/", "/gases/", "/equipment/", "/industries/", "/engineering/", "/knowledge/", "/cases/", "/documents/process-gas-questionnaire/", "/about/", "/contacts/", "/legal/"];
   const visited = new Set<string>();
   while (pending.length) {
     const route = pending.shift();
@@ -100,6 +135,7 @@ test("published navigation has no broken internal links or empty HTML pages", as
     expect(response.status(), route).toBe(200);
     if (!response.headers()["content-type"]?.includes("text/html")) continue;
     const html = await response.text();
+    expectCustomerLanguage(html, route);
     expect(html, `missing H1 at ${route}`).toMatch(/<h1[\s>]/);
     expect(html, `missing canonical at ${route}`).toMatch(/rel="canonical"/);
     expect(html, `placeholder at ${route}`).not.toMatch(/lorem ipsum|coming-soon/i);
@@ -118,7 +154,7 @@ test("published navigation has no broken internal links or empty HTML pages", as
   expect(visited.size).toBeGreaterThan(55);
 });
 
-test("search endpoints are valid and public gases exclude the legacy gas direction", async ({ page, request }) => {
+test("search endpoints expose public equipment intents and exclude internal source routes", async ({ page, request }) => {
   await page.goto("/gases/");
   await expect(page.locator("main")).not.toContainText(/SF[₆6]|элегаз/);
   const sitemap = await request.get("/sitemap.xml");
@@ -126,7 +162,8 @@ test("search endpoints are valid and public gases exclude the legacy gas directi
   const xml = await sitemap.text();
   expect(xml).toContain("<urlset");
   expect(xml).toContain("/rfq");
-  expect(xml).not.toMatch(/sf6|элегаз/i);
+  for (const route of equipmentRoutes) expect(xml).toContain(route.replace(/\/$/, ""));
+  for (const term of sourceTerms) expect(xml.toLowerCase()).not.toContain(term.toLowerCase());
   for (const match of xml.matchAll(/<loc>([^<]+)<\/loc>/g)) expect(() => new URL(match[1])).not.toThrow();
   const robots = await request.get("/robots.txt");
   expect(robots.status()).toBe(200);
@@ -136,20 +173,133 @@ test("search endpoints are valid and public gases exclude the legacy gas directi
   for (const route of ["/solutions/no-such-working-point/", "/gases/not-a-gas/", "/equipment/imaginary-model/"]) {
     expect((await request.get(route)).status(), route).toBe(404);
   }
+  for (const route of retiredRoutes) expect((await request.get(route)).status(), route).toBe(404);
+  for (const route of ["/documents/", ...removedDocumentRoutes, "/news/", "/news/no-such-event/"]) expect((await request.get(route)).status(), route).toBe(404);
 });
 
-test("equipment provenance and document access stay honest", async ({ page, request }) => {
-  await page.goto("/equipment/oil-free-reciprocating/");
-  await expect(page.locator("main")).toContainText("Исходный каталог производителя не предоставлен");
-  await expect(page.locator("main")).toContainText("draft — исходные технические данные ожидают проверки");
-  await expect(page.locator("main table.data-table")).toHaveCount(0);
-  await expect(page.locator("main")).not.toContainText("engineering-verified");
+test("equipment catalog describes applications without source identities, product schema or unverified limits", async ({ page, request }) => {
+  await page.goto("/equipment/");
+  await expect(page.locator("main h1")).toHaveText("Компрессоры и бустеры для технологических газов");
+  for (const route of equipmentRoutes) await expect(page.locator(`main a[href="${route.replace(/\/$/, "")}"], main a[href="${route}"]`).first()).toBeVisible();
+  for (const route of ["/equipment/", ...equipmentRoutes]) {
+    const response = await request.get(route);
+    expect(response.status(), route).toBe(200);
+    const html = await response.text();
+    expectPublicCatalogCopy(html, route);
+    expect(html, route).not.toMatch(/1[–-]500\+|150\+\s*(?:bar|бар)/);
+  }
+  await page.goto("/solutions/nitrogen-for-laser-cutting/");
+  await expect(page.locator("main h1")).toHaveText("Система подачи азота для лазерной резки");
+  await page.goto("/solutions/nitrogen-booster-after-generator/");
+  await expect(page.locator("main h1")).toHaveText("Дожатие азота после генератора");
+  await page.goto("/solutions/helium-compression/");
+  await expect(page.locator("main h1")).toHaveText("Сжатие гелия");
   const questionnaire = await request.get("/documents/process-gas-questionnaire.txt");
   expect(questionnaire.status()).toBe(200);
   expect(await questionnaire.text()).toMatch(/Газ|P₁|давлени/i);
-  await page.goto("/documents/");
-  await expect(page.locator('main a[href^="/rfq"]')).not.toHaveCount(0);
-  await expect(page.locator('main a[download][href$=".pdf"]')).toHaveCount(0);
+});
+
+test("customer navigation and the knowledge hub expose six substantial linked articles", async ({ page }) => {
+  await page.goto("/knowledge/");
+  const navigation = page.getByRole("navigation", { name: "Основная навигация" });
+  await expect(navigation.locator("a:not(.header-rfq)")).toHaveText(["Оборудование", "Решения", "Технологические газы", "База знаний", "О компании", "Контакты"]);
+  await expect(navigation.locator(".header-rfq")).toContainText("Подобрать компрессор");
+  await expect(page.locator("main h1")).toHaveText("База знаний");
+  await expect(page.locator(".page-hero .eyebrow")).toHaveText("Экспертный центр");
+  await expect(page.locator(".page-hero")).toContainText("Практические материалы о компрессорах, технологических газах и подборе оборудования.");
+  const featured = page.locator('[aria-labelledby="knowledge-start-title"]');
+  await expect(featured.locator("article")).toHaveCount(6);
+  await expect(page.getByTestId("knowledge-library").locator("article")).toHaveCount(19);
+  for (const [slug, title] of featuredArticles) await expect(featured.getByRole("link", { name: title, exact: true })).toHaveAttribute("href", new RegExp(`/knowledge/${slug}/?$`));
+  await page.getByLabel("Поиск по базе знаний", { exact: true }).fill("несуществующийпоисковыйзапрос");
+  await expect(page.getByRole("heading", { name: "По этому запросу статьи не найдены" })).toBeVisible();
+  await page.getByRole("button", { name: "Показать все материалы", exact: true }).click();
+  await expect(page.getByTestId("knowledge-library").locator("article")).toHaveCount(19);
+  for (const [slug, title] of featuredArticles) {
+    await page.goto(`/knowledge/${slug}/`);
+    await expect(page.locator("main h1")).toHaveText(title);
+    expect((await page.locator("article.prose").innerText()).length, slug).toBeGreaterThan(1800);
+    expect(await page.locator("article.prose h2").count(), slug).toBeGreaterThanOrEqual(5);
+    expect(await page.locator('main svg[role="img"], main img[alt], main table').count(), `${slug}: explanatory visual`).toBeGreaterThan(0);
+    for (const section of ["equipment", "solutions", "gases", "rfq"]) await expect(page.locator(`main a[href^="/${section}"]`).first(), `${slug}: ${section} link`).toBeVisible();
+    const related = page.locator(`main a[href^="/knowledge/"]:not([href="/knowledge/"]):not([href="/knowledge/${slug}/"]):not([href="/knowledge/${slug}"])`);
+    await expect(related.first(), `${slug}: related article`).toBeVisible();
+  }
+});
+
+test("questionnaire exports the supplied parameters without contacts and keeps sending explicit", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  const writes: string[] = [];
+  page.on("request", (request) => { if (!["GET", "HEAD"].includes(request.method())) writes.push(request.url()); });
+  await page.goto("/documents/process-gas-questionnaire/");
+  await expect(page.locator("main h1")).toHaveText("Опросный лист на подбор газового компрессора");
+  await fillNitrogen(page);
+  await page.getByRole("button", { name: "Продолжить" }).click();
+  await page.getByLabel("Давление на входе P₁", { exact: true }).fill("6");
+  await page.getByRole("button", { name: "Продолжить" }).click();
+  await page.getByLabel("Давление на выходе P₂", { exact: true }).fill("40");
+  await page.getByRole("button", { name: "Продолжить" }).click();
+  await page.getByLabel("Производительность Q", { exact: true }).fill("80");
+  await page.getByRole("button", { name: "Продолжить" }).click();
+  await page.getByRole("radio", { name: /Непрерывный 24\/7/ }).check();
+  await page.getByRole("button", { name: "Проверить параметры подбора" }).click();
+  for (const [field, value] of Object.entries(optionalProjectData)) await page.locator(`#project-${field}`).fill(value);
+  await page.getByLabel("Имя", { exact: true }).fill("QuestionnaireContactFixture");
+  const sheet = await page.locator("#questionnaire-text").inputValue();
+  expect(sheet).toMatch(/азот|N₂/i);
+  for (const value of ["6", "40", "80", ...Object.values(optionalProjectData)]) expect(sheet).toContain(value);
+  expect(sheet).not.toContain("QuestionnaireContactFixture");
+  await page.getByRole("button", { name: "Скопировать данные", exact: true }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(sheet);
+  const downloaded = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Скачать заполненный лист", exact: true }).click();
+  const download = await downloaded;
+  const downloadPath = await download.path();
+  expect(downloadPath).toBeTruthy();
+  expect(await readFile(downloadPath!, "utf8")).toBe(sheet);
+  await page.evaluate(() => { window.print = () => { document.documentElement.dataset.printRequests = "1"; }; });
+  await page.getByRole("button", { name: "Распечатать", exact: true }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-print-requests", "1");
+  await expect(page.getByRole("button", { name: "Сохранить тестовую заявку", exact: true })).toBeVisible();
+  await expect(page.locator('.rfq-consent input[type="checkbox"]')).not.toBeChecked();
+  expect(writes).toEqual([]);
+});
+
+test("equipment RFQ carries a descriptive nitrogen booster and only a preliminary engineering result", async ({ page }) => {
+  await page.goto("/equipment/nitrogen-boosters/");
+  await expect(page.locator("main h1")).toHaveText("Бустеры азота высокого давления");
+  await page.locator('main a[href*="equipment=nitrogen-boosters"]').first().click();
+  await expect(page).toHaveURL(/\/rfq\/?\?/);
+  await expect(page.locator('input[name="gas"][value="n2"]')).toBeChecked();
+  await fillNitrogen(page);
+  await page.getByRole("button", { name: "Продолжить" }).click();
+  await page.getByLabel("Давление на входе P₁", { exact: true }).fill("6");
+  await page.getByRole("button", { name: "Продолжить" }).click();
+  await page.getByLabel("Давление на выходе P₂", { exact: true }).fill("40");
+  await page.getByRole("button", { name: "Продолжить" }).click();
+  await page.getByLabel("Производительность Q", { exact: true }).fill("80");
+  await page.getByRole("button", { name: "Продолжить" }).click();
+  await page.getByRole("radio", { name: /Непрерывный 24\/7/ }).check();
+  await page.getByRole("button", { name: "Проверить параметры подбора" }).click();
+  await expect(page.getByRole("heading", { name: "Предварительный вариант оборудования", exact: true })).toBeVisible();
+  const preliminary = page.locator(".rfq-preliminary-data");
+  await expect(preliminary).toContainText("Бустер азота высокого давления");
+  await expect(preliminary).toContainText("Назначение");
+  await expect(preliminary).toContainText(/азот/i);
+  await expect(preliminary).toContainText("Уточняется после инженерного расчёта");
+  await expect(preliminary).toContainText("Требуется инженерное подтверждение");
+  await expect(page.locator(".rfq-summary")).toContainText("40 bar(g)");
+  await expect(page.locator(".rfq-summary")).toContainText("80 Nm³/h");
+  for (const term of sourceTerms) await expect(page.locator("main")).not.toContainText(term);
+});
+
+test("SF₆ equipment prefills an individual mixture enquiry without claiming a compatible model", async ({ page }) => {
+  await page.goto("/rfq/?equipment=sf6-compressors");
+  await expect(page.locator('input[name="gas"][value="mixtures"]')).toBeChecked();
+  await expect(page.locator("#gas-composition")).toHaveValue("SF₆; чистота и примеси требуют уточнения");
+  await page.locator("#gas-composition").fill("SF₆; состав и примеси по анализу заказчика");
+  await page.getByRole("button", { name: "Продолжить" }).click();
+  await expect(page.getByRole("heading", { name: "Какое давление на входе?" })).toBeVisible();
 });
 
 test("mobile navigation works by keyboard and closes after choosing a section", async ({ page }) => {
@@ -159,7 +309,7 @@ test("mobile navigation works by keyboard and closes after choosing a section", 
   await toggle.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("button", { name: "Закрыть" })).toHaveAttribute("aria-expanded", "true");
-  const gasLink = page.getByRole("navigation", { name: "Основная навигация" }).getByRole("link", { name: "Газы", exact: true });
+  const gasLink = page.getByRole("navigation", { name: "Основная навигация" }).getByRole("link", { name: "Технологические газы", exact: true });
   await gasLink.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/gases\/?$/);
@@ -205,9 +355,9 @@ test("qualified RFQ completes with explicit consent and honest local-staging rec
     if (request.url().endsWith("/api/rfq") && request.method() === "POST") submitted.push(request.postDataJSON() as unknown);
   });
   await page.goto("/gases/nitrogen/?utm_source=e2e");
-  await page.getByRole("link", { name: "Подобрать решение для N₂" }).click();
+  await page.getByRole("link", { name: /Подобрать компрессор для N₂/ }).click();
   await expect(page).toHaveURL(/\/rfq\/?\?/);
-  await expect(page.getByText("Staging · локальная проверка", { exact: true })).toBeVisible();
+  await expect(page.getByText("Тестовый режим · локальная проверка", { exact: true })).toBeVisible();
   await fillNitrogen(page);
   await page.getByRole("button", { name: "Продолжить" }).click();
   await page.getByLabel("Давление на входе P₁", { exact: true }).fill("6");
@@ -223,8 +373,8 @@ test("qualified RFQ completes with explicit consent and honest local-staging rec
   await expect(page.locator("#duty-details")).toHaveAttribute("aria-invalid", "true");
   await page.getByRole("radio", { name: /Непрерывный 24\/7/ }).check();
   await page.getByRole("button", { name: "Проверить параметры подбора" }).click();
-  await expect(page.getByRole("heading", { name: "Параметры для подбора компрессора" })).toBeVisible();
-  await expect(page.getByText("Предварительный класс решения", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Предварительный вариант оборудования", exact: true })).toBeVisible();
+  await expect(page.locator(".rfq-preliminary-data")).toContainText("Требуется инженерное подтверждение");
   await page.getByLabel("Имя", { exact: true }).fill("Тестовый инженер");
   await page.getByLabel("Компания", { exact: true }).fill("Тестовая организация E2E");
   await page.getByLabel("Рабочий email", { exact: true }).fill("engineer@example.test");
@@ -255,6 +405,7 @@ test("qualified RFQ completes with explicit consent and honest local-staging rec
 
 test("desktop and mobile staging screenshots", async ({ page }) => {
   await mkdir(".local/screenshots", { recursive: true });
+  await mkdir(".local/screenshots/catalog", { recursive: true });
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.goto("/");
   await page.screenshot({ path: ".local/screenshots/home-1440-fold.png" });
@@ -265,4 +416,11 @@ test("desktop and mobile staging screenshots", async ({ page }) => {
   await page.screenshot({ path: ".local/screenshots/home-390.png", fullPage: true });
   await page.goto("/rfq/");
   await page.screenshot({ path: ".local/screenshots/rfq-390.png", fullPage: true });
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 960 });
+    await page.goto("/equipment/");
+    await page.screenshot({ path: `.local/screenshots/catalog/equipment-${width}.png`, fullPage: true });
+    await page.goto("/equipment/nitrogen-boosters/");
+    await page.screenshot({ path: `.local/screenshots/catalog/nitrogen-boosters-${width}.png`, fullPage: true });
+  }
 });
