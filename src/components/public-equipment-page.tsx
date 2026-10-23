@@ -9,6 +9,23 @@ import { EquipmentConfiguration, EquipmentSelection, equipmentActionLabel, equip
 
 export function PublicEquipmentPage({ equipment, content }: { equipment: Equipment; content: ContentSnapshot }) {
   const path = `/equipment/${equipment.slug}/`;
+  if (equipment.externalReference) {
+    const reference = equipment.externalReference;
+    const articles = content.articles.filter((article) => equipment.articleIds.includes(article.id));
+    return <div data-testid="sf6-specialist-reference">
+      <ContentView event="equipment_view" id={equipment.id} />
+      <Breadcrumbs items={[{ label: "Оборудование", href: "/equipment/" }, { label: equipment.title, href: path }]} />
+      <PageIntro eyebrow="Специализированное направление" title={equipment.title} summary={equipment.summary} action={<a className="button" href={reference.url} target="_blank" rel="noopener noreferrer">Оборудование и решения для SF₆ — {reference.name} <span aria-hidden="true">↗</span></a>} />
+      <article className="container prose section">
+        <ContentSection title="Какая задача связана с элегазом"><p>{equipment.technology}</p><p>Перед выбором оборудования уточните, нужно ли перенести газ между объёмами, повысить его давление, восстановить пригодный газ после процесса или обеспечить другую операцию. Требования к подготовке, герметичности и безопасному обращению зависят от состояния среды.</p></ContentSection>
+        <ContentSection title="Что подготовить для рассмотрения задачи"><BulletList items={equipment.inputs} /><p>Сведения о составе и примесях, предыдущем применении газа и допустимых потерях помогут определить необходимые проверки. Конкретные параметры и исполнение согласуются по технической документации выбранного оборудования.</p></ContentSection>
+        <ContentSection title="Оборудование и решения SF6RUS"><p>Для выбора специализированного оборудования перейдите в направление SF6RUS. В запросе укажите технологическую операцию, известные условия источника и приёмника, состав газа и требования к его дальнейшему использованию.</p><a className="button" href={reference.url} target="_blank" rel="noopener noreferrer">Перейти в SF6RUS <span aria-hidden="true">↗</span></a></ContentSection>
+        <RelatedLinks title="Материалы по теме" items={articles.map((article) => ({ title: article.title, href: `/knowledge/${article.slug}/` }))} />
+        <Link className="text-link" href="/equipment/">Компрессоры для других технологических газов <span aria-hidden="true">→</span></Link>
+      </article>
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "WebPage", name: equipment.title, description: equipment.summary, url: absoluteUrl(path), inLanguage: "ru-RU", about: { "@type": "Thing", name: "Оборудование для работы с SF₆" }, relatedLink: reference.url }} />
+    </div>;
+  }
   const rfqHref = equipmentRfqHref(equipment);
   const capabilities = publicProperties(equipment.verifiedCapabilities);
   const solutions = equipment.solutionIds.flatMap((id) => content.solutions.filter((solution) => solution.id === id));

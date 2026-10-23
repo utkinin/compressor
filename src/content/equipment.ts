@@ -163,10 +163,11 @@ const definitions: EquipmentDefinition[] = [
     articleIds: ["co2-phase-and-compression", "air-vs-water-cooling", "normal-and-actual-flow", "what-to-specify-for-gas-compressor"],
   },
   {
-    id: "sf6-compressors", slug: "sf6-compressors", title: "Компрессоры для SF₆", editorialState: "review",
-    summary: "Подбор компрессора для специализированных задач с элегазом начинается с источника, состава среды и требуемых параметров. Исполнение и возможность применения подтверждаются для конкретного проекта.",
+    id: "sf6-compressors", slug: "sf6-compressors", title: "Оборудование для SF₆ — SF6RUS", editorialState: "review",
+    summary: "Оборудование и решения для работы с элегазом представлены в специализированном направлении SF6RUS. Здесь собраны ориентиры для выбора задачи и подготовки исходных данных.",
+    externalReference: { name: "SF6RUS", url: "https://www.sf6rus.ru/products/0000004/" },
     gas: "sf6", gasIds: [], rfqGas: "mixtures", diagram: "medium",
-    technology: "Для запроса на сжатие или перекачку SF₆ сначала уточняются состояние среды, состав, начальные и конечные условия. Возможность применения и параметры исполнения подтверждаются первичной технической документацией и расчётом. До этой проверки конкретная модель и характеристики не назначаются.",
+    technology: "Работа с элегазом может включать сжатие, перекачку, подготовку или повторную подачу газа. Это разные функции: необходимое оборудование выбирают по состоянию среды, технологической операции и условиям источника и приёмника. Оборудование для этих задач представлено в специализированном направлении SF6RUS.",
     applications: [
       "Рассмотрение задачи сжатия газообразного элегаза при заданных условиях источника и приёмника.",
       "Рассмотрение перекачки или повторной подачи газа по согласованному технологическому циклу.",
@@ -196,8 +197,8 @@ const definitions: EquipmentDefinition[] = [
       "КИП, арматура и трубная обвязка — по требованиям к среде и подключениям.",
       "Ресивер, управление и рама — если требуются согласованным циклом и входят в границы поставки.",
     ],
-    solutionIds: ["gas-transfer-recovery", "equipment-integration"],
-    articleIds: ["what-to-specify-for-gas-compressor", "bar-g-and-bar-a", "normal-and-actual-flow"],
+    solutionIds: [],
+    articleIds: ["sf6-compressor-service-life", "what-to-specify-for-gas-compressor", "bar-g-and-bar-a"],
   },
   {
     id: "process-gas-compressors", slug: "process-gas-compressors", title: "Компрессоры для технологических газов", editorialState: "review",

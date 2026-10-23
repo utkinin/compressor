@@ -1,131 +1,133 @@
 import Link from "next/link";
-import { articles, cases, equipment, industries } from "@/content";
-import { TechnicalDiagram } from "@/components/technical-diagram";
+import { articles } from "@/content";
 import { TrackedLink } from "@/components/tracked-link";
-import { EquipmentCards } from "@/components/equipment-catalog";
 import { pageMetadata } from "@/lib/seo";
+import "./home-page.css";
 
 export const metadata = pageMetadata(
-  "Компрессоры для технологических газов",
-  "Подбираем компрессоры и бустеры для N₂, He, SF₆, CO₂ и других технологических газов по давлению на входе, требуемому давлению, расходу и режиму работы.",
+  "Компрессоры и бустеры для технологических газов",
+  "Дожатие азота после генератора, газоснабжение лазерного станка, возврат гелия, сжатие CO₂ и газовых смесей. Подбор компрессора и необходимой комплектации.",
   "/",
 );
 
-const tasks = [
-  { title: "Дожать азот после генератора", text: "Согласовать давление источника, буфер и потребление оборудования.", href: "nitrogen-booster-after-generator" },
-  { title: "Повысить давление газа", text: "Подобрать бустер под давление источника и требования процесса.", href: "oil-free-gas-booster" },
-  { title: "Подать газ в оборудование", text: "Учесть чистоту, потери давления и реальный цикл потребления.", href: "process-gas-compressor" },
-  { title: "Вернуть газ в процесс", text: "Спроектировать сбор, подготовку и повторное сжатие.", href: "gas-transfer-recovery" },
-  { title: "Заполнить буфер или ресивер", text: "Связать объём, время заполнения и пиковый расход.", href: "buffer-receiver-charging" },
-  { title: "Встроить компрессор в оборудование", text: "Согласовать габариты, подключения и управление с вашей системой.", href: "equipment-integration" },
-  { title: "Поставить комплектную систему", text: "Определить необходимые опции и компоновку на общей раме.", href: "compressor-skid" },
-  { title: "Решить специальную задачу", text: "Начать с состава газа, диапазона режимов и ограничений.", href: "process-gas-compressor" },
+const parameterRfq = "/rfq/?source=%2F";
+const briefRfq = "/rfq/?intake=brief&source=%2F";
+
+const scenarios = [
+  { title: "Не хватает давления после генератора азота", text: "Подбор бустера под фактическое давление и производительность источника, требуемое давление и график потребления. Бустер повышает давление, но не создаёт дополнительный газ.", action: "Рассчитать дожатие азота", href: "/solutions/nitrogen-booster-after-generator/", label: "Азот после генератора" },
+  { title: "Требуется газоснабжение лазерного станка", text: "Подача газа по требованиям станка: источник, давление, расход и подготовка. Азот или сжатый воздух рассматриваем с учётом материала и технологии резки.", action: "Подобрать систему для лазера", href: "/solutions/nitrogen-for-laser-cutting/", label: "Лазерная резка" },
+  { title: "Нужно вернуть дорогой газ в процесс", text: "Сбор, буферизация и повторное сжатие гелия или другой подходящей среды. Учитываем качество возврата, допустимые потери и баланс полного цикла.", action: "Рассчитать возврат газа", href: "/solutions/helium-recovery/", label: "Гелий и возврат газа" },
+  { title: "Нужно сжать CO₂ или другой технологический газ", text: "Подбор по составу среды, давлениям, расходу, температуре и режиму. Для CO₂ проверяем фазовое состояние по маршруту сжатия и охлаждения.", action: "Отправить параметры газа", href: "/solutions/process-gas-compressor/", label: "CO₂ и газовые смеси" },
+  { title: "Нужно встроить компрессор в ваше оборудование", text: "Подбор компрессора и необходимой комплектации под габарит и интерфейсы вашей установки. Согласуем газовые подключения, питание, охлаждение, управление и доступ для сервиса.", action: "Подобрать модуль для встраивания", href: "/solutions/equipment-integration/", label: "Встраивание в оборудование" },
 ];
 
-const featuredGases = [
-  { symbol: "N₂", title: "Азот", note: "Дожатие после генератора, подача в процесс", href: "/equipment/nitrogen-compressors/" },
-  { symbol: "He", title: "Гелий", note: "Сжатие, герметичность, возврат газа", href: "/equipment/helium-compressors/" },
-  { symbol: "SF₆", title: "Элегаз", note: "Состав газа и параметры задачи для подбора", href: "/equipment/sf6-compressors/" },
-  { symbol: "CO₂", title: "Диоксид углерода", note: "Температура, давление и фазовое состояние", href: "/equipment/co2-compressors/" },
-  { symbol: "Другие", title: "Технологические газы и смеси", note: "Подбор по составу и условиям процесса", href: "/equipment/process-gas-compressors/" },
+const parameters = [
+  { label: "Газ", note: "Название, состав смеси и известные требования к чистоте." },
+  { label: "P₁ — давление на входе", note: "Доступное давление источника и его изменения под нагрузкой." },
+  { label: "P₂ — требуемое давление", note: "Давление, необходимое потребителю или следующему этапу процесса." },
+  { label: "Q — расход", note: "Средний и пиковый расход с единицами и условиями приведения." },
+  { label: "Режим работы", note: "Непрерывная работа, периодические включения или известный цикл." },
 ];
 
-const steps = [
-  { title: "Разбираем задачу", text: "Уточняем источник газа, потребителя, состав и диапазон режимов. Определяем требования к компрессору и подключениям." },
-  { title: "Проверяем параметры", text: "P₁, P₂ и Q с единицами, температура, пики и непрерывность работы. Учитываем ограничения источника и тепловой режим." },
-  { title: "Выбираем компрессор", text: "Тип компрессора, ступени, привод и необходимое охлаждение. Согласуем материалы и газоспецифичные требования." },
-  { title: "Согласуем поставку", text: "Определяем нужные опции, подключения, состав документации и приёмку. Фиксируем исполнение и комплектацию компрессора." },
+const supplyFormats = [
+  { title: "Отдельный компрессор / бустер", text: "Базовое оборудование для интеграции в существующую систему. Подключения и внешние вспомогательные функции согласуем до поставки." },
+  { title: "Компрессорный модуль", text: "Компрессор с необходимым охлаждением, КИП, защитами и элементами подключения — в составе, который требуется вашей установке." },
+  { title: "Комплектная система", text: "Компрессор, буфер, арматура, автоматика, фильтрация и обвязка в согласованных границах поставки. Общая рама — при необходимости." },
 ];
 
-const scope = [
-  { title: "Охлаждение", text: "Воздушное или водяное охлаждение — по тепловой нагрузке и условиям площадки." },
-  { title: "КИП", text: "Измерение давления и температуры — для контроля согласованных режимов." },
-  { title: "Арматура", text: "Запорная и регулирующая арматура — под схему подключения компрессора." },
-  { title: "Ресивер", text: "Буферный объём — если он необходим при переменном потреблении или заполнении системы." },
-  { title: "Автоматика", text: "Управление и защиты — под компрессор и требования оборудования площадки." },
-  { title: "Обвязка", text: "Трубопроводы и соединения — в согласованных границах поставки." },
+const gases = [
+  { symbol: "N₂", title: "Азот", text: "Дожатие после генератора, накопление и подача в оборудование.", href: "/equipment/nitrogen-compressors/" },
+  { symbol: "He", title: "Гелий", text: "Сжатие и возврат с учётом герметичности и допустимых потерь.", href: "/equipment/helium-compressors/" },
+  { symbol: "CO₂", title: "Диоксид углерода", text: "Подбор с проверкой температуры и фазового состояния.", href: "/equipment/co2-compressors/" },
+  { symbol: "Газ / смесь", title: "Другие технологические газы", text: "Индивидуальная проверка состава, материалов и применимости.", href: "/equipment/process-gas-compressors/" },
+];
+
+const engineeringSteps = [
+  { title: "Разбираем процесс", text: "Определяем источник, потребителя, текущую схему и проблему, которую требуется решить." },
+  { title: "Проверяем исходные данные", text: "Сопоставляем давление, расход, температуру, чистоту и график потребления с возможностями источника." },
+  { title: "Подбираем компрессор", text: "Проверяем конструкцию, ступени, привод, охлаждение, материалы и применимость к выбранной среде." },
+  { title: "Формируем поставку", text: "Согласуем комплектацию, подключения, документацию и границы ответственности." },
+];
+
+const deliverables = [
+  { title: "Проверка исходных данных", result: "Перечень подтверждённых параметров и вопросов, которые нужно уточнить." },
+  { title: "Расчёт компрессора", result: "Выбранное исполнение и рабочие характеристики для заданного газа и режима." },
+  { title: "Согласование комплектации", result: "Состав поставки, подключения, КИП, автоматика и необходимые дополнительные компоненты." },
+  { title: "Коммерческое предложение", result: "Техническое описание, стоимость, срок и условия поставки выбранного оборудования." },
 ];
 
 export default function HomePage() {
-  const featuredIds = ["what-to-specify-for-gas-compressor", "why-process-gas-compressors-need-task-specific-selection", "what-is-in-compressor-skid", "sf6-compressor-service-life", "how-to-select-nitrogen-booster", "compressors-for-gas-mixtures"];
+  const featuredIds = ["how-to-select-nitrogen-booster", "booster-vs-source", "pressure-after-nitrogen-generator", "oil-free-compression", "what-to-specify-for-gas-compressor", "normal-and-actual-flow"];
   const featuredArticles = featuredIds.flatMap(id => articles.filter(article => article.id === id));
   return <>
-    <section className="hero">
-      <div className="container hero-grid">
+    <section className="hero v21-hero" data-home-section="hero">
+      <div className="container hero-grid v21-hero-grid">
         <div className="hero-copy">
-          <p className="eyebrow">ГАЗОВЫЕ КОМПРЕССОРЫ · БУСТЕРЫ</p>
-          <h1>Компрессоры для <span>технологических газов</span></h1>
-          <p className="hero-description">Подбираем компрессоры и бустеры под ваши параметры. N₂, He, SF₆, CO₂ и другие технологические газы. Подбор по давлению на входе, требуемому давлению, расходу и режиму работы.</p>
-          <div className="hero-actions"><TrackedLink event="hero_rfq_click" className="button" href="/rfq/?source=%2F">Подобрать компрессор <span aria-hidden="true">→</span></TrackedLink><Link className="button button-secondary" href="/rfq/?source=%2F">Отправить параметры <span aria-hidden="true">→</span></Link></div>
-          <p className="hero-note">Для инженеров, технологов и снабжения.<br />Подбор по условиям вашего процесса.</p>
+          <p className="eyebrow">БЕЗМАСЛЯНЫЕ КОМПРЕССОРЫ И БУСТЕРЫ · ТЕХНОЛОГИЧЕСКИЕ ГАЗЫ</p>
+          <h1>Компрессоры и бустеры для <span>технологических газов</span></h1>
+          <p className="hero-description">Подбираем оборудование для повышения давления, подачи и возврата технологических газов. Азот после генератора, газоснабжение лазерных установок, возврат гелия, CO₂, газовые смеси и компрессорные модули для встраивания в оборудование.</p>
+          <p className="v21-hero-supply">От отдельного компрессора или бустера до комплектной системы с необходимым охлаждением, ресивером, КИП, автоматикой и обвязкой.</p>
+          <div className="hero-actions"><TrackedLink event="hero_rfq_click" className="button" href={parameterRfq}>Подобрать компрессор <span aria-hidden="true">→</span></TrackedLink><TrackedLink event="hero_rfq_click" className="button button-secondary" href={briefRfq}>Отправить ТЗ или параметры <span aria-hidden="true">→</span></TrackedLink></div>
+          <p className="v21-hero-parameters">Газ · P₁ · P₂ · Q · режим работы</p>
+          <p className="v21-hero-note"><strong>Не знаете все параметры?</strong> Начните с ТЗ, паспорта оборудования, модели установки, фото шильды или существующей схемы. Определим, каких данных не хватает для расчёта.</p>
         </div>
-        <div className="hero-art">
-          <div className="hero-art-topline"><span>КОМПРЕССОР</span><span><span className="status-dot" />ПРИМЕР КОМПОНОВКИ</span></div>
-          <TechnicalDiagram kind="small" title="Компрессор: входные и требуемые параметры" />
-          <div className="hero-point-note"><span>НА ВХОДЕ <strong>Газ / P₁ / T₁</strong></span><span aria-hidden="true">→</span><span>НА ВЫХОДЕ <strong>P₂ / Q / режим</strong></span></div>
-        </div>
+        <aside className="v21-process" aria-label="От источника газа к вашей задаче">
+          <p className="eyebrow">Сначала — ваша задача</p>
+          <ol className="v21-process-flow"><li><strong>Источник газа</strong><span>Генератор, магистраль или возврат из процесса</span></li><li><strong>Компрессор или бустер</strong><span>Под требуемое давление, расход и режим</span></li><li><strong>Ваше оборудование</strong><span>Согласованная подача газа к потребителю</span></li></ol>
+          <p className="v21-process-caption">Необходимые буферы, подготовку газа и управление определяем по условиям процесса.</p>
+          <Link href="#tasks" className="v21-process-link">Выбрать свою задачу <span aria-hidden="true">↓</span></Link>
+        </aside>
       </div>
     </section>
 
-    <section className="working-point-section selection-parameters" aria-labelledby="working-point-title">
-      <div className="container working-point"><div className="working-point-title"><h2 id="working-point-title">Начнём с 5 основных параметров</h2><p>Укажите газ, давление на входе, требуемое давление на выходе, расход и режим работы. Этого достаточно, чтобы начать подбор компрессора. Остальные параметры уточним в процессе проработки.</p></div>
-        <div className="working-point-fields">
-          {[{ label: "Газ", note: "Состав и чистота" }, { label: "P₁ — давление на входе", note: "Доступное давление источника" }, { label: "P₂ — требуемое давление", note: "Необходимое давление после компрессора" }, { label: "Q — расход", note: "Значение с единицей измерения" }, { label: "Режим работы", note: "Непрерывно, периодически, по циклам" }].map((field) => <div className="working-point-field" key={field.label}><strong>{field.label}</strong><span>{field.note}</span></div>)}
-        </div>
-        <div className="selection-parameters-footer"><Link href="/rfq/?source=%2F">Отправить параметры <span aria-hidden="true">→</span></Link></div>
+    <section className="section v21-scenarios" id="tasks" aria-labelledby="tasks-title" data-home-section="scenarios"><div className="container">
+      <div className="section-heading"><div><p className="eyebrow">01 / Задача</p><h2 id="tasks-title">Что требуется решить?</h2></div><p>Выберите ближайшую задачу. На странице решения — схема, данные для подбора и необходимые проверки.</p></div>
+      <div className="v21-scenario-grid">{scenarios.map((scenario, index) => <article className="v21-scenario" key={scenario.href}><p className="v21-scenario-label"><span>0{index + 1}</span>{scenario.label}</p><h3><Link href={scenario.href}>{scenario.title}</Link></h3><p>{scenario.text}</p><Link className="v21-card-action" href={scenario.href}>{scenario.action}<span aria-hidden="true">→</span></Link></article>)}</div>
+      <div className="v21-section-links"><Link href="/solutions/">Все решения <span aria-hidden="true">→</span></Link><Link href="/industries/">Отрасли и применения <span aria-hidden="true">→</span></Link></div>
+    </div></section>
+
+    <section className="working-point-section selection-parameters v21-parameters" aria-labelledby="working-point-title" data-home-section="parameters"><div className="container working-point">
+      <div className="working-point-title"><h2 id="working-point-title">Начнём с 5 основных параметров</h2><p>Укажите газ, давление на входе, требуемое давление на выходе, расход и режим работы. Этого достаточно, чтобы начать подбор компрессора. Остальные параметры уточним в процессе проработки.</p></div>
+      <div className="working-point-fields">{parameters.map(parameter => <div className="working-point-field" key={parameter.label}><strong>{parameter.label}</strong><span>{parameter.note}</span></div>)}</div>
+      <div className="v21-parameters-footer"><p>Если расход или давление пока неизвестны, начните с модели оборудования, схемы процесса или описания задачи.</p><Link href={briefRfq}>Отправить то, что уже известно <span aria-hidden="true">→</span></Link></div>
+    </div></section>
+
+    <section className="section v21-supply" aria-labelledby="supply-title" data-home-section="supply"><div className="container">
+      <div className="section-heading"><div><p className="eyebrow">02 / Формат поставки</p><h2 id="supply-title">От компрессора до комплектной системы</h2></div><p>Сначала выбираем компрессор или бустер. Затем определяем, какие дополнительные функции нужны именно вашему процессу.</p></div>
+      <ol className="configuration-flow v21-supply-flow" aria-label="От компрессора к комплектной системе"><li>КОМПРЕССОР</li><li>+ НЕОБХОДИМЫЕ ОПЦИИ</li><li>КОМПЛЕКТНАЯ СИСТЕМА</li></ol>
+      <div className="v21-supply-grid">{supplyFormats.map(format => <article key={format.title}><h3>{format.title}</h3><p>{format.text}</p></article>)}</div>
+      <p className="v21-supply-note">Состав системы определяется процессом. Ресивер, фильтрация, автоматика и другие элементы не включаются автоматически, если они не нужны для конкретной задачи.</p>
+      <div className="v21-section-links"><Link href="/equipment/">Каталог компрессоров и бустеров <span aria-hidden="true">→</span></Link><Link href="/solutions/compressor-skid/">Комплектация на общей раме <span aria-hidden="true">→</span></Link></div>
+    </div></section>
+
+    <section className="section gas-section v21-gases" aria-labelledby="gases-title" data-home-section="gases"><div className="container">
+      <div className="section-heading"><div><p className="eyebrow">03 / Среда и условия</p><h2 id="gases-title">Технологические газы требуют разного исполнения</h2></div><p>Состав, чистота, температура и требования к герметичности учитываются вместе с давлением, расходом и режимом.</p></div>
+      <div className="v21-gas-grid">{gases.map(gas => <Link key={gas.symbol} href={gas.href} className="gas-tile v21-gas"><span className="gas-symbol">{gas.symbol}</span><span className="gas-tile-title">{gas.title}</span><small>{gas.text}</small><span className="link-arrow" aria-hidden="true">→</span></Link>)}</div>
+      <div className="v21-specialized"><p>Оборудование для работы с элегазом (SF₆) представлено в специализированном направлении SF6RUS.</p><a href="https://www.sf6rus.ru/products/0000004/" target="_blank" rel="noopener noreferrer">Оборудование и решения для работы с SF₆ — SF6RUS <span aria-hidden="true">↗</span><span className="sr-only"> (откроется в новой вкладке)</span></a></div>
+      <div className="v21-section-links"><Link href="/gases/">Особенности технологических газов <span aria-hidden="true">→</span></Link></div>
+    </div></section>
+
+    <section className="section engineering-section v21-engineering" aria-labelledby="engineering-title" data-home-section="engineering"><div className="container">
+      <div className="section-heading"><div><p className="eyebrow">04 / Подбор оборудования</p><h2 id="engineering-title">Как проходит инженерный подбор</h2></div><p>От описания процесса к выбору компрессора, необходимой комплектации и согласованной поставке.</p></div>
+      <div className="engineering-steps">{engineeringSteps.map((step, index) => <article key={step.title} className="engineering-step"><span className="step-number">0{index + 1}</span><h3>{step.title}</h3><p>{step.text}</p></article>)}</div>
+      <div className="v21-section-links"><Link href="/engineering/">Подробнее о подборе <span aria-hidden="true">→</span></Link><Link href="/cases/">Примеры расчётных задач <span aria-hidden="true">→</span></Link></div>
+    </div></section>
+
+    <section className="section v21-deliverables" aria-labelledby="deliverables-title" data-home-section="deliverables"><div className="container">
+      <div className="section-heading"><div><p className="eyebrow">05 / Результаты этапов</p><h2 id="deliverables-title">От расчёта до технического предложения</h2></div><p>Техническое предложение связывает условия процесса с выбранным оборудованием и конкретным составом поставки.</p></div>
+      <div className="v21-deliverables-grid"><ol className="v21-deliverable-list">{deliverables.map((item, index) => <li key={item.title}><span aria-hidden="true">0{index + 1}</span><div><h3>{item.title}</h3><p><strong>Результат:</strong> {item.result}</p></div></li>)}</ol>
+        <div className="v21-technical-table"><table><caption>Что фиксируем при согласовании</caption><thead><tr><th scope="col">Данные</th><th scope="col">Содержание</th></tr></thead><tbody><tr><th scope="row">Среда</th><td>Газ, состав, чистота и существенные примеси</td></tr><tr><th scope="row">Режим</th><td>Диапазон входного давления, требуемое давление, расход и цикл</td></tr><tr><th scope="row">Исполнение</th><td>Материалы, охлаждение, герметичность и условия площадки</td></tr><tr><th scope="row">Поставка</th><td>Комплектация, подключения, документация и приёмка</td></tr></tbody></table><p>Конкретные характеристики выбранного исполнения подтверждаются расчётом для заданного газа и режима.</p><Link href="/documents/process-gas-questionnaire/">Заполнить опросный лист <span aria-hidden="true">→</span></Link></div>
       </div>
-    </section>
-
-    <section className="section configuration-section" aria-labelledby="configuration-title"><div className="container">
-      <div className="section-heading"><div><p className="eyebrow">01 / Комплектация</p><h2 id="configuration-title">Комплектуем компрессор под задачу</h2></div><p>После выбора компрессора определяем необходимую комплектацию — от базового исполнения до комплектной системы на общей раме.</p></div>
-      <ol className="configuration-flow" aria-label="От компрессора к комплектной системе"><li><span>КОМПРЕССОР</span></li><li><span>+ НЕОБХОДИМЫЕ ОПЦИИ</span></li><li><span>КОМПЛЕКТНАЯ СИСТЕМА</span></li></ol>
-      <div className="configuration-options">{scope.map((item) => <article key={item.title}><div><h3>{item.title}</h3><span>По необходимости</span></div><p>{item.text}</p></article>)}</div>
-      <p className="configuration-note">Не все опции обязательны. Состав поставки зависит от газа, параметров компрессора и условий эксплуатации. Комплектную систему на общей раме также называют skid-системой.</p>
     </div></section>
 
-    <section className="section" id="tasks" aria-labelledby="tasks-title"><div className="container">
-      <div className="section-heading"><div><p className="eyebrow">02 / Задача процесса</p><h2 id="tasks-title">Какую задачу должен<br />решать компрессор?</h2></div><Link href="/solutions/" className="text-link">Все решения <span aria-hidden="true">→</span></Link></div>
-      <div className="task-grid">{tasks.map((task, index) => <Link className="task-card" href={`/solutions/${task.href}/`} key={`${task.href}-${index}`}><span className="task-card-index">0{index + 1} / ЗАДАЧА</span><h3>{task.title}</h3><p>{task.text}</p><span className="task-card-arrow" aria-hidden="true">→</span></Link>)}</div>
-    </div></section>
-
-    <section className="section gas-section" aria-labelledby="gases-title"><div className="container">
-      <div className="section-heading"><div><p className="eyebrow">03 / Газ определяет исполнение</p><h2 id="gases-title">Один процесс.<br />Разные требования к газу.</h2></div><p>Состав, чистота, температура и требования к герметичности меняют схему подбора. Начните с вашего газа.</p></div>
-      <div className="gas-grid home-gas-grid">{featuredGases.map((gas) => <Link key={gas.symbol} href={gas.href} className="gas-tile"><span className="gas-symbol">{gas.symbol}</span><span className="gas-tile-title">{gas.title}</span><small>{gas.note}</small><span className="link-arrow" aria-hidden="true">→</span></Link>)}</div>
-      <p className="gas-disclaimer">Компрессор подбирается под состав газа и условия процесса. Применимость, исполнение и параметры подтверждаются при инженерной проработке.</p>
-    </div></section>
-
-    <section className="section" aria-labelledby="equipment-title"><div className="container">
-      <div className="section-heading"><div><p className="eyebrow">04 / Каталог оборудования</p><h2 id="equipment-title">Компрессоры для<br />технологических газов</h2></div><Link href="/equipment/" className="text-link">Все компрессоры и бустеры <span aria-hidden="true">→</span></Link></div>
-      <EquipmentCards items={equipment} sourcePage="/" headingLevel={3} />
-      <div className="equipment-home-selection"><div><h3>Не знаете, какой компрессор нужен?</h3><p>Укажите газ, давление на входе, требуемое давление, расход и режим работы. Этого достаточно, чтобы начать подбор.</p></div><Link className="button" href="/rfq/?source=%2F">Подобрать компрессор <span aria-hidden="true">→</span></Link></div>
-    </div></section>
-
-    <section className="section engineering-section" aria-labelledby="engineering-title"><div className="container">
-      <div className="section-heading"><div><p className="eyebrow">05 / Инженерный подбор</p><h2 id="engineering-title">Сначала параметры.<br />Затем выбор компрессора.</h2></div><p>Название модели не отвечает на вопрос, как компрессор будет работать в вашей системе. Подбор проходит четыре связанных этапа.</p></div>
-      <div className="engineering-steps">{steps.map((step, index) => <div key={step.title} className="engineering-step"><span className="step-number">0{index + 1} —</span><h3>{step.title}</h3><p>{step.text}</p></div>)}</div>
-      <div className="engineering-bottom"><p>Производительность компрессора подтверждается при заданных давлениях, составе газа, температуре и режиме работы.</p><Link href="/engineering/" className="text-link">Как выполняется подбор <span aria-hidden="true">→</span></Link></div>
-    </div></section>
-
-    <section className="section industry-section" aria-labelledby="industries-title"><div className="container industry-layout">
-      <div className="industry-intro"><p className="eyebrow">06 / Контекст применения</p><h2 id="industries-title">Ваш процесс<br />задаёт требования.</h2><p>От испытательного стенда до технологической линии. Проверяем связь компрессора с задачей, подключениями и условиями эксплуатации.</p><Link className="text-link" href="/industries/">Отрасли и применения <span aria-hidden="true">→</span></Link></div>
-      <div className="industry-list">{industries.slice(0, 8).map((industry) => <Link key={industry.id} href={`/industries/${industry.slug}/`}>{industry.title}<span className="link-arrow" aria-hidden="true">→</span></Link>)}</div>
-    </div></section>
-
-    <section className="section" aria-labelledby="questionnaire-title"><div className="container equipment-home-selection">
-      <div><p className="eyebrow">07 / Исходные данные</p><h2 id="questionnaire-title">Опросный лист на подбор газового компрессора</h2><p>Запишите газ, давление на входе и выходе, расход и режим работы. Дополнительные условия можно указать в том же листе.</p></div>
-      <Link className="button" href="/documents/process-gas-questionnaire/">Заполнить опросный лист <span aria-hidden="true">→</span></Link>
-    </div></section>
-
-    <section className="section" aria-labelledby="cases-title"><div className="container">
-      <div className="section-heading"><div><p className="eyebrow">08 / Типовые рабочие задачи</p><h2 id="cases-title">Как задача превращается<br />в инженерный запрос.</h2></div><p>Примеры задач: источник газа, требования потребителя и подбор необходимого оборудования.</p></div>
-      <div className="case-home-grid">{cases.slice(0, 3).map((item) => <article key={item.id} className="case-home-card"><span className="case-kind">Типовая инженерная задача</span><h3>{item.title}</h3><p>{item.summary}</p><Link className="text-link" href={`/cases/${item.slug}/`}>Разобрать задачу <span aria-hidden="true">→</span></Link></article>)}</div>
-    </div></section>
-
-    <section className="section knowledge-home" aria-labelledby="knowledge-title"><div className="container">
-      <div className="section-heading"><div><p className="eyebrow">09 / Экспертный центр</p><h2 id="knowledge-title">База знаний</h2></div><Link href="/knowledge/" className="text-link">База знаний <span aria-hidden="true">→</span></Link></div>
+    <section className="section knowledge-home v21-knowledge" aria-labelledby="knowledge-title" data-home-section="knowledge"><div className="container">
+      <div className="section-heading"><div><p className="eyebrow">06 / Экспертный центр</p><h2 id="knowledge-title">Практические материалы</h2></div><Link href="/knowledge/" className="text-link">База знаний <span aria-hidden="true">→</span></Link></div>
       <div className="knowledge-home-list">{featuredArticles.map((article, index) => <Link key={article.id} href={`/knowledge/${article.slug}/`} className="knowledge-home-item"><span>0{index + 1}</span><div><h3>{article.title}</h3><p>{article.summary}</p></div><span className="link-arrow" aria-hidden="true">→</span></Link>)}</div>
     </div></section>
 
-    <section className="final-cta" aria-labelledby="final-cta-title"><div className="container final-cta-inner"><div><p className="eyebrow">10 / Следующий шаг</p><h2 id="final-cta-title">Расскажите о задаче.<br />Подберём компрессор.</h2><p>Укажите газ, давления, расход с единицами и режим работы. Если задача ещё формируется — добавьте известные параметры, источник газа и ограничения. Остальное уточним при подборе.</p></div><div className="final-cta-action"><strong>Газ + P₁ + P₂ + Q<br />Температура + режим + условия</strong><Link className="button" href="/rfq/?source=%2F">Отправить параметры <span aria-hidden="true">→</span></Link><p>Подбор исполнения и комплектации.<br />Характеристики проверяются расчётом.</p></div></div></section>
+    <section className="final-cta v21-rfq" aria-labelledby="final-cta-title" data-home-section="rfq"><div className="container final-cta-inner">
+      <div><p className="eyebrow">07 / Ваша задача</p><h2 id="final-cta-title">Расскажите о задаче — начнём с того, что уже известно</h2><p>Укажите газ, давление на входе, требуемое давление, расход и режим работы. Если часть параметров неизвестна, начните с ТЗ, паспорта оборудования, модели установки, схемы или описания текущей системы.</p></div>
+      <div className="final-cta-action"><strong>Параметры или описание задачи</strong><Link className="button" href={parameterRfq}>Подобрать компрессор <span aria-hidden="true">→</span></Link><Link className="button button-secondary v21-brief-button" href={briefRfq}>Отправить ТЗ или описание <span aria-hidden="true">→</span></Link><p>Уточним недостающие данные и определим подход к расчёту.</p></div>
+    </div></section>
   </>;
 }

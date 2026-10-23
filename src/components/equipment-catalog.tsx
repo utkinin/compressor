@@ -8,7 +8,6 @@ const categoryLabels: Record<string, { symbol: string; task: string; cta: string
   "nitrogen-boosters": { symbol: "N₂", task: "Дожатие газа от источника", cta: "Подобрать бустер азота" },
   "helium-compressors": { symbol: "He", task: "Сжатие, перекачка и возврат", cta: "Подобрать компрессор для гелия" },
   "co2-compressors": { symbol: "CO₂", task: "Подбор с учётом состояния газа", cta: "Подобрать компрессор для CO₂" },
-  "sf6-compressors": { symbol: "SF₆", task: "Специализированная газовая задача", cta: "Подобрать компрессор для SF₆" },
   "process-gas-compressors": { symbol: "Газ / смесь", task: "Индивидуальное рассмотрение состава", cta: "Отправить параметры газа" },
 };
 
@@ -23,7 +22,7 @@ export function equipmentActionLabel(equipment: Equipment): string {
 
 export function EquipmentCards({ items, sourcePage = "/equipment/", headingLevel = 2 }: { items: Equipment[]; sourcePage?: string; headingLevel?: 2 | 3 }) {
   const Heading = headingLevel === 3 ? "h3" : "h2";
-  return <div className="equipment-card-grid">{items.map((item) => {
+  return <div className="equipment-card-grid">{items.filter((item) => !item.externalReference).map((item) => {
     const label = categoryLabels[item.id];
     return <article className="equipment-catalog-card" key={item.id}>
       <div className="equipment-card-heading"><span className="equipment-card-symbol">{label?.symbol ?? "Газ"}</span><p>{label?.task ?? "Подбор под параметры процесса"}</p></div>

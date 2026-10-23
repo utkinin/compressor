@@ -1,5 +1,10 @@
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir, readFile, stat } from "node:fs/promises";
+import path from "node:path";
+import { createHash } from "node:crypto";
+import { briefFile, expectBriefIntake, fillBriefContact } from "../support/brief-v21";
 import { expect, test, type Page } from "@playwright/test";
+import { expectProjectLandings } from "../support/landing-v21";
+import { expectHomeV21 } from "../support/home-v21";
 import { sourceModels } from "../../src/content/internal/source-model-registry";
 
 const equipmentRoutes = ["nitrogen-compressors", "nitrogen-boosters", "helium-compressors", "co2-compressors", "sf6-compressors", "process-gas-compressors"].map((slug) => `/equipment/${slug}/`);
@@ -66,21 +71,9 @@ async function fillNitrogen(page: Page) {
   await page.locator("#gas-flowProfile").fill("20 средний / 30 пиковый Nm³/h");
 }
 
-test("compressor selection precedes optional configuration; laser supply has two alternatives", async ({ page }) => {
+test("problem-first homepage preserves selection depth and the laser supply alternatives", async ({ page }) => {
   await page.goto("/");
-  const hero = page.locator(".hero");
-  await expect(hero.getByRole("heading", { level: 1 })).toHaveText("Компрессоры для технологических газов");
-  await expect(hero.locator(".hero-description")).toHaveText("Подбираем компрессоры и бустеры под ваши параметры. N₂, He, SF₆, CO₂ и другие технологические газы. Подбор по давлению на входе, требуемому давлению, расходу и режиму работы.");
-  await expect(hero.getByRole("link", { name: "Подобрать компрессор" })).toHaveAttribute("href", /\/rfq(?:\/|\?)/);
-  await expect(hero.getByRole("link", { name: "Отправить параметры" })).toHaveAttribute("href", /\/rfq(?:\/|\?)/);
-  await expect(hero).not.toContainText(/рабочая точка|\b(?:H₂|O₂)|КИП|автоматика|ресивер/i);
-  const sections = page.locator("main > section");
-  await expect(sections.nth(1).getByRole("heading", { level: 2 })).toHaveText("Начнём с 5 основных параметров");
-  await expect(sections.nth(1).locator(".working-point-field strong")).toHaveText(["Газ", "P₁ — давление на входе", "P₂ — требуемое давление", "Q — расход", "Режим работы"]);
-  await expect(sections.nth(2).getByRole("heading", { level: 2 })).toHaveText("Комплектуем компрессор под задачу");
-  await expect(sections.nth(2).locator(".configuration-flow li")).toHaveText(["КОМПРЕССОР", "+ НЕОБХОДИМЫЕ ОПЦИИ", "КОМПЛЕКТНАЯ СИСТЕМА"]);
-  await expect(sections.nth(2)).toContainText("Не все опции обязательны");
-  await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /N₂, He, SF₆, CO₂/);
+  await expectHomeV21(page);
   await page.goto("/industries/laser-cutting/");
   await expect(page.locator("main h1")).toHaveText("Газоснабжение лазерного станка");
   const alternatives = page.locator(".laser-supply-options");
@@ -124,7 +117,7 @@ for (const width of [360, 390, 768, 1440]) {
 }
 
 test("published navigation has no broken internal links, development language or empty HTML pages", async ({ request }) => {
-  const pending = ["/", "/solutions/", "/gases/", "/equipment/", "/industries/", "/engineering/", "/knowledge/", "/cases/", "/documents/process-gas-questionnaire/", "/about/", "/contacts/", "/legal/"];
+  const pending = ["/"];
   const visited = new Set<string>();
   while (pending.length) {
     const route = pending.shift();
@@ -152,6 +145,9 @@ test("published navigation has no broken internal links, development language or
     }
   }
   expect(visited.size).toBeGreaterThan(55);
+  const canonicalPaths = [...(await (await request.get("/sitemap.xml")).text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname.replace(/\/$/, "") || "/");
+  const reachable = new Set([...visited].map((route) => route.replace(/\/$/, "") || "/"));
+  expect(canonicalPaths.filter((route) => !reachable.has(route)), "canonical pages orphaned from the homepage").toEqual([]);
 });
 
 test("search endpoints expose public equipment intents and exclude internal source routes", async ({ page, request }) => {
@@ -180,6 +176,8 @@ test("search endpoints expose public equipment intents and exclude internal sour
 test("equipment catalog describes applications without source identities, product schema or unverified limits", async ({ page, request }) => {
   await page.goto("/equipment/");
   await expect(page.locator("main h1")).toHaveText("Компрессоры и бустеры для технологических газов");
+  await expect(page.locator(".equipment-catalog-card")).toHaveCount(5);
+  await expect(page.locator(".equipment-card-grid")).not.toContainText("SF₆");
   for (const route of equipmentRoutes) await expect(page.locator(`main a[href="${route.replace(/\/$/, "")}"], main a[href="${route}"]`).first()).toBeVisible();
   for (const route of ["/equipment/", ...equipmentRoutes]) {
     const response = await request.get(route);
@@ -197,6 +195,10 @@ test("equipment catalog describes applications without source identities, produc
   const questionnaire = await request.get("/documents/process-gas-questionnaire.txt");
   expect(questionnaire.status()).toBe(200);
   expect(await questionnaire.text()).toMatch(/Газ|P₁|давлени/i);
+});
+
+test("project gases retain their URLs and nitrogen and laser keep distinct linked tasks", async ({ page }) => {
+  await expectProjectLandings(page);
 });
 
 test("customer navigation and the knowledge hub expose six substantial linked articles", async ({ page }) => {
@@ -221,7 +223,11 @@ test("customer navigation and the knowledge hub expose six substantial linked ar
     expect((await page.locator("article.prose").innerText()).length, slug).toBeGreaterThan(1800);
     expect(await page.locator("article.prose h2").count(), slug).toBeGreaterThanOrEqual(5);
     expect(await page.locator('main svg[role="img"], main img[alt], main table').count(), `${slug}: explanatory visual`).toBeGreaterThan(0);
-    for (const section of ["equipment", "solutions", "gases", "rfq"]) await expect(page.locator(`main a[href^="/${section}"]`).first(), `${slug}: ${section} link`).toBeVisible();
+    for (const section of (slug === "sf6-compressor-service-life" ? ["equipment", "solutions", "gases"] : ["equipment", "solutions", "gases", "rfq"])) await expect(page.locator(`main a[href^="/${section}"]`).first(), `${slug}: ${section} link`).toBeVisible();
+    if (slug === "sf6-compressor-service-life") {
+      await expect(page.locator('main a[href="https://www.sf6rus.ru/products/0000004/"]').first()).toBeVisible();
+      await expect(page.locator('main a[href^="/rfq"]')).toHaveCount(0);
+    }
     const related = page.locator(`main a[href^="/knowledge/"]:not([href="/knowledge/"]):not([href="/knowledge/${slug}/"]):not([href="/knowledge/${slug}"])`);
     await expect(related.first(), `${slug}: related article`).toBeVisible();
   }
@@ -244,7 +250,7 @@ test("questionnaire exports the supplied parameters without contacts and keeps s
   await page.getByRole("radio", { name: /Непрерывный 24\/7/ }).check();
   await page.getByRole("button", { name: "Проверить параметры подбора" }).click();
   for (const [field, value] of Object.entries(optionalProjectData)) await page.locator(`#project-${field}`).fill(value);
-  await page.getByLabel("Имя", { exact: true }).fill("QuestionnaireContactFixture");
+  await page.locator(".rfq-shell:visible").getByLabel("Имя", { exact: true }).fill("QuestionnaireContactFixture");
   const sheet = await page.locator("#questionnaire-text").inputValue();
   expect(sheet).toMatch(/азот|N₂/i);
   for (const value of ["6", "40", "80", ...Object.values(optionalProjectData)]) expect(sheet).toContain(value);
@@ -261,7 +267,7 @@ test("questionnaire exports the supplied parameters without contacts and keeps s
   await page.getByRole("button", { name: "Распечатать", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-print-requests", "1");
   await expect(page.getByRole("button", { name: "Сохранить тестовую заявку", exact: true })).toBeVisible();
-  await expect(page.locator('.rfq-consent input[type="checkbox"]')).not.toBeChecked();
+  await expect(page.locator('.rfq-shell:visible .rfq-consent input[type="checkbox"]')).not.toBeChecked();
   expect(writes).toEqual([]);
 });
 
@@ -293,13 +299,16 @@ test("equipment RFQ carries a descriptive nitrogen booster and only a preliminar
   for (const term of sourceTerms) await expect(page.locator("main")).not.toContainText(term);
 });
 
-test("SF₆ equipment prefills an individual mixture enquiry without claiming a compatible model", async ({ page }) => {
+test("SF₆ keeps its canonical specialist reference without a local commercial selection", async ({ page }) => {
+  await page.goto("/equipment/sf6-compressors/");
+  const reference = page.getByTestId("sf6-specialist-reference");
+  await expect(page.locator("main h1")).toHaveText("Оборудование для SF₆ — SF6RUS");
+  await expect(reference.locator('a[href="https://www.sf6rus.ru/products/0000004/"]').first()).toHaveAttribute("href", "https://www.sf6rus.ru/products/0000004/");
+  await expect(reference.locator('a[href^="/rfq"]')).toHaveCount(0);
+  expect(new URL((await page.locator('link[rel="canonical"]').getAttribute("href"))!).pathname.replace(/\/$/, "")).toBe("/equipment/sf6-compressors");
   await page.goto("/rfq/?equipment=sf6-compressors");
-  await expect(page.locator('input[name="gas"][value="mixtures"]')).toBeChecked();
-  await expect(page.locator("#gas-composition")).toHaveValue("SF₆; чистота и примеси требуют уточнения");
-  await page.locator("#gas-composition").fill("SF₆; состав и примеси по анализу заказчика");
-  await page.getByRole("button", { name: "Продолжить" }).click();
-  await expect(page.getByRole("heading", { name: "Какое давление на входе?" })).toBeVisible();
+  await expect(page.locator('input[name="gas"][value="n2"]')).toBeChecked();
+  await expect(page.locator("main")).not.toContainText("Компрессор для SF₆");
 });
 
 test("mobile navigation works by keyboard and closes after choosing a section", async ({ page }) => {
@@ -357,7 +366,7 @@ test("qualified RFQ completes with explicit consent and honest local-staging rec
   await page.goto("/gases/nitrogen/?utm_source=e2e");
   await page.getByRole("link", { name: /Подобрать компрессор для N₂/ }).click();
   await expect(page).toHaveURL(/\/rfq\/?\?/);
-  await expect(page.getByText("Тестовый режим · локальная проверка", { exact: true })).toBeVisible();
+  await expect(page.locator(".rfq-shell:visible").getByText("Тестовый режим · локальная проверка", { exact: true })).toBeVisible();
   await fillNitrogen(page);
   await page.getByRole("button", { name: "Продолжить" }).click();
   await page.getByLabel("Давление на входе P₁", { exact: true }).fill("6");
@@ -375,10 +384,10 @@ test("qualified RFQ completes with explicit consent and honest local-staging rec
   await page.getByRole("button", { name: "Проверить параметры подбора" }).click();
   await expect(page.getByRole("heading", { name: "Предварительный вариант оборудования", exact: true })).toBeVisible();
   await expect(page.locator(".rfq-preliminary-data")).toContainText("Требуется инженерное подтверждение");
-  await page.getByLabel("Имя", { exact: true }).fill("Тестовый инженер");
-  await page.getByLabel("Компания", { exact: true }).fill("Тестовая организация E2E");
-  await page.getByLabel("Рабочий email", { exact: true }).fill("engineer@example.test");
-  const consent = page.locator('.rfq-consent input[type="checkbox"]');
+  await page.locator(".rfq-shell:visible").getByLabel("Имя", { exact: true }).fill("Тестовый инженер");
+  await page.locator(".rfq-shell:visible").getByLabel("Компания", { exact: true }).fill("Тестовая организация E2E");
+  await page.locator(".rfq-shell:visible").getByLabel("Рабочий email", { exact: true }).fill("engineer@example.test");
+  const consent = page.locator('.rfq-shell:visible .rfq-consent input[type="checkbox"]');
   await expect(consent).not.toBeChecked();
   await page.getByRole("button", { name: "Сохранить тестовую заявку" }).click();
   await expect(consent).toHaveAttribute("aria-invalid", "true");
@@ -401,6 +410,51 @@ test("qualified RFQ completes with explicit consent and honest local-staging rec
     consent: { accepted: true, version: "2026-10-22-v1" },
     attribution: { sourcePage: "/gases/nitrogen/", landingPage: expect.stringMatching(/^\/gases\/nitrogen\/?$/), utm: { source: "e2e" } },
   });
+});
+
+test("a file-only brief accepts unknown parameters, requires consent and persists private file bytes once", async ({ page, request }) => {
+  await page.goto("/rfq/?intake=brief&source=%2Fsolutions%2Fequipment-integration%2F");
+  await expectBriefIntake(page);
+  await page.locator("#brief-files").setInputFiles(briefFile);
+  await expect(page.locator(".brief-files-list")).toContainText(briefFile.name);
+  await fillBriefContact(page);
+  const posted: string[] = [];
+  page.on("request", (submission) => { if (submission.url().endsWith("/api/rfq") && submission.method() === "POST") posted.push(submission.url()); });
+  await page.getByRole("button", { name: "Сохранить тестовую заявку", exact: true }).click();
+  await expect(page.locator("#brief-consent")).toHaveAttribute("aria-invalid", "true");
+  expect(posted).toEqual([]);
+  await page.locator("#brief-consent").check();
+  const receiving = page.waitForResponse((response) => response.url().endsWith("/api/rfq") && response.request().method() === "POST");
+  await page.getByRole("button", { name: "Сохранить тестовую заявку", exact: true }).click();
+  const response = await receiving;
+  expect(response.status(), await response.text()).toBe(201);
+  const receipt = await response.json() as { id: string; duplicate: boolean; delivery: string };
+  expect(receipt).toMatchObject({ duplicate: false, delivery: "local-staging" });
+  await expect(page.getByTestId("brief-receipt")).toContainText("Тестовая заявка сохранена локально");
+  const sent = response.request();
+  const key = sent.headers()["idempotency-key"];
+  expect(key).toBeTruthy();
+  const filePath = path.resolve(".local/e2e-rfq", `${createHash("sha256").update(key).digest("hex")}.json`);
+  const stored = JSON.parse(await readFile(filePath, "utf8")) as { envelope: { id: string; rfq: Record<string, unknown>; attachments: { name: string; size: number; contentBase64: string; sha256: string }[] }; state: string };
+  const payload = stored.envelope.rfq;
+  expect(payload).toMatchObject({ intake: "brief", description: "", attachmentCount: 1, consent: { accepted: true } });
+  for (const field of ["gas", "inlet", "outlet", "flow"]) expect(payload).not.toHaveProperty(field);
+  expect(stored.state).toBe("complete");
+  expect(stored.envelope.id).toBe(receipt.id);
+  expect(stored.envelope.attachments).toHaveLength(1);
+  const attachment = stored.envelope.attachments[0];
+  expect(attachment.name).toBe(briefFile.name);
+  expect(attachment.size).toBe(briefFile.buffer.byteLength);
+  expect(Buffer.from(attachment.contentBase64, "base64")).toEqual(briefFile.buffer);
+  expect(attachment.sha256).toBe(createHash("sha256").update(briefFile.buffer).digest("hex"));
+  expect((await stat(filePath)).mode & 0o077).toBe(0);
+  const duplicate = await request.post("/api/rfq", {
+    headers: { "Idempotency-Key": key, Origin: "http://127.0.0.1:3000" },
+    multipart: { payload: JSON.stringify(payload), files: { name: briefFile.name, mimeType: briefFile.mimeType, buffer: briefFile.buffer } },
+  });
+  expect(duplicate.status(), await duplicate.text()).toBe(200);
+  expect(await duplicate.json()).toMatchObject({ id: receipt.id, duplicate: true, delivery: "local-staging" });
+  expect(await readFile(filePath, "utf8")).toContain(attachment.sha256);
 });
 
 test("desktop and mobile staging screenshots", async ({ page }) => {

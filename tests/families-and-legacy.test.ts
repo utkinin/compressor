@@ -22,7 +22,7 @@ function structuredDataTypes(value: unknown): string[] {
 }
 
 describe("public equipment catalogue and canonical intent preservation", () => {
-  it("generates exactly six equipment directions and no source-model or removed category route", async () => {
+  it("preserves all six equipment URLs without source-model or removed category routes", async () => {
     const { equipment } = await contentRepository.getSnapshot();
     const params = await equipmentParams();
     expect(equipment.map((item) => item.slug)).toEqual(equipmentSlugs);
@@ -36,7 +36,7 @@ describe("public equipment catalogue and canonical intent preservation", () => {
 
   it("renders substantive equipment pages with parameters, optional configurations and contextual RFQ links", async () => {
     const content = await contentRepository.getSnapshot();
-    for (const equipment of content.equipment) {
+    for (const equipment of content.equipment.filter((item) => item.id !== "sf6-compressors")) {
       const html = renderToStaticMarkup(createElement(PublicEquipmentPage, { equipment, content }));
       const headings = [...html.matchAll(/<h1\b[^>]*>(.*?)<\/h1>/g)];
       expect(headings).toHaveLength(1);
@@ -58,6 +58,19 @@ describe("public equipment catalogue and canonical intent preservation", () => {
     }
   });
 
+  it("preserves the SF₆ canonical as a specialist reference without a local product offer", async () => {
+    const content = await contentRepository.getSnapshot();
+    const equipment = content.equipment.find((item) => item.id === "sf6-compressors")!;
+    const html = renderToStaticMarkup(createElement(PublicEquipmentPage, { equipment, content }));
+    expect(html).toContain('data-testid="sf6-specialist-reference"');
+    expect(html).toContain("https://www.sf6rus.ru/products/0000004/");
+    expect(html).toContain("noopener");
+    expect(html).toContain("SF6RUS");
+    expect(html).not.toMatch(/href="\/rfq(?:\/|\?)/);
+    expect(html).not.toContain("Предварительный вариант оборудования");
+    expect(html).not.toContain("Исполнение и необходимая комплектация");
+  });
+
   it("never exposes private model identities or product-and-offer schema in equipment HTML", async () => {
     const content = await contentRepository.getSnapshot();
     for (const equipment of content.equipment) {
@@ -69,7 +82,7 @@ describe("public equipment catalogue and canonical intent preservation", () => {
       }
       const jsonLd = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)]
         .map((match) => JSON.parse(match[1]) as Record<string, unknown>);
-      expect(jsonLd.find((item) => item["@type"] === "CollectionPage")?.name).toBe(equipment.title);
+      expect(jsonLd.find((item) => ["CollectionPage", "WebPage"].includes(String(item["@type"])))?.name).toBe(equipment.title);
       const types = jsonLd.flatMap(structuredDataTypes);
       for (const forbiddenType of ["Product", "ProductGroup", "ProductModel", "Offer", "AggregateOffer"]) {
         expect(types).not.toContain(forbiddenType);

@@ -50,6 +50,7 @@ export interface Solution extends Entity {
 }
 
 export interface Equipment extends Entity {
+  externalReference?: { name: string; url: string };
   kind: "equipment-direction";
   gas: GasId | "sf6";
   technology: string;
