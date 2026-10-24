@@ -7,7 +7,7 @@ import { siteConfig } from "@/config/site";
 import "./site-navigation.css";
 
 const links = [
-  ["/equipment/", "Оборудование"], ["/solutions/", "Решения"], ["/gases/", "Технологические газы"],
+  ["/equipment/", "Оборудование"], ["/solutions/", "Решения"], ["/integrators/", "Интеграторам"], ["/gases/", "Технологические газы"],
   ["/knowledge/", "База знаний"], ["/about/", "О компании"], ["/contacts/", "Контакты"],
 ] as const;
 
