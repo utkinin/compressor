@@ -33,3 +33,18 @@ new = 'Проектные и повторяемые поставки для об
 if text.count(old) != 1:
     raise RuntimeError(f"Expected one old integrator heading assertion, found {text.count(old)}")
 path.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+# Static-preview acceptance must reflect the same seven customer navigation
+# sections as the server acceptance suite.
+path = Path("tests/preview/site.spec.ts")
+text = path.read_text(encoding="utf-8")
+old_title = 'test("preview navigation exposes six sections plus phone and RFQ"'
+new_title = 'test("preview navigation exposes seven sections plus phone and RFQ"'
+old_links = '["Оборудование", "Решения", "Технологические газы", "База знаний", "О компании", "Контакты"]'
+new_links = '["Оборудование", "Решения", "Интеграторам", "Технологические газы", "База знаний", "О компании", "Контакты"]'
+if text.count(old_title) != 1:
+    raise RuntimeError(f"Expected one old preview navigation title, found {text.count(old_title)}")
+if text.count(old_links) != 1:
+    raise RuntimeError(f"Expected one old preview navigation array, found {text.count(old_links)}")
+text = text.replace(old_title, new_title, 1).replace(old_links, new_links, 1)
+path.write_text(text, encoding="utf-8")
