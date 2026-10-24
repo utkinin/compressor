@@ -1,0 +1,43 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .38rem;
+  width: fit-content;
+  max-width: 100%;
+  padding: .28rem .52rem .28rem .4rem;
+  border: 1px solid #cad8cd;
+  border-radius: 999px;
+  background: #f7faf6;
+  color: #244b3b;
+  font-weight: 750;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  vertical-align: middle;
+}
+
+.mark {
+  flex: 0 0 auto;
+  width: 1.55rem;
+  height: 1.05rem;
+  overflow: visible;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  fill: #d8e7dc;
+}
+
+.formula {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .badge {
+    padding: .25rem .46rem .25rem .35rem;
+    gap: .3rem;
+  }
+
+  .mark {
+    width: 1.35rem;
+  }
+}

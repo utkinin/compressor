@@ -54,7 +54,7 @@ export function BulletList({ items }: { items: readonly string[] }) {
   return <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>;
 }
 
-export function EntityCard({ title, summary, href, label }: { title: string; summary: string; href: string; label?: string }) {
+export function EntityCard({ title, summary, href, label }: { title: string; summary: string; href: string; label?: ReactNode }) {
   return (
     <article className="content-card entity-card">
       {label ? <p className="eyebrow">{label}</p> : null}

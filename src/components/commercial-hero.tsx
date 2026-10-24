@@ -4,7 +4,7 @@ import "./commercial-visuals.css";
 
 /** Copy and the object illustration have separate responsive space. */
 export function CommercialHero({ eyebrow, title, summary, action, visualId }: {
-  eyebrow: string;
+  eyebrow: ReactNode;
   title: string;
   summary: string;
   action?: ReactNode;

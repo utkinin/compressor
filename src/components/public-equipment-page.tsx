@@ -39,6 +39,7 @@ export function PublicEquipmentPage({ equipment, content }: { equipment: Equipme
     <CommercialHero eyebrow="Оборудование / подбор по назначению" title={equipment.title} summary={equipment.summary} visualId={equipment.heroVisualId} action={<Link className="button" href={rfqHref}>{equipmentActionLabel(equipment)} <span aria-hidden="true">→</span></Link>} />
     <div className="container detail-layout equipment-detail"><article className="prose">
       <ContentSection title="Что это и для каких задач"><p>{equipment.technology}</p><BulletList items={equipment.applications} /></ContentSection>
+      <ContentSection title="Безмасляное сжатие"><p>Для этих направлений масло не подаётся в камеру сжатия компрессора. Чистота газа на выходе при этом зависит также от трубопроводов, арматуры, уплотнений и согласованной подготовки всей системы.</p><Link className="text-link" href="/knowledge/oil-free-compression/">Подробнее о безмасляном сжатии <span aria-hidden="true">→</span></Link></ContentSection>
       <EquipmentSelection rfqHref={rfqHref} />
       <ContentSection title="Что уточним для вашего процесса"><BulletList items={equipment.inputs} /></ContentSection>
       <ContentSection title="Как выбирается компрессор"><ProcessVisual id={equipment.processVisualId} /><ol>{equipment.approach.map((step) => <li key={step}>{step}</li>)}</ol></ContentSection>
