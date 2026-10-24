@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { articles, solutions } from "@/content";
-import { TrackedLink } from "@/components/tracked-link";
+import { HomeHeroV3 } from "@/components/home-hero-v3";
 import { HeroVisual } from "@/components/hero-visual";
 import { ProcessVisual } from "@/components/process-visual";
 import { pageMetadata } from "@/lib/seo";
@@ -63,20 +63,7 @@ export default function HomePage() {
   const featuredArticles = featuredIds.flatMap(id => articles.filter(article => article.id === id));
   const scenarioVisuals = new Map(solutions.map(solution => [`/solutions/${solution.slug}/`, solution.heroVisualId]));
   return <>
-    <section className="hero v21-hero" data-home-section="hero">
-      <div className="container hero-grid v21-hero-grid">
-        <div className="hero-copy">
-          <p className="eyebrow">БЕЗМАСЛЯНЫЕ КОМПРЕССОРЫ И БУСТЕРЫ · ТЕХНОЛОГИЧЕСКИЕ ГАЗЫ</p>
-          <h1>Компрессоры и бустеры для <span>технологических газов</span></h1>
-          <p className="hero-description">Подбираем оборудование для повышения давления, подачи и возврата технологических газов. Азот после генератора, газоснабжение лазерных установок, возврат гелия, CO₂, газовые смеси и компрессорные модули для встраивания в оборудование.</p>
-          <p className="v21-hero-supply">От отдельного компрессора или бустера до комплектной системы с необходимым охлаждением, ресивером, КИП, автоматикой и обвязкой.</p>
-          <div className="hero-actions"><TrackedLink event="hero_rfq_click" className="button" href={parameterRfq}>Подобрать компрессор <span aria-hidden="true">→</span></TrackedLink><TrackedLink event="hero_rfq_click" className="button button-secondary" href={briefRfq}>Отправить ТЗ или параметры <span aria-hidden="true">→</span></TrackedLink></div>
-          <p className="v21-hero-parameters">Газ · P₁ · P₂ · Q · режим работы</p>
-          <p className="v21-hero-note"><strong>Не знаете все параметры?</strong> Начните с ТЗ, паспорта оборудования, модели установки, фото шильды или существующей схемы. Определим, каких данных не хватает для расчёта.</p>
-        </div>
-        <div className="home-equipment-visual"><HeroVisual id="home-compressor-system" priority /><ul className="home-visual-parameters" aria-label="Исходные параметры"><li>Газ</li><li>P₁</li><li>P₂</li><li>Q</li><li>Режим</li></ul></div>
-      </div>
-    </section>
+    <HomeHeroV3 />
 
     <section className="container home-process-band" aria-label="Принцип подачи газа"><ProcessVisual id="process-home" compact /></section>
 

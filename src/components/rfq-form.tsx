@@ -247,7 +247,7 @@ export function RfqForm({ mode, initialGas, initialRequest = {}, questionnaire =
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (sending || mode === "disabled" || !validate()) return;
+    if (sending || mode === "disabled" || !consent || !validate()) return;
     const result = rfqSchema.safeParse(candidate());
     if (!result.success) return;
     if (mode === "preview") {
@@ -393,7 +393,7 @@ export function RfqForm({ mode, initialGas, initialRequest = {}, questionnaire =
           <div className="rfq-consent"><label><input type="checkbox" checked={consent} aria-invalid={Boolean(errors["consent.accepted"])} aria-describedby="consent-error" onChange={(event) => { changed(); setConsent(event.target.checked); }} /><span>Я даю <Link href="/legal/consent/" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</Link> для ответа на мой запрос и ознакомлен(а) с <Link href="/legal/privacy/" target="_blank" rel="noopener noreferrer">политикой обработки персональных данных</Link>. Рассылки в это согласие не входят.</span></label><ErrorText id="consent-error" message={errors["consent.accepted"] ?? errors.consent} /><p className="rfq-help">Версия согласия: {CONSENT_VERSION}. {mode === "preview" ? "В этой демонстрации согласие не передаётся серверу и не сохраняется." : "Дата и время фиксируются сервером при получении заявки."}</p></div>
           {serverError && <div className="rfq-server-error" role="alert"><strong>Отправка не подтверждена</strong><p>{serverError}</p><p>Данные остались в форме. Повторная отправка без изменений использует тот же ключ и не создаст дубликат.</p></div>}
           {Object.keys(errors).length > 0 && <p className="rfq-error" role="alert">Проверьте отмеченные поля. Если ошибка относится к параметрам компрессора, вернитесь к их редактированию.</p>}
-          <div className="rfq-actions"><button type="submit" className="button" disabled={sending || mode === "disabled"}>{sending ? "Сохраняем запрос…" : mode === "preview" ? "Завершить демонстрацию" : mode === "staging" ? "Сохранить тестовую заявку" : "Отправить параметры для подбора"}<span aria-hidden="true">→</span></button></div>
+          <div className="rfq-actions"><button type="submit" className="button" disabled={sending || mode === "disabled" || !consent}>{sending ? "Сохраняем запрос…" : mode === "preview" ? "Завершить демонстрацию" : mode === "staging" ? "Сохранить тестовую заявку" : "Отправить параметры для подбора"}<span aria-hidden="true">→</span></button></div>
           <p className="rfq-help">{mode === "preview" ? "Демонстрация завершится в браузере без сетевой отправки и сохранения контактов." : mode === "staging" ? "Проверка полного пути RFQ без внешней отправки." : "Подтверждение приёма заявки не является коммерческим предложением или подтверждением параметров компрессора."}</p>
           </fieldset>
         </form>}

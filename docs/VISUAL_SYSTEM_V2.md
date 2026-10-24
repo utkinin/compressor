@@ -68,8 +68,13 @@
 | `/knowledge/sf6-compressor-service-life/` | KnowledgeVisual where mapped; article text/table: Inline explanatory SVG or no topic image | `knowledge-sf6-life / knowledge-detail-sf6-compressor-service-life` | REPLACE; PASS |
 | `/knowledge/compressors-for-gas-mixtures/` | KnowledgeVisual where mapped; article text/table: Inline explanatory SVG or no topic image | `knowledge-gas-mixtures / knowledge-detail-compressors-for-gas-mixtures` | REPLACE; PASS |
 
+Финальный hero учитывает `HERO_V3_ZERO_SCROLL.md`: общий H1 сохранён, пять компактных переходов к задачам видны внутри первого экрана, справа показан настоящий raster asset `home-compressor-system`. Подробные scenario cards и отдельный светлый process band сохранены ниже. На пяти приоритетных Solutions применяются problem-led H1/CTA из `solutionHeroOverrides`, а изображения/процессы по-прежнему выбираются через visual ID. Названия и URL контентных направлений не менялись.
+
+На 1366×768 все пять pain links заканчиваются до y639.9, primary CTA находится на y392.4, изображение — y161…554.6. На 390×844 все пять pain links заканчиваются до y741.1. Мобильный порядок следует Hero v3: H1 → краткий lead → primary CTA → задачи → secondary CTA → крупное изображение. Прежняя промежуточная компоновка с изображением перед lead заменена этим окончательным правилом.
+
 ## B. Components и content model
 
+- `HomeHeroV3` отвечает за компактную многозадачную навигацию, отслеживает только контролируемые hero events и использует реальное предметное изображение вместо CSS-макета машины.
 - `HeroVisual` читает зарегистрированный visual ID и отвечает за предметное/application/editorial изображение, адаптивный источник, alt, размеры, приоритет загрузки и подпись. Главные изображения светлые; несогласованный или отсутствующий asset не публикуется.
 - `CommercialHero` объединяет текст/CTA слева и крупное изображение справа; на телефоне композиция перестраивается без уменьшения машины до чертежа.
 - `ProcessVisual` читает отдельный native process spec. Объекты и HTML-подписи остаются крупными; длинные flows переходят в вертикальные шаги на mobile. Сравнение воздуха/азота имеет два равноправных пути, буфер/ресивер отмечаются опциональными там, где это требуется.
@@ -189,7 +194,7 @@ Baseline: 7 production callsites / 37 rendered instances. После мигра�
 
 Проверены **1440 / 1280 / 1024 / 768 / 390**: Home, Equipment, N₂ compressor, N₂ booster, Solutions, N₂ after generator, Laser, Helium recovery, CO₂ equipment, Knowledge, статья о пяти параметрах. Все 55 сочетаний страницы/ширины проходят runtime checks без horizontal overflow, image errors и выхода CTA/process за экран. Просмотрены 10 контактных листов всех 55 fold screenshots и отдельные изображения/процессы в полном размере. Оборудование читается сразу, crop сохраняет основной объект, процессы и подписи остаются светлыми и крупными.
 
-Новые browser checks проверяют декодирование изображения, реальный local URL, осмысленный alt, зарезервированные dimensions, светлый контейнер, отсутствие legacy dark figure, overflow и выход CTA/process за viewport. Static checks отдельно проверяют responsive `currentSrc` под `/compressor/`. Скриншоты и метрики сохранены в `.local/visual-v2/final/screenshots/`, просмотренные контактные листы — `.local/visual-v2/final/contact-sheets/`. На Home390×844 основное изображение начинается на y391 и имеет высоту232px, primary CTA находится на y766.6 с высотой54px; оба доступны в первом экране. Для этого мобильная композиция ставит изображение после H1, а supporting copy сохраняется ниже CTA.
+Новые browser checks проверяют декодирование изображения, реальный local URL, осмысленный alt, зарезервированные dimensions, светлый контейнер, отсутствие legacy dark figure, overflow и выход CTA/process за viewport. Static checks отдельно проверяют responsive `currentSrc` под `/compressor/`. Скриншоты и метрики сохранены в `.local/visual-v2/final/screenshots/`, просмотренные контактные листы — `.local/visual-v2/final/contact-sheets/`. Финальные измерения Hero v3 приведены выше: пять pain paths доступны в первом экране desktop/mobile; изображение на mobile следует за навигацией по задачам, как требует актуальное задание.
 
 ## F. Performance
 
@@ -211,8 +216,8 @@ Baseline reports: `.local/visual-v2/baseline/lighthouse/`. Итоговые по
 | Production build | PASS:86 prerender entries, обязательные source/output/editorial guards |
 | Typecheck | PASS: npm run typecheck |
 | Lint | PASS: npm run lint, без предупреждений |
-| Unit tests | PASS:163 tests,8 files |
-| Server browser acceptance | PASS:32/32 в полном локальном наборе; отдельная повторная проверка выбора размеров изображений перед публикацией |
-| Static preview browser acceptance | PASS:23/23 в полном локальном наборе; отдельная повторная проверка responsive sources/basePath перед публикацией |
-| Public-output/editorial guard | PASS:713 production files,734 isolated static files,554 export text files;89 HTML,0 нарушений,12 допустимых технических терминов |
+| Unit tests | PASS:168 tests,9 files |
+| Server browser acceptance | PASS:32/32 в полном объединённом локальном наборе, включая Hero v3, согласие Stage A и пять ширин visual QA |
+| Static preview browser acceptance | PASS:23/23 в полном объединённом локальном наборе, включая Hero v3, disabled-until-consent и responsive sources/basePath |
+| Public-output/editorial guard | PASS:796 production files,737 isolated static files,556 export text files;89 HTML,0 нарушений,12 допустимых технических терминов |
 | Published preview HTTPS check | Требует проверки после публикации |

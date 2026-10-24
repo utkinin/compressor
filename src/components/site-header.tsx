@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { siteConfig } from "@/config/site";
 import "./site-navigation.css";
 
 const links = [
@@ -21,6 +22,7 @@ export function SiteHeader({ preview = true }: { preview?: boolean }) {
         <button type="button" className="menu-toggle" aria-expanded={open} aria-controls="primary-navigation" onClick={() => setOpen(!open)}><span>{open ? "Закрыть" : "Меню"}</span><span className={`menu-icon${open ? " is-open" : ""}`} aria-hidden="true"><i /><i /></span></button>
         <nav aria-label="Основная навигация" id="primary-navigation" className={`primary-nav${open ? " is-open" : ""}`}>
           {links.map(([href, label]) => <Link key={href} href={href} aria-current={pathname.startsWith(href.replace(/\/$/, "")) ? "page" : undefined} onClick={() => setOpen(false)}>{label}</Link>)}
+          <a href={siteConfig.phoneHref} className="header-phone" aria-label={`Позвонить ${siteConfig.phoneDisplay}`} onClick={() => setOpen(false)}>{siteConfig.phoneDisplay}</a>
           <Link href="/rfq/" className="header-rfq" onClick={() => setOpen(false)}>Подобрать компрессор<span aria-hidden="true">→</span></Link>
         </nav>
       </div>

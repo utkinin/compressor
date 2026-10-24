@@ -20,12 +20,16 @@ for (const width of [1440, 1280, 1024, 768, 390]) {
       expect(response?.status(), route).toBe(200);
       await expectVisualSystem(page);
       if (route === "/") {
-        const object = await page.locator(".home-equipment-visual img").boundingBox();
+        const object = await page.locator(".home-product-visual img").boundingBox();
         expect(object, "Home product image missing").not.toBeNull();
-        expect(object!.y + object!.height / 2, "Home equipment is hidden below the initial viewport").toBeLessThan(page.viewportSize()!.height);
+        if (width === 390) {
+          const pain = await page.locator(".home-pain-link").nth(2).boundingBox();
+          expect(pain, "Mobile pain navigator missing").not.toBeNull();
+          expect(pain!.y + pain!.height, "Mobile pain paths are hidden below the initial viewport").toBeLessThanOrEqual(844);
+        } else expect(object!.y + object!.height / 2, "Home equipment is hidden below the initial viewport").toBeLessThan(page.viewportSize()!.height);
       }
       const heroImage = await page.locator("main figure[data-visual-id] img").first().boundingBox();
-      const primaryCta = page.locator("main .hero-actions a.button").first();
+      const primaryCta = page.locator("main .hero-actions a.button, main .home-hero-v3-actions a.button").first();
       const primaryCtaBox = await primaryCta.count() ? await primaryCta.boundingBox() : null;
       const name = route === "/" ? "home" : route.replace(/^\/|\/$/g, "").replaceAll("/", "--");
       await page.screenshot({ path: `${folder}/${name}.png` });

@@ -51,6 +51,7 @@ technical explanations. Remove private supplier names and internal manufacturer 
 - Implement technical/RFQ safeguards and the commercial homepage/content restructuring as separate reviewable stages. Do not claim a PR exists, a live request was delivered, or a check passed before verifying it.
 
 ## Visual system v2 precedence
+- Final homepage and five priority solution heroes follow docs/HERO_V3_ZERO_SCROLL.md and its checklist: broad homepage H1, five explicit pain paths above the1366×768fold, light equipment image, and problem-led solution heroes. The mobile pain navigator precedes the large equipment image.
 - The approved visual migration is documented in docs/VISUAL_SYSTEM_V2.md. Earlier image plans are deprecated and do not mandate SVG-only heroes.
 - Start with visible equipment or its application, then explain the process, then show detailed engineering. HeroVisual, ProcessVisual and topic-specific deep figures have separate roles.
 - Content entities reference the public visual registry by ID. Keep image dimensions, meaningful alt text, approval, mobile/card sources and concept captions with the asset record.
