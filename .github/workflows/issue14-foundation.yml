@@ -23,7 +23,9 @@ jobs:
           node-version-file: .node-version
           cache: npm
       - name: Apply foundation patch
-        run: python3 scripts/apply-issue14-foundation.py
+        run: |
+          python3 scripts/apply-issue14-foundation.py
+          python3 scripts/apply-issue14-integration.py
       - run: npm ci
       - name: Validate source
         run: |
