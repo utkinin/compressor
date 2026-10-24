@@ -93,16 +93,16 @@ Baseline: 7 production callsites / 37 rendered instances. После мигра�
 | `TechnicalDiagram` | 0 | Удалённый компонент, совпадений в production source нет. |
 | `technical-diagram` | 0 | Удалённый файл/import path, совпадений нет. |
 | `DiagramKind` | 0 | Старый универсальный enum удалён, совпадений нет. |
-| `hero` | 316 | Действующие HeroVisual/CommercialHero, content heroVisualId, классы и props героя. |
+| `hero` | 305 | Действующие HeroVisual/CommercialHero, content heroVisualId, классы и props героя. |
 | `small` | 22 | HTML small, компактные контролы/шрифты и responsive asset suffix; не тип машины. |
 | `medium` | 6 | UTM medium и responsive image suffix; не модель или серия оборудования. |
 | `large` | 2 | Описание крупных пиктограмм в комментарии и ограничение размера HTTP body; не enum. |
-| `nitrogen` | 153 | Существующие азотные URL, IDs, контент и новые изображения. |
-| `helium` | 84 | Существующие гелиевые URL, IDs, контент и новые изображения. |
+| `nitrogen` | 158 | Существующие азотные URL, IDs, контент и новые изображения. |
+| `helium` | 87 | Существующие гелиевые URL, IDs, контент и новые изображения. |
 | `hydrogen` | 16 | Сохранённые водородные URL и проектное рассмотрение; не основной коммерческий hero. |
-| `co2` | 90 | Существующий CO₂-контент, URL и отдельные изображения. |
+| `co2` | 91 | Существующий CO₂-контент, URL и отдельные изображения. |
 | `instrumentation` | 1 | Вторичный объект КИП в светлом process renderer. |
-| `integration` | 30 | Действующие страницы, примеры и иллюстрации встраивания. |
+| `integration` | 33 | Действующие страницы, примеры и иллюстрации встраивания. |
 
 Полный список файлов каждого совпадения сохранён локально: `.local/visual-v2/final/legacy-term-search.json`.
 
@@ -206,7 +206,18 @@ Baseline: 7 production callsites / 37 rendered instances. После мигра�
 | Equipment | 100 | 113.9 ms | 0 | 215 368 B | 0 B |
 | N₂ booster | 100 | 117.0 ms | 0 | 213 641 B | 0 B |
 
-Baseline reports: `.local/visual-v2/baseline/lighthouse/`. Итоговые показатели и сравнение будут заполнены после сборки. Lazy loading ниже первого экрана, явные aspect ratio/width/height и high fetch priority первого изображения проверяются отдельно; fake measurement не подставляется.
+Итоговые сопоставимые измерения объединённой Visual System v2 + Hero v3:
+
+| PAGE | PERFORMANCE ДО → ПОСЛЕ | ACCESSIBILITY | LCP ДО → ПОСЛЕ | CLS | TRANSFER ДО → ПОСЛЕ | IMAGE TRANSFER ПОСЛЕ |
+| --- | --- | --- | --- | --- | --- | --- |
+| home | 100 → 100 | 100 | 177.2 → 203.7 ms | 0 | 197306 → 310420 B | 37472 B |
+| equipment | 100 → 100 | 100 | 113.9 → 118.9 ms | 0 | 215368 → 311824 B | 74897 B |
+| nitrogen-booster | 100 → 100 | 100 | 117.0 → 119.0 ms | 0 | 213641 → 248052 B | 9498 B |
+
+Оценки performance/accessibility сохранились по100/100, CLS остался0. Рост transfer относительно старого SVG-only UI связан с предметными изображениями, новым hero и данными клиентских компонентов. Измерения локальные, с provided throttling; это не обещание production Core Web Vitals. Picture/srcset выбирает384/600/900/1800px по viewport/DPR. После оптимизации на контрольном390px image transfer составил37.5KB на Home,74.9KB на Equipment и9.5KB на бустере. Lazy loading и high fetch priority первого изображения сохранены.
+
+Baseline reports: `.local/visual-v2/baseline/lighthouse/`; финальные raw reports: `.local/visual-v2/final/lighthouse/`. Обложка `knowledge-air-vs-nitrogen` подготовлена в manifest; новый article URL не создавался. На действующей лазерной странице оба пути раскрывает полноценный `process-laser`.
+
 
 ## G. Tests
 
@@ -220,4 +231,14 @@ Baseline reports: `.local/visual-v2/baseline/lighthouse/`. Итоговые по
 | Server browser acceptance | PASS:32/32 в полном объединённом локальном наборе, включая Hero v3, согласие Stage A и пять ширин visual QA |
 | Static preview browser acceptance | PASS:23/23 в полном объединённом локальном наборе, включая Hero v3, disabled-until-consent и responsive sources/basePath |
 | Public-output/editorial guard | PASS:796 production files,737 isolated static files,556 export text files;89 HTML,0 нарушений,12 допустимых технических терминов |
-| Published preview HTTPS check | Требует проверки после публикации |
+| Published preview HTTPS check | PASS:89 HTML/201 HTTPS URL; все125 visual files возвращают200 и совпадают поSHA256 с локальной сборкой |
+
+## Публикация и фактические границы
+
+[GitHub Actions run40113705049](https://github.com/utkinin/compressor/actions/runs/40113705049) завершился успешно: сборка и deployment. Опубликованный код — `525c7af5ee95f06562993a1c83505a5b72b10043`; исходная visual migration — `9281697`. В него сохранены параллельные изменения Hero v3/Stage A и интегрированы реальные visual assets вместо CSS-макета оборудования.
+
+Превью: https://utkinin.github.io/compressor/ . HTTPS-сверка подтвердила89 HTML и201 URL, совпадение H1/текста/canonical/metadata и ресурсов с проверенным export. Отдельно проверены все125 изображений:HTTP200 и точныйSHA256. Публичный Chromium smoke подтвердил все пять pain paths в первом экране1366×768 и390×844, переход в brief RFQ, unchecked consent, отсутствие API-запросов и overflow. Python проверял HTTPS обычным доверенным SSL-контекстом; Chromium использовал исключение сертификата прокси только для тестовой среды.
+
+Все60 контентных canonical URL сохранены в sitemap;21 ранее удалённый ошибочный URL возвращает настоящий404. Предыдущие запрещённые supplier-названия/внутренние коммерческие акронимы как слова отсутствуют в собственном коде, комментариях, тестах и документации; технические строки компилятора и lock integrity не менялись.
+
+GitHub Pages остаётся независимым статическим noindex-preview. `siteConfig` содержит предоставленные production origin/контакты; перенос DNS/hosting регулируется `PRODUCTION_CUTOVER.md`. Live-приём RFQ по-прежнему требует утверждённых реквизитов и настроенного канала. Hero analytics передаёт только контролируемые события после согласия; данные посещаемости и конверсий в этом проходе не собирались.
