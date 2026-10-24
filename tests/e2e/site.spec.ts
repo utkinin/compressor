@@ -178,10 +178,10 @@ test("project gas URLs and linked nitrogen intents remain distinct", async ({ pa
   await expectProjectLandings(page);
 });
 
-test("header exposes six navigation sections, phone and RFQ separately", async ({ page }) => {
+test("header exposes seven navigation sections, phone and RFQ separately", async ({ page }) => {
   await page.goto("/knowledge/");
   const navigation = page.getByRole("navigation", { name: "Основная навигация" });
-  await expect(navigation.locator("a:not(.header-rfq):not(.header-phone)")).toHaveText(["Оборудование", "Решения", "Технологические газы", "База знаний", "О компании", "Контакты"]);
+  await expect(navigation.locator("a:not(.header-rfq):not(.header-phone)")).toHaveText(["Оборудование", "Решения", "Интеграторам", "Технологические газы", "База знаний", "О компании", "Контакты"]);
   await expect(navigation.locator(".header-phone")).toHaveText("+7 (812) 309-05-12");
   await expect(navigation.locator(".header-phone")).toHaveAttribute("href", "tel:+78123090512");
   await expect(navigation.locator(".header-rfq")).toContainText("Подобрать компрессор");

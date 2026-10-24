@@ -58,7 +58,7 @@ const projectStages = [
 ] as const;
 
 export default function IntegratorsPage() {
-  const rfq = "/rfq/?intake=brief&solution=equipment-integration&source=%2Fintegrators%2F";
+  const rfq = "/rfq/?intake=integration&solution=equipment-integration&source=%2Fintegrators%2F";
   return <>
     <Breadcrumbs items={[{ label: "Интеграторам", href: "/integrators/" }]} />
     <CommercialHero

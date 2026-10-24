@@ -102,20 +102,25 @@ export default function HomePage() {
       <div className="v21-section-links"><Link href="/engineering/">Подробнее о подборе <span aria-hidden="true">→</span></Link><Link href="/cases/">Примеры расчётных задач <span aria-hidden="true">→</span></Link></div>
     </div></section>
 
+    <section className="section v21-integrators" aria-labelledby="integrators-home-title" data-home-section="integrators"><div className="container integrators-home-layout">
+      <div><p className="eyebrow">05 / Для интеграторов и производителей оборудования</p><h2 id="integrators-home-title">Компрессорный модуль как часть вашей машины или системы</h2><p>Подбираем узел не только по давлению и расходу: согласуем питание, охлаждение, габариты, управление и подключения. Фокус — проектные и повторяемые поставки от опытного образца до серии.</p><div className="v21-section-links"><Link href="/integrators/">Интеграторам <span aria-hidden="true">→</span></Link><Link href="/rfq/?intake=integration&solution=equipment-integration&source=%2F">Передать ТЗ на интеграцию <span aria-hidden="true">→</span></Link></div></div>
+      <ProcessVisual id="process-integration" />
+    </div></section>
+
     <section className="section v21-deliverables" aria-labelledby="deliverables-title" data-home-section="deliverables"><div className="container">
-      <div className="section-heading"><div><p className="eyebrow">05 / Результаты этапов</p><h2 id="deliverables-title">От расчёта до технического предложения</h2></div><p>Техническое предложение связывает условия процесса с выбранным оборудованием и конкретным составом поставки.</p></div>
+      <div className="section-heading"><div><p className="eyebrow">06 / Результаты этапов</p><h2 id="deliverables-title">От расчёта до технического предложения</h2></div><p>Техническое предложение связывает условия процесса с выбранным оборудованием и конкретным составом поставки.</p></div>
       <div className="v21-deliverables-grid"><ol className="v21-deliverable-list">{deliverables.map((item, index) => <li key={item.title}><span aria-hidden="true">0{index + 1}</span><div><h3>{item.title}</h3><p><strong>Результат:</strong> {item.result}</p></div></li>)}</ol>
         <div className="v21-technical-table"><table><caption>Что фиксируем при согласовании</caption><thead><tr><th scope="col">Данные</th><th scope="col">Содержание</th></tr></thead><tbody><tr><th scope="row">Среда</th><td>Газ, состав, чистота и существенные примеси</td></tr><tr><th scope="row">Режим</th><td>Диапазон входного давления, требуемое давление, расход и цикл</td></tr><tr><th scope="row">Исполнение</th><td>Материалы, охлаждение, герметичность и условия площадки</td></tr><tr><th scope="row">Поставка</th><td>Комплектация, подключения, документация и приёмка</td></tr></tbody></table><p>Конкретные характеристики выбранного исполнения подтверждаются расчётом для заданного газа и режима.</p><Link href="/documents/process-gas-questionnaire/">Заполнить опросный лист <span aria-hidden="true">→</span></Link></div>
       </div>
     </div></section>
 
     <section className="section knowledge-home v21-knowledge" aria-labelledby="knowledge-title" data-home-section="knowledge"><div className="container">
-      <div className="section-heading"><div><p className="eyebrow">06 / Экспертный центр</p><h2 id="knowledge-title">Практические материалы</h2></div><Link href="/knowledge/" className="text-link">База знаний <span aria-hidden="true">→</span></Link></div>
+      <div className="section-heading"><div><p className="eyebrow">07 / Экспертный центр</p><h2 id="knowledge-title">Практические материалы</h2></div><Link href="/knowledge/" className="text-link">База знаний <span aria-hidden="true">→</span></Link></div>
       <div className="knowledge-home-list">{featuredArticles.map((article, index) => <Link key={article.id} href={`/knowledge/${article.slug}/`} className="knowledge-home-item"><HeroVisual id={article.heroVisualId} variant="card" /><div><span className="home-knowledge-index">0{index + 1}</span><h3>{article.title}</h3><p>{article.summary}</p></div><span className="link-arrow" aria-hidden="true">→</span></Link>)}</div>
     </div></section>
 
     <section className="final-cta v21-rfq" aria-labelledby="final-cta-title" data-home-section="rfq"><div className="container final-cta-inner">
-      <div><p className="eyebrow">07 / Ваша задача</p><h2 id="final-cta-title">Расскажите о задаче — начнём с того, что уже известно</h2><p>Укажите газ, давление на входе, требуемое давление, расход и режим работы. Если часть параметров неизвестна, начните с ТЗ, паспорта оборудования, модели установки, схемы или описания текущей системы.</p></div>
+      <div><p className="eyebrow">08 / Ваша задача</p><h2 id="final-cta-title">Расскажите о задаче — начнём с того, что уже известно</h2><p>Укажите газ, давление на входе, требуемое давление, расход и режим работы. Если часть параметров неизвестна, начните с ТЗ, паспорта оборудования, модели установки, схемы или описания текущей системы.</p></div>
       <div className="final-cta-action"><strong>Параметры или описание задачи</strong><Link className="button" href={parameterRfq}>Подобрать компрессор <span aria-hidden="true">→</span></Link><Link className="button button-secondary v21-brief-button" href={briefRfq}>Отправить ТЗ или описание <span aria-hidden="true">→</span></Link><p>Уточним недостающие данные и определим подход к расчёту.</p></div>
     </div></section>
   </>;

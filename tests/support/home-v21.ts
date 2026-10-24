@@ -14,9 +14,9 @@ export async function expectHomeV21(page: Page, mount = "") {
   for (const [index, slug] of painDestinations.entries()) await expect(painLinks.nth(index)).toHaveAttribute("href", new RegExp(`${mount}/solutions/${slug}/?$`));
   await expect(hero).not.toContainText(/рабочая точка|(?<![\p{L}\p{N}])(?:H₂|O₂|SF₆)(?![\p{L}\p{N}])|ПЭТ/iu);
   const sections = page.locator("main > section[data-home-section]");
-  await expect(sections).toHaveCount(9);
+  await expect(sections).toHaveCount(10);
   expect(await sections.evaluateAll((elements) => elements.map((element) => element.getAttribute("data-home-section")))).toEqual([
-    "hero", "scenarios", "parameters", "supply", "gases", "engineering", "deliverables", "knowledge", "rfq",
+    "hero", "scenarios", "parameters", "supply", "gases", "engineering", "integrators", "deliverables", "knowledge", "rfq",
   ]);
   await expect(sections.nth(1).getByRole("heading", { level: 2 })).toHaveText("Что требуется решить?");
   const scenarios = sections.nth(1).locator(".v21-scenario");
@@ -32,11 +32,13 @@ export async function expectHomeV21(page: Page, mount = "") {
   await expect(sections.nth(4).locator(".v21-gas-grid a")).toHaveCount(4);
   await expect(sections.nth(4).locator('a[href="https://www.sf6rus.ru/products/0000004/"]')).toHaveAttribute("href", "https://www.sf6rus.ru/products/0000004/");
   await expect(sections.nth(5).locator(".engineering-step")).toHaveCount(4);
-  await expect(sections.nth(6)).toContainText("От расчёта до технического предложения");
-  expect(await sections.nth(7).locator("h3").count()).toBeGreaterThanOrEqual(4);
-  expect(await sections.nth(7).locator("h3").count()).toBeLessThanOrEqual(6);
-  await expect(sections.nth(7)).not.toContainText("SF₆");
-  await expect(sections.nth(8).getByRole("link", { name: /ТЗ|описание|параметры/ }).first()).toHaveAttribute("href", /intake=brief/);
+  await expect(sections.nth(6)).toContainText("Компрессорный модуль как часть вашей машины или системы");
+  await expect(sections.nth(6).getByRole("link", { name: /Интеграторам/ })).toHaveAttribute("href", new RegExp(`${mount}/integrators/?$`));
+  await expect(sections.nth(7)).toContainText("От расчёта до технического предложения");
+  expect(await sections.nth(8).locator("h3").count()).toBeGreaterThanOrEqual(4);
+  expect(await sections.nth(8).locator("h3").count()).toBeLessThanOrEqual(6);
+  await expect(sections.nth(8)).not.toContainText("SF₆");
+  await expect(sections.nth(9).getByRole("link", { name: /ТЗ|описание|параметры/ }).first()).toHaveAttribute("href", /intake=brief/);
   await expect(page.locator('meta[name="description"]')).not.toHaveAttribute("content", /(?<![\p{L}\p{N}])(?:SF₆|H₂|O₂)(?![\p{L}\p{N}])|ПЭТ/u);
   await expect(page.locator("main")).not.toContainText(/\d+\s*[→–-]\s*\d+\s*(?:bar|бар)|\d+\s*(?:Nm³|Нм³)\/ч/i);
 }
