@@ -20,10 +20,14 @@ export async function expectProjectLandings(page: Page, mount = "") {
   const nitrogenPath = `${mount}/solutions/nitrogen-booster-after-generator/`;
   const laserPath = `${mount}/solutions/nitrogen-for-laser-cutting/`;
   await page.goto(nitrogenPath);
-  await expect(page.locator("main h1")).toHaveText("Дожатие азота после генератора");
+  await expect(page.locator("main h1")).toHaveText("Не хватает давления после генератора азота?");
+  await expect(page.locator("main h1")).toHaveCount(1);
+  await expect(page.locator(".solution-process-visual")).toBeVisible();
   await expect(page.locator(`main a[href="${laserPath}"],main a[href="${laserPath.slice(0, -1)}"]`).first()).toBeVisible();
   await page.goto(laserPath);
-  await expect(page.locator("main h1")).toHaveText("Система подачи азота для лазерной резки");
+  await expect(page.locator("main h1")).toHaveText("Нужен газ для лазерного станка?");
+  await expect(page.locator("main h1")).toHaveCount(1);
+  await expect(page.locator(".solution-process-visual")).toBeVisible();
   await expect(page.locator(`main a[href="${nitrogenPath}"],main a[href="${nitrogenPath.slice(0, -1)}"]`).first()).toBeVisible();
   await expect(page.locator("main")).toContainText("компрессор → ресивер → осушитель → фильтрация → лазер");
   await expect(page.locator("main")).toContainText("источник N₂ / генератор → бустер → ресивер → лазер");
