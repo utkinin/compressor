@@ -43,13 +43,13 @@ describe("content evidence and editorial safety", () => {
     ]) expect(publicProperties([{ ...fixture, source }])).toEqual([]);
   });
 
-  it("publishes six equipment directions without unsupported performance claims", () => {
+  it("preserves five equipment directions and the SF₆ specialist reference without unsupported claims", () => {
     expect(equipment.map((item) => [item.id, item.title])).toEqual([
       ["nitrogen-compressors", "Компрессоры для азота"],
       ["nitrogen-boosters", "Бустеры азота высокого давления"],
       ["helium-compressors", "Компрессоры для гелия"],
       ["co2-compressors", "Компрессоры для CO₂"],
-      ["sf6-compressors", "Компрессоры для SF₆"],
+      ["sf6-compressors", "Оборудование для SF₆ — SF6RUS"],
       ["process-gas-compressors", "Компрессоры для технологических газов"],
     ]);
     expect(equipment.every((item) => item.kind === "equipment-direction" && item.id === item.slug)).toBe(true);

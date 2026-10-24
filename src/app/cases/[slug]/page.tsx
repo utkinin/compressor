@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { contentRepository } from "@/content";
 import { pageMetadata } from "@/lib/seo";
-import { Breadcrumbs, BulletList, ContentSection, PageIntro, RelatedLinks, RfqPanel } from "@/components/content-page";
-import { TechnicalDiagram } from "@/components/technical-diagram";
+import { Breadcrumbs, BulletList, ContentSection, RelatedLinks, RfqPanel } from "@/components/content-page";
+import { CommercialHero } from "@/components/commercial-hero";
+import { ProcessVisual } from "@/components/process-visual";
 
 export async function generateStaticParams() { const { cases } = await contentRepository.getSnapshot(); return cases.map(({ slug }) => ({ slug })); }
 
@@ -26,8 +28,8 @@ export default async function ScenarioPage({ params }: { params: Promise<{ slug:
   if (relatedSolutions[0]) query.set("solution", relatedSolutions[0].id);
   return <>
     <Breadcrumbs items={[{ label: "Примеры расчётных задач", href: "/cases/" }, { label: scenario.title, href: `/cases/${scenario.slug}/` }]} />
-    <PageIntro eyebrow={labels[scenario.kind]} title={scenario.title} summary={scenario.summary} />
-    <section className="container"><TechnicalDiagram kind={relatedSolutions[0]?.diagram || "hero"} title={scenario.title} /></section>
+    <CommercialHero eyebrow={labels[scenario.kind]} title={scenario.title} summary={scenario.summary} visualId={scenario.heroVisualId} action={<Link className="button" href={`/rfq/?${query.toString()}`}>Обсудить похожую задачу <span aria-hidden="true">→</span></Link>} />
+    <section className="container commercial-process-section" aria-label="Принцип расчётного примера"><ProcessVisual id={scenario.processVisualId} /></section>
     <div className="container detail-layout"><article className="prose">
       <ContentSection title="Постановка задачи"><p>{scenario.input}</p></ContentSection>
       <ContentSection title="Подход к компоновке"><BulletList items={scenario.approach} /></ContentSection>

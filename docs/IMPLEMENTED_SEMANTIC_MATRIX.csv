@@ -23,7 +23,7 @@
 "equipment","/equipment/nitrogen-boosters/","Бустеры азота высокого давления","n2","nitrogen-boosters","review"
 "equipment","/equipment/helium-compressors/","Компрессоры для гелия","he","helium-compressors","review"
 "equipment","/equipment/co2-compressors/","Компрессоры для CO₂","co2","co2-compressors","review"
-"equipment","/equipment/sf6-compressors/","Компрессоры для SF₆","","sf6-compressors","review"
+"equipment","/equipment/sf6-compressors/","Оборудование для SF₆ — SF6RUS","","sf6-compressors","review"
 "equipment","/equipment/process-gas-compressors/","Компрессоры для технологических газов","mixtures|h2|o2","process-gas-compressors","review"
 "industries","/industries/machine-building/","Машиностроение","n2|he|mixtures","","review"
 "industries","/industries/laser-cutting/","Газоснабжение лазерного станка","n2","","review"

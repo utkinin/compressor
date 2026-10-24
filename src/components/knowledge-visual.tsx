@@ -1,104 +1,28 @@
-import type { ReactNode } from "react";
+import { knowledgeFigures } from "@/content/knowledge-visuals";
 
-type BlockProps = { x: number; y: number; width?: number; title: string; note?: string; accent?: boolean; noteSize?: number };
-function Block({ x, y, width = 160, title, note, accent = false, noteSize = 13 }: BlockProps) {
-  return <g transform={`translate(${x} ${y})`}>
-    <rect width={width} height="74" rx="2" fill={accent ? "#e2b995" : "#e9eee1"} stroke={accent ? "#c47c50" : "#91a18a"} />
-    <text x={width / 2} y={note ? 31 : 43} textAnchor="middle" fill="#243b2c" fontSize="17" fontWeight="600">{title}</text>
-    {note && <text x={width / 2} y="53" textAnchor="middle" fill="#52654d" fontSize={noteSize}>{note}</text>}
-  </g>;
-}
-function Arrow({ x, y, width = 38 }: { x: number; y: number; width?: number }) {
-  return <g fill="none" stroke="#8da17f" strokeWidth="2"><path d={`M${x} ${y}h${width}`} /><path d={`m${x + width - 6} ${y - 5} 6 5-6 5`} /></g>;
-}
-function Diagram({ label, children }: { label: string; children: ReactNode }) {
-  return <svg className="knowledge-visual-wide" viewBox="0 0 760 240" role="img" aria-label={label}><title>{label}</title>{children}</svg>;
-}
-
-const mobileStages: Record<string, { title: string; note: string }[]> = {
-  "what-to-specify-for-gas-compressor": [
-    { title: "Газ · P₁ · P₂ · Q · режим", note: "пять основных параметров" },
-    { title: "Подбор компрессора", note: "по условиям процесса" },
-    { title: "Исполнение и комплектация", note: "после выбора компрессора" },
-  ],
-  "why-process-gas-compressors-need-task-specific-selection": [
-    { title: "Условия процесса", note: "газ · P₁ · P₂ · Q · режим" },
-    { title: "Подбор", note: "расчёт и совместимость" },
-    { title: "Оборудование", note: "исполнение и необходимые опции" },
-  ],
-  "what-is-in-compressor-skid": [
-    { title: "Компрессор", note: "основное оборудование" },
-    { title: "Необходимые опции", note: "по условиям процесса" },
-    { title: "Комплектная система", note: "согласованный состав" },
-  ],
-  "sf6-compressor-service-life": [
-    { title: "Состояние SF₆ и нагрузка", note: "влага · примеси · температура · режим" },
-    { title: "Клапаны и уплотнения", note: "состояние и герметичность" },
-    { title: "Обслуживание", note: "контроль по документации" },
-  ],
-  "how-to-select-nitrogen-booster": [
-    { title: "Источник азота", note: "доступные давление P₁ и расход Q" },
-    { title: "Бустер", note: "повышение давления" },
-    { title: "Ресивер", note: "по расчёту" },
-    { title: "Потребитель", note: "требуемые давление P₂ и расход Q" },
-  ],
-  "compressors-for-gas-mixtures": [
-    { title: "Состав смеси", note: "компоненты, концентрации и примеси" },
-    { title: "Совместимость", note: "материалы и безопасность" },
-    { title: "Компрессор", note: "подтверждённое исполнение" },
-  ],
-};
-
-function MobileDiagram({ articleId, label }: { articleId: string; label: string }) {
-  const stages = mobileStages[articleId];
-  if (!stages) return null;
-  return <svg className="knowledge-visual-mobile" viewBox={`0 0 380 ${stages.length * 102 + 16}`} role="img" aria-label={label}><title>{label}</title>
-    {stages.map((stage, index) => <g key={stage.title}>
-      <Block x={24} y={20 + index * 102} width={332} title={stage.title} note={stage.note} noteSize={15} accent={index === 1} />
-      {index < stages.length - 1 && <g fill="none" stroke="#8da17f" strokeWidth="2"><path d={`M190 ${101 + index * 102}v14`} /><path d={`m185 ${110 + index * 102} 5 5 5-5`} /></g>}
-    </g>)}
+function DetailObject({ title }: { title: string }) {
+  const compressor = /компрессор|бустер|ступень/i.test(title);
+  const cooling = /охлаждение|температура/i.test(title);
+  const service = /обслуживание|клапаны|уплотнения|привод/i.test(title);
+  return <svg viewBox="0 0 180 130" aria-hidden="true" focusable="false">
+    {compressor ? <><ellipse cx="90" cy="113" rx="74" ry="9" fill="#d7e3d4" /><rect x="17" y="99" width="146" height="12" rx="3" fill="#79927a" /><rect x="35" y="58" width="64" height="42" rx="6" fill="#426c54" /><rect x="47" y="25" width="42" height="38" rx="4" fill="#e9c4a3" stroke="#a86d48" strokeWidth="2" /><path d="M52 34h32M52 43h32M52 52h32" stroke="#b68660" strokeWidth="3" /><rect x="102" y="68" width="45" height="31" rx="6" fill="#a3b8a8" /><path d="M67 25V13h53v24" stroke="#345341" strokeWidth="6" fill="none" /><rect x="112" y="33" width="18" height="20" rx="3" fill="#b8ccba" /></> : cooling ? <><rect x="25" y="27" width="130" height="78" rx="9" fill="#dcebef" stroke="#71979d" strokeWidth="3" /><path d="M42 38v56m19-56v56m19-56v56m19-56v56m19-56v56m19-56v56" stroke="#8bb0b6" strokeWidth="5" /><path d="M25 50H9m146 31h16" stroke="#6b939b" strokeWidth="7" /></> : service ? <><circle cx="90" cy="65" r="43" fill="#edd1b4" stroke="#ab7954" strokeWidth="3" /><circle cx="90" cy="65" r="21" fill="#fafbf7" stroke="#ab7954" strokeWidth="3" /><path d="M90 13v16m0 73v16M38 65h16m73 0h16M53 28l13 13m50 50 13 13M53 102l13-13m50-50 13-13" stroke="#ab7954" strokeWidth="12" /></> : <><rect x="37" y="24" width="106" height="84" rx="17" fill="#e2ecdf" stroke="#8ca58d" strokeWidth="3" /><circle cx="69" cy="54" r="14" fill="#b8ccbc" /><circle cx="110" cy="56" r="14" fill="#e4bd9c" /><circle cx="89" cy="85" r="14" fill="#bad6dc" /><path d="M17 66h17m112 0h17" stroke="#8ca58d" strokeWidth="6" /></>}
   </svg>;
 }
 
-const illustrations: Record<string, { label: string; caption: string; content: ReactNode }> = {
-  "what-to-specify-for-gas-compressor": {
-    label: "Пять основных параметров для подбора компрессора",
-    caption: "Газ, два давления, расход и режим работы задают начало подбора. Дополнительные требования уточняются для конкретного процесса.",
-    content: <><text x="40" y="44" fontSize="14" fill="#afbd9f">ИСХОДНЫЕ ПАРАМЕТРЫ</text>{["Газ", "P₁", "P₂", "Q", "Режим"].map((item, index) => <g key={item}><rect x={40 + index * 89} y="85" width="76" height="68" fill="#e9eee1" stroke="#91a18a" /><text x={78 + index * 89} y="127" textAnchor="middle" fontSize="21" fill="#243b2c">{item}</text></g>)}<Arrow x={491} y={119} width={42} /><Block x={548} y={82} width={172} title="Компрессор" note="под ваши параметры" accent /></>,
-  },
-  "why-process-gas-compressors-need-task-specific-selection": {
-    label: "Условия процесса определяют выбор компрессора",
-    caption: "Одинаковое требуемое давление может соответствовать разным газам, расходам и режимам. Подбор учитывает условия вместе.",
-    content: <><Block x={35} y={83} width={193} title="Условия процесса" note="газ · P₁ · P₂ · Q · режим" /><Arrow x={239} y={120} width={40} /><Block x={290} y={83} width={180} title="Подбор" note="расчёт и совместимость" accent /><Arrow x={482} y={120} width={40} /><Block x={534} y={83} width={191} title="Оборудование" note="исполнение и опции" /><text x="380" y="204" textAnchor="middle" fontSize="14" fill="#afbd9f">ТЕМПЕРАТУРА · МАТЕРИАЛЫ · ГЕРМЕТИЧНОСТЬ · ПЛОЩАДКА</text></>,
-  },
-  "what-is-in-compressor-skid": {
-    label: "От компрессора к комплектной системе через необходимые опции",
-    caption: "Состав поставки определяется задачей. Исполнение на общей раме и дополнительные компоненты согласуются после выбора компрессора.",
-    content: <><Block x={30} y={83} width={186} title="Компрессор" note="основное оборудование" /><Arrow x={227} y={120} width={33} /><Block x={272} y={83} width={194} title="Необходимые опции" note="по условиям процесса" accent /><Arrow x={478} y={120} width={33} /><Block x={523} y={83} width={207} title="Комплектная система" note="согласованный состав" /></>,
-  },
-  "sf6-compressor-service-life": {
-    label: "Состояние газа, режим и обслуживание влияют на срок службы компрессора SF₆",
-    caption: "Срок службы зависит от условий эксплуатации. Его нельзя определить только по названию газа или перенести с другого исполнения.",
-    content: <><Block x={35} y={34} width={190} title="Состояние SF₆" note="влага и примеси" /><Block x={35} y={132} width={190} title="Нагрузка" note="температура и режим" /><path d="M240 71h42v98h-42m42-49h48" fill="none" stroke="#8da17f" strokeWidth="2" /><Block x={345} y={83} width={176} title="Условия работы" note="клапаны и уплотнения" accent /><Arrow x={532} y={120} width={33} /><Block x={577} y={83} width={148} title="Обслуживание" note="по документации" /></>,
-  },
-  "how-to-select-nitrogen-booster": {
-    label: "Источник азота, бустер, ресивер и потребитель",
-    caption: "Бустер повышает давление имеющегося азота. Ресивер может сглаживать пики, а постоянный расход обеспечивается источником газа.",
-    content: <><Block x={25} y={83} width={152} title="Источник N₂" note="доступные P₁ и Q" /><Arrow x={187} y={120} width={25} /><Block x={224} y={83} width={143} title="Бустер" note="повышение давления" accent /><Arrow x={378} y={120} width={25} /><Block x={415} y={83} width={143} title="Ресивер" note="по расчёту" /><Arrow x={568} y={120} width={25} /><Block x={605} y={83} width={130} title="Потребитель" note="требуемые P₂ и Q" /></>,
-  },
-  "compressors-for-gas-mixtures": {
-    label: "Состав газовой смеси определяет проверку совместимости и выбор оборудования",
-    caption: "Для смеси учитывают все компоненты и диапазон их концентраций. Возможность сжатия подтверждается для конкретного состава и условий.",
-    content: <><Block x={35} y={83} width={194} title="Состав смеси" note="компоненты и примеси" /><Arrow x={241} y={120} width={37} /><Block x={290} y={83} width={185} title="Совместимость" note="материалы и безопасность" accent /><Arrow x={487} y={120} width={37} /><Block x={536} y={83} width={189} title="Компрессор" note="подтверждённое исполнение" /><text x="380" y="204" textAnchor="middle" fontSize="14" fill="#afbd9f">ВЛАГА · КОНДЕНСАТ · ТЕМПЕРАТУРА · ДАВЛЕНИЕ · РАСХОД</text></>,
-  },
-};
-
-export function KnowledgeVisual({ articleId, compact = false }: { articleId: string; compact?: boolean }) {
-  const illustration = illustrations[articleId];
-  if (!illustration) return null;
-  return <figure className={`knowledge-visual${compact ? " knowledge-visual-compact" : ""}`}>
-    <Diagram label={illustration.label}>{illustration.content}</Diagram>
-    {!compact && <MobileDiagram articleId={articleId} label={illustration.label} />}
-    {!compact && <figcaption>{illustration.caption}</figcaption>}
+/** Detailed explanations sit below the article opening, separate from its cover. */
+export function KnowledgeVisual({ articleId, figureIds }: { articleId: string; figureIds?: string[] }) {
+  const figure = knowledgeFigures[articleId];
+  if (!figure || !figureIds?.includes(figure.id)) return null;
+  const List = figure.layout === "factors" || figure.layout === "components" || figure.layout === "comparison" ? "ul" : "ol";
+  return <figure className={`knowledge-detail-figure knowledge-detail-${figure.layout}`} data-visual-role="engineering-detail" data-visual-id={figure.id}>
+    <figcaption>{figure.title}</figcaption>
+    {figure.layout === "factors" && <div className="knowledge-detail-center"><DetailObject title="Компрессор" /><strong>Компрессор SF₆</strong></div>}
+    <List className="knowledge-detail-steps">{figure.steps.map((step) => <li key={step.title} className={figure.layout === "components" && step.optional ? "knowledge-detail-option" : undefined}>
+      <DetailObject title={step.title} />
+      <div><h3>{step.title}</h3><p>{step.note}</p>{figure.layout === "components" && step.optional && <span className="knowledge-detail-optional">По условиям задачи</span>}</div>
+    </li>)}</List>
+    {figure.layout === "loop" && <p className="knowledge-detail-footnote">Газ возвращается в процесс после проверки качества и условий повторной подачи.</p>}
+    {figure.layout === "components" && <p className="knowledge-detail-footnote">Элементы с пунктирной границей — варианты комплектации. Они включаются только в согласованном составе поставки.</p>}
+    {figure.layout === "steps" && articleId === "how-working-point-is-calculated" && <p className="knowledge-detail-footnote">Показан принцип многоступенчатого сжатия. Число ступеней и схема охлаждения определяются расчётом конкретного исполнения.</p>}
   </figure>;
 }

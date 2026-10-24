@@ -1,3 +1,5 @@
+> DEPRECATED: историческая визуальная система. Действующая спецификация, реестр изображений и отчёт миграции — [VISUAL_SYSTEM_V2.md](VISUAL_SYSTEM_V2.md). Прежнее требование использовать только React SVG отменено заданием пользователя от 24 октября 2026 года.
+
 # Оригинальные инженерные визуалы
 
 Исторический документ / отчёт предыдущего прохода. Текущая публичная таксономия оборудования, граница private source data и правила публикации определяются [CATALOG_IMPLEMENTATION](CATALOG_IMPLEMENTATION.md), [EQUIPMENT_MIGRATION](EQUIPMENT_MIGRATION.md) и [IMPLEMENTED_CONTENT_MODEL](IMPLEMENTED_CONTENT_MODEL.md). Прежние public family pages, ProductGroup и проверки числа страниц не являются текущими требованиями.

@@ -51,7 +51,7 @@ export function BriefRfqForm({ mode, initialGas, initialRequest = {} }: { mode: 
   }
   async function submit(formEvent: FormEvent<HTMLFormElement>) {
     formEvent.preventDefault();
-    if (sending || mode === "disabled") return;
+    if (sending || mode === "disabled" || !consent) return;
     const query = new URLSearchParams(window.location.search);
     const source = query.get("source");
     const sourcePage = source?.startsWith("/") && !source.startsWith("//") ? source.split(/[?#]/)[0].slice(0, 300) : window.location.pathname;
@@ -123,7 +123,7 @@ export function BriefRfqForm({ mode, initialGas, initialRequest = {} }: { mode: 
       <div className="rfq-consent"><label><input id="brief-consent" type="checkbox" checked={consent} onChange={e => { changed(); setConsent(e.target.checked); }} aria-invalid={Boolean(errors["consent.accepted"])} aria-describedby="brief-consent-accepted-error" /><span>Я даю <Link href="/legal/consent/" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</Link> для ответа на запрос и ознакомлен(а) с <Link href="/legal/privacy/" target="_blank" rel="noopener noreferrer">политикой обработки персональных данных</Link>. Рассылки в это согласие не входят.</span></label>{error("consent.accepted")}</div>
       {Object.keys(errors).length > 0 && <p className="rfq-error" role="alert">Проверьте отмеченные поля. Для обращения достаточно описания задачи, модели установки или файла; точные давления и расход не обязательны.</p>}
       {failure && <div className="rfq-server-error" role="alert"><strong>Приём запроса не подтверждён</strong><p>{failure}</p><p>Данные остались в форме. Повторная отправка без изменений использует тот же ключ и не создаёт дубликат.</p></div>}
-      <button className="button" type="submit" disabled={sending || mode === "disabled"}>{sending ? "Отправляем…" : mode === "preview" ? "Завершить демонстрацию" : mode === "staging" ? "Сохранить тестовую заявку" : "Отправить ТЗ или описание"}</button>
+      <button className="button" type="submit" disabled={sending || mode === "disabled" || !consent}>{sending ? "Отправляем…" : mode === "preview" ? "Завершить демонстрацию" : mode === "staging" ? "Сохранить тестовую заявку" : "Отправить ТЗ или описание"}</button>
     </fieldset>
   </form>;
 }

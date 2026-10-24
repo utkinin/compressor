@@ -10,8 +10,9 @@ type EquipmentDefinition = Omit<Equipment, "kind" | "scope" | "checks" | "source
 const definitions: EquipmentDefinition[] = [
   {
     id: "nitrogen-compressors", slug: "nitrogen-compressors", title: "Компрессоры для азота", editorialState: "review",
+    heroVisualId: "equipment-nitrogen-compressor", processVisualId: "process-gas",
     summary: "Безмасляные компрессоры для сжатия и повышения давления азота после генератора, магистрали или другого источника. Подбор начинается с условий подачи газа и требований потребителя.",
-    gas: "n2", gasIds: ["n2"], rfqGas: "n2", diagram: "small",
+    gas: "n2", gasIds: ["n2"], rfqGas: "n2",
     technology: "Компрессор повышает давление азота до согласованного уровня. Конструкция, ступени и исполнение газового тракта выбираются по составу, давлениям, расходу и режиму.",
     applications: [
       "Подача азота в технологическое оборудование из источника с известными параметрами.",
@@ -49,8 +50,9 @@ const definitions: EquipmentDefinition[] = [
   },
   {
     id: "nitrogen-boosters", slug: "nitrogen-boosters", title: "Бустеры азота высокого давления", editorialState: "review",
+    heroVisualId: "equipment-nitrogen-booster", processVisualId: "process-nitrogen-after-generator",
     summary: "Дожатие азота до требуемого давления при известном давлении источника и расходе. Для предварительно сжатого азота проверяем запас источника, режим бустера и потребление оборудования.",
-    gas: "n2", gasIds: ["n2"], rfqGas: "n2", diagram: "nitrogen",
+    gas: "n2", gasIds: ["n2"], rfqGas: "n2",
     technology: "Бустер — дожимной компрессор для газа, уже поступающего под давлением. Его выбирают по минимальному давлению источника, требуемому давлению на выходе и расходу. «Высокого давления» описывает задачу дожатия и не задаёт универсальный числовой предел.",
     applications: [
       "Повышение давления азота после генератора, когда его расход и чистота отвечают задаче.",
@@ -88,8 +90,9 @@ const definitions: EquipmentDefinition[] = [
   },
   {
     id: "helium-compressors", slug: "helium-compressors", title: "Компрессоры для гелия", editorialState: "review",
+    heroVisualId: "equipment-helium-compressor", processVisualId: "process-gas",
     summary: "Сжатие, перекачка, возврат и повторное использование гелия. Компрессор подбирается по давлению источника, расходу, режиму и требованиям к потерям газа.",
-    gas: "he", gasIds: ["he"], rfqGas: "he", diagram: "helium",
+    gas: "he", gasIds: ["he"], rfqGas: "he",
     technology: "Компрессор выполняет сжатие гелия в выбранной схеме. Для свежего и возвращаемого газа различаются состав, условия всасывания и требования к подготовке. Герметичность конкретного исполнения подтверждается документацией и согласованной методикой проверки.",
     applications: [
       "Сжатие свежего гелия для технологического процесса или испытания.",
@@ -127,8 +130,9 @@ const definitions: EquipmentDefinition[] = [
   },
   {
     id: "co2-compressors", slug: "co2-compressors", title: "Компрессоры для CO₂", editorialState: "review",
+    heroVisualId: "equipment-co2-compressor", processVisualId: "process-co2",
     summary: "Сжатие и перекачка CO₂ с подбором по параметрам газа и технологического процесса. Температура и фазовое состояние проверяются вместе с давлением, расходом и режимом.",
-    gas: "co2", gasIds: ["co2"], rfqGas: "co2", diagram: "co2",
+    gas: "co2", gasIds: ["co2"], rfqGas: "co2",
     technology: "Газовый компрессор рассматривается для подтверждённой газовой фазы CO₂. Давления без температуры и состава недостаточно для выбора оборудования. Жидкий или неопределённый источник сначала требует уточнения подготовки среды и подходящего класса оборудования.",
     applications: [
       "Повышение давления газообразного CO₂ от согласованного источника.",
@@ -163,10 +167,12 @@ const definitions: EquipmentDefinition[] = [
     articleIds: ["co2-phase-and-compression", "air-vs-water-cooling", "normal-and-actual-flow", "what-to-specify-for-gas-compressor"],
   },
   {
-    id: "sf6-compressors", slug: "sf6-compressors", title: "Компрессоры для SF₆", editorialState: "review",
-    summary: "Подбор компрессора для специализированных задач с элегазом начинается с источника, состава среды и требуемых параметров. Исполнение и возможность применения подтверждаются для конкретного проекта.",
-    gas: "sf6", gasIds: [], rfqGas: "mixtures", diagram: "medium",
-    technology: "Для запроса на сжатие или перекачку SF₆ сначала уточняются состояние среды, состав, начальные и конечные условия. Возможность применения и параметры исполнения подтверждаются первичной технической документацией и расчётом. До этой проверки конкретная модель и характеристики не назначаются.",
+    id: "sf6-compressors", slug: "sf6-compressors", title: "Оборудование для SF₆ — SF6RUS", editorialState: "review",
+    heroVisualId: "equipment-sf6-compressor", processVisualId: "process-gas",
+    summary: "Оборудование и решения для работы с элегазом представлены в специализированном направлении SF6RUS. Здесь собраны ориентиры для выбора задачи и подготовки исходных данных.",
+    externalReference: { name: "SF6RUS", url: "https://www.sf6rus.ru/products/0000004/" },
+    gas: "sf6", gasIds: [], rfqGas: "mixtures",
+    technology: "Работа с элегазом может включать сжатие, перекачку, подготовку или повторную подачу газа. Это разные функции: необходимое оборудование выбирают по состоянию среды, технологической операции и условиям источника и приёмника. Оборудование для этих задач представлено в специализированном направлении SF6RUS.",
     applications: [
       "Рассмотрение задачи сжатия газообразного элегаза при заданных условиях источника и приёмника.",
       "Рассмотрение перекачки или повторной подачи газа по согласованному технологическому циклу.",
@@ -196,13 +202,14 @@ const definitions: EquipmentDefinition[] = [
       "КИП, арматура и трубная обвязка — по требованиям к среде и подключениям.",
       "Ресивер, управление и рама — если требуются согласованным циклом и входят в границы поставки.",
     ],
-    solutionIds: ["gas-transfer-recovery", "equipment-integration"],
-    articleIds: ["what-to-specify-for-gas-compressor", "bar-g-and-bar-a", "normal-and-actual-flow"],
+    solutionIds: [],
+    articleIds: ["sf6-compressor-service-life", "what-to-specify-for-gas-compressor", "bar-g-and-bar-a"],
   },
   {
     id: "process-gas-compressors", slug: "process-gas-compressors", title: "Компрессоры для технологических газов", editorialState: "review",
+    heroVisualId: "equipment-process-gas", processVisualId: "process-gas",
     summary: "Подбор компрессоров для других технологических газов и газовых смесей после анализа среды и рабочих параметров. Применимость не переносится автоматически с одного состава газа на другой.",
-    gas: "mixtures", gasIds: ["mixtures", "h2", "o2"], rfqGas: "mixtures", diagram: "integration",
+    gas: "mixtures", gasIds: ["mixtures", "h2", "o2"], rfqGas: "mixtures",
     technology: "Технологический газ или смесь рассматриваются по компонентному составу, фазовому состоянию, давлениям, расходу и режиму. Материалы, чистота, герметичность и требования безопасности проверяются для конкретной среды; универсальное исполнение для всех газов не заявляется.",
     applications: [
       "Подача известного технологического газа в производственную установку.",

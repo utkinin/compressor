@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useState } from "react";
 import type { GasId, KnowledgeArticle, KnowledgeTopic } from "@/content/types";
 import { firstKnowledgeCluster, knowledgeTopic, knowledgeTopics, knowledgeTopicTitle } from "@/lib/knowledge";
-import { KnowledgeVisual } from "@/components/knowledge-visual";
+import { HeroVisual } from "@/components/hero-visual";
 import "./knowledge.css";
 
-export type KnowledgeCard = Pick<KnowledgeArticle, "id" | "slug" | "title" | "summary" | "gasIds" | "equipmentIds" | "topic">;
+export type KnowledgeCard = Pick<KnowledgeArticle, "id" | "slug" | "title" | "summary" | "gasIds" | "equipmentIds" | "topic" | "heroVisualId">;
 type GasFilter = GasId | "sf6";
 
 const gasFilters: { id: GasFilter; title: string }[] = [
@@ -22,7 +22,7 @@ function searchValue(value: string) {
 
 function ArticleCard({ article, featured = false }: { article: KnowledgeCard; featured?: boolean }) {
   return <article className={`knowledge-card${featured ? " knowledge-card-featured" : ""}`}>
-    {featured && <Link href={`/knowledge/${article.slug}/`} className="knowledge-card-visual" tabIndex={-1} aria-hidden="true"><KnowledgeVisual articleId={article.id} compact /></Link>}
+    <Link href={`/knowledge/${article.slug}/`} className="knowledge-card-visual" tabIndex={-1} aria-hidden="true"><HeroVisual id={article.heroVisualId} variant="card" caption={false} /></Link>
     <p className="knowledge-card-topic">{knowledgeTopicTitle(article)}</p>
     <h3><Link href={`/knowledge/${article.slug}/`}>{article.title}</Link></h3>
     <p>{article.summary}</p>
