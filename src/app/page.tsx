@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { articles } from "@/content";
+import { articles, solutions } from "@/content";
 import { TrackedLink } from "@/components/tracked-link";
+import { HeroVisual } from "@/components/hero-visual";
+import { ProcessVisual } from "@/components/process-visual";
 import { pageMetadata } from "@/lib/seo";
 import "./home-page.css";
 
@@ -59,6 +61,7 @@ const deliverables = [
 export default function HomePage() {
   const featuredIds = ["how-to-select-nitrogen-booster", "booster-vs-source", "pressure-after-nitrogen-generator", "oil-free-compression", "what-to-specify-for-gas-compressor", "normal-and-actual-flow"];
   const featuredArticles = featuredIds.flatMap(id => articles.filter(article => article.id === id));
+  const scenarioVisuals = new Map(solutions.map(solution => [`/solutions/${solution.slug}/`, solution.heroVisualId]));
   return <>
     <section className="hero v21-hero" data-home-section="hero">
       <div className="container hero-grid v21-hero-grid">
@@ -71,18 +74,15 @@ export default function HomePage() {
           <p className="v21-hero-parameters">Газ · P₁ · P₂ · Q · режим работы</p>
           <p className="v21-hero-note"><strong>Не знаете все параметры?</strong> Начните с ТЗ, паспорта оборудования, модели установки, фото шильды или существующей схемы. Определим, каких данных не хватает для расчёта.</p>
         </div>
-        <aside className="v21-process" aria-label="От источника газа к вашей задаче">
-          <p className="eyebrow">Сначала — ваша задача</p>
-          <ol className="v21-process-flow"><li><strong>Источник газа</strong><span>Генератор, магистраль или возврат из процесса</span></li><li><strong>Компрессор или бустер</strong><span>Под требуемое давление, расход и режим</span></li><li><strong>Ваше оборудование</strong><span>Согласованная подача газа к потребителю</span></li></ol>
-          <p className="v21-process-caption">Необходимые буферы, подготовку газа и управление определяем по условиям процесса.</p>
-          <Link href="#tasks" className="v21-process-link">Выбрать свою задачу <span aria-hidden="true">↓</span></Link>
-        </aside>
+        <div className="home-equipment-visual"><HeroVisual id="home-compressor-system" priority /><ul className="home-visual-parameters" aria-label="Исходные параметры"><li>Газ</li><li>P₁</li><li>P₂</li><li>Q</li><li>Режим</li></ul></div>
       </div>
     </section>
 
+    <section className="container home-process-band" aria-label="Принцип подачи газа"><ProcessVisual id="process-home" compact /></section>
+
     <section className="section v21-scenarios" id="tasks" aria-labelledby="tasks-title" data-home-section="scenarios"><div className="container">
       <div className="section-heading"><div><p className="eyebrow">01 / Задача</p><h2 id="tasks-title">Что требуется решить?</h2></div><p>Выберите ближайшую задачу. На странице решения — схема, данные для подбора и необходимые проверки.</p></div>
-      <div className="v21-scenario-grid">{scenarios.map((scenario, index) => <article className="v21-scenario" key={scenario.href}><p className="v21-scenario-label"><span>0{index + 1}</span>{scenario.label}</p><h3><Link href={scenario.href}>{scenario.title}</Link></h3><p>{scenario.text}</p><Link className="v21-card-action" href={scenario.href}>{scenario.action}<span aria-hidden="true">→</span></Link></article>)}</div>
+      <div className="v21-scenario-grid">{scenarios.map((scenario, index) => <article className="v21-scenario" key={scenario.href}>{scenarioVisuals.get(scenario.href) && <Link className="home-scenario-image" href={scenario.href} aria-label={scenario.title}><HeroVisual id={scenarioVisuals.get(scenario.href)!} variant="card" /></Link>}<p className="v21-scenario-label"><span>0{index + 1}</span>{scenario.label}</p><h3><Link href={scenario.href}>{scenario.title}</Link></h3><p>{scenario.text}</p><Link className="v21-card-action" href={scenario.href}>{scenario.action}<span aria-hidden="true">→</span></Link></article>)}</div>
       <div className="v21-section-links"><Link href="/solutions/">Все решения <span aria-hidden="true">→</span></Link><Link href="/industries/">Отрасли и применения <span aria-hidden="true">→</span></Link></div>
     </div></section>
 
@@ -94,7 +94,7 @@ export default function HomePage() {
 
     <section className="section v21-supply" aria-labelledby="supply-title" data-home-section="supply"><div className="container">
       <div className="section-heading"><div><p className="eyebrow">02 / Формат поставки</p><h2 id="supply-title">От компрессора до комплектной системы</h2></div><p>Сначала выбираем компрессор или бустер. Затем определяем, какие дополнительные функции нужны именно вашему процессу.</p></div>
-      <ol className="configuration-flow v21-supply-flow" aria-label="От компрессора к комплектной системе"><li>КОМПРЕССОР</li><li>+ НЕОБХОДИМЫЕ ОПЦИИ</li><li>КОМПЛЕКТНАЯ СИСТЕМА</li></ol>
+      <ProcessVisual id="supply-compressor-to-system" />
       <div className="v21-supply-grid">{supplyFormats.map(format => <article key={format.title}><h3>{format.title}</h3><p>{format.text}</p></article>)}</div>
       <p className="v21-supply-note">Состав системы определяется процессом. Ресивер, фильтрация, автоматика и другие элементы не включаются автоматически, если они не нужны для конкретной задачи.</p>
       <div className="v21-section-links"><Link href="/equipment/">Каталог компрессоров и бустеров <span aria-hidden="true">→</span></Link><Link href="/solutions/compressor-skid/">Комплектация на общей раме <span aria-hidden="true">→</span></Link></div>
@@ -122,7 +122,7 @@ export default function HomePage() {
 
     <section className="section knowledge-home v21-knowledge" aria-labelledby="knowledge-title" data-home-section="knowledge"><div className="container">
       <div className="section-heading"><div><p className="eyebrow">06 / Экспертный центр</p><h2 id="knowledge-title">Практические материалы</h2></div><Link href="/knowledge/" className="text-link">База знаний <span aria-hidden="true">→</span></Link></div>
-      <div className="knowledge-home-list">{featuredArticles.map((article, index) => <Link key={article.id} href={`/knowledge/${article.slug}/`} className="knowledge-home-item"><span>0{index + 1}</span><div><h3>{article.title}</h3><p>{article.summary}</p></div><span className="link-arrow" aria-hidden="true">→</span></Link>)}</div>
+      <div className="knowledge-home-list">{featuredArticles.map((article, index) => <Link key={article.id} href={`/knowledge/${article.slug}/`} className="knowledge-home-item"><HeroVisual id={article.heroVisualId} variant="card" /><div><span className="home-knowledge-index">0{index + 1}</span><h3>{article.title}</h3><p>{article.summary}</p></div><span className="link-arrow" aria-hidden="true">→</span></Link>)}</div>
     </div></section>
 
     <section className="final-cta v21-rfq" aria-labelledby="final-cta-title" data-home-section="rfq"><div className="container final-cta-inner">

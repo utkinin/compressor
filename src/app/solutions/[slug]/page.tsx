@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import { contentRepository } from "@/content";
 import { absoluteUrl, pageMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
-import { Breadcrumbs, BulletList, ContentSection, PageIntro, Procurement, RelatedLinks, RfqPanel } from "@/components/content-page";
-import { TechnicalDiagram } from "@/components/technical-diagram";
+import { Breadcrumbs, BulletList, ContentSection, Procurement, RelatedLinks, RfqPanel } from "@/components/content-page";
+import { CommercialHero } from "@/components/commercial-hero";
+import { ProcessVisual } from "@/components/process-visual";
 import { ContentView } from "@/components/content-events";
 import { LegacyAlias } from "@/components/legacy-alias";
 import { legacyDestination, legacySlugs } from "@/lib/legacy-paths";
@@ -42,10 +43,10 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
   return <>
     <ContentView event="solution_view" id={solution.id} />
     <Breadcrumbs items={[{ label: "Решения", href: "/solutions/" }, { label: solution.title, href: `/solutions/${solution.slug}/` }]} />
-    <PageIntro eyebrow={projectReview ? "Проектное рассмотрение" : "Подбор компрессора под задачу"} title={solution.title} summary={solution.summary} action={<Link className="button" href={projectReview ? `${rfqHref}&intake=brief` : rfqHref}>{projectReview ? "Обсудить применимость оборудования" : "Подобрать компрессор"} →</Link>} />
+    <CommercialHero eyebrow={projectReview ? "Проектное рассмотрение" : "Подбор компрессора под задачу"} title={solution.title} summary={solution.summary} visualId={solution.heroVisualId} action={<Link className="button" href={projectReview ? `${rfqHref}&intake=brief` : rfqHref}>{projectReview ? "Обсудить применимость оборудования" : "Подобрать компрессор"} →</Link>} />
     {projectReview && <section className="container prose"><ContentSection title="Проектное рассмотрение"><p>Состав газа, давления, расход, материалы газового тракта и требования безопасности проверяются для конкретного процесса. Применимость и исполнение оборудования подтверждаются инженерной проработкой; серийное исполнение без такой проверки не заявляется.</p></ContentSection></section>}
-    {solution.id === "nitrogen-for-laser-cutting" && <section className="container prose"><ContentSection title="Газоснабжение начинается с требований станка"><p>Сначала уточняются требования изготовителя лазерного станка, материал, толщина и технология резки. По ним определяют давление у подключения, средний и пиковый расход, чистоту и подготовку газа. Азот и сжатый воздух рассматриваются по условиям процесса; один вариант не объявляется универсально лучшим.</p><div className="laser-supply-options"><article><h3>Сжатый воздух</h3><p>компрессор → ресивер → осушитель → фильтрация → лазер</p></article><article><h3>Азот</h3><p>источник N₂ / генератор → бустер → ресивер → лазер</p></article></div><p>Это возможные схемы, а не фиксированная комплектация. Бустер нужен при недостаточном давлении источника; ресивер и подготовка газа определяются расчётом и требованиями станка.</p></ContentSection></section>}
-    <section className="container"><TechnicalDiagram kind={solution.diagram} title={`Схема решения: ${solution.title}`} /></section>
+    {solution.id === "nitrogen-for-laser-cutting" && <section className="container prose"><ContentSection title="Газоснабжение начинается с требований станка"><p>Сначала уточняются требования изготовителя лазерного станка, материал, толщина и технология резки. По ним определяют давление у подключения, средний и пиковый расход, чистоту и подготовку газа. Азот и сжатый воздух рассматриваются по условиям процесса; один вариант не объявляется универсально лучшим.</p><p>Это возможные схемы, а не фиксированная комплектация. Бустер нужен при недостаточном давлении источника; ресивер и подготовка газа определяются расчётом и требованиями станка.</p></ContentSection></section>}
+    <section className="container commercial-process-section" aria-label="Принцип процесса"><ProcessVisual id={solution.processVisualId} /></section>
     <div className="container detail-layout"><article className="prose">
       <ContentSection title="Задача"><p>{solution.intent}</p></ContentSection>
       {counterpart && <ContentSection title="Связанная задача"><p>{solution.id === "nitrogen-booster-after-generator" ? "Если азот используется для лазерной резки, отдельно согласуются требования станка, качество газа и профиль потребления." : "Если генератор азота уже есть, но его давления недостаточно, сначала проверьте доступную подачу источника и условия дожатия."}</p><Link className="text-link" href={`/solutions/${counterpart.slug}/`} data-testid="solution-intent-crosslink">{counterpart.title} →</Link></ContentSection>}

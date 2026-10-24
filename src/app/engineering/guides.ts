@@ -2,7 +2,8 @@ export interface EngineeringGuide {
   slug: string;
   title: string;
   summary: string;
-  diagram: string;
+  heroVisualId: string;
+  processVisualId: string;
   rfqHref: string;
   sections: { title: string; text: string; checks: string[] }[];
   links: { title: string; href: string }[];
@@ -13,7 +14,8 @@ export const engineeringGuides: EngineeringGuide[] = [
     slug: "how-to-select-nitrogen-booster",
     title: "Как подобрать бустер азота",
     summary: "Пять рабочих вопросов между генератором и потребителем: реальная подача, диапазон всасывания, режим, буфер и границы управления.",
-    diagram: "nitrogen",
+    heroVisualId: "solution-nitrogen-after-generator",
+    processVisualId: "process-nitrogen-after-generator",
     rfqHref: "/rfq/?gas=n2&solution=nitrogen-booster-after-generator",
     sections: [
       { title: "1. Зафиксировать реальную подачу источника", text: "Паспорт генератора нужно читать при требуемой чистоте азота и доступном давлении. Номинальный расход сам по себе не определяет подачу на вход booster.", checks: ["Указать тип источника: PSA, мембрана, магистраль или газификация криогенной жидкости.", "Получить зависимость подачи и чистоты от рабочего режима источника.", "Зафиксировать минимальное и максимальное давление на всасывании с учётом потерь в фильтрах и линии."] },
@@ -27,7 +29,8 @@ export const engineeringGuides: EngineeringGuide[] = [
     slug: "working-point-checklist",
     title: "Параметры компрессора: чек-лист для запроса",
     summary: "Что передать инженеру, чтобы предварительный запрос превратился в проверяемую постановку задачи, а не в подбор по одному давлению.",
-    diagram: "instrumentation",
+    heroVisualId: "knowledge-five-parameters",
+    processVisualId: "process-five-parameters",
     rfqHref: "/rfq/",
     sections: [
       { title: "Определить границы процесса", text: "Отметьте на схеме точку подключения источника и место, где должны выполняться требования потребителя. Давления у разных точек системы нельзя считать равными без проверки потерь.", checks: ["Состав, чистота, примеси и возможные изменения газа.", "Тип и характеристики источника, наличие буфера до компрессора.", "Требования к газу после узла: давление, расход, температура, чистота и пульсации."] },
@@ -41,7 +44,8 @@ export const engineeringGuides: EngineeringGuide[] = [
     slug: "skid-integration-checklist",
     title: "Система на общей раме: подключения до поставки",
     summary: "Механические подключения, энергоресурсы, сигналы и безопасность: список границ, которые нужно включить в задание на компрессорный модуль.",
-    diagram: "integration",
+    heroVisualId: "solution-integration",
+    processVisualId: "process-integration",
     rfqHref: "/rfq/?solution=compressor-skid",
     sections: [
       { title: "Процесс и механические подключения", text: "Компрессорная система на общей раме должна быть согласована с технологическим процессом. Зафиксируйте не только диаметр соединения, но и допустимые нагрузки, направление потока и условия изоляции для обслуживания.", checks: ["Вход и выход газа, дренажи, продувка, вентиляция и безопасные сбросы.", "Материалы, тип соединений, ориентация патрубков и ограничения по пространству.", "Ресиверы и защитная арматура: входят в поставку или находятся на стороне площадки."] },

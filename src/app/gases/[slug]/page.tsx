@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { contentRepository } from "@/content";
 import { pageMetadata } from "@/lib/seo";
-import { Breadcrumbs, BulletList, ContentSection, Faq, PageIntro, RelatedLinks, RfqPanel } from "@/components/content-page";
-import { TechnicalDiagram } from "@/components/technical-diagram";
+import { Breadcrumbs, BulletList, ContentSection, Faq, RelatedLinks, RfqPanel } from "@/components/content-page";
+import { CommercialHero } from "@/components/commercial-hero";
+import { ProcessVisual } from "@/components/process-visual";
 import { ContentView } from "@/components/content-events";
 
 export async function generateStaticParams() { const { gases } = await contentRepository.getSnapshot(); return gases.map(({ slug }) => ({ slug })); }
@@ -29,13 +30,12 @@ export default async function GasPage({ params }: { params: Promise<{ slug: stri
   if (projectReview) query.set("intake", "brief");
   const rfqHref = `/rfq/?${query.toString()}`;
   const actionLabel = projectReview ? `Обсудить применимость для ${gas.symbol}` : `Подобрать компрессор для ${gas.symbol}`;
-  const diagramKind = ({ n2: "nitrogen", he: "helium", h2: "hydrogen", o2: "instrumentation", co2: "co2", mixtures: "hero" })[gas.id];
   return <>
     <ContentView event="gas_view" id={gas.id} />
     <Breadcrumbs items={[{ label: "Технологические газы", href: "/gases/" }, { label: gas.title, href: `/gases/${gas.slug}/` }]} />
-    <PageIntro eyebrow={`${gas.symbol} / ${projectReview ? "проектное рассмотрение" : "подбор компрессора"}`} title={gas.title} summary={gas.summary} action={<Link className="button" href={rfqHref}>{actionLabel} →</Link>} />
+    <CommercialHero eyebrow={`${gas.symbol} / ${projectReview ? "проектное рассмотрение" : "подбор компрессора"}`} title={gas.title} summary={gas.summary} visualId={gas.heroVisualId} action={<Link className="button" href={rfqHref}>{actionLabel} →</Link>} />
     {projectReview && <section className="container prose"><ContentSection id="project-review" title="Проектное рассмотрение"><p>{projectReview}</p></ContentSection></section>}
-    <section className="container"><TechnicalDiagram kind={diagramKind} title={`Принципиальная схема сжатия: ${gas.symbol}`} /></section>
+    <section className="container commercial-process-section" aria-label="Принцип процесса"><ProcessVisual id={gas.processVisualId} /></section>
     <div className="container detail-layout"><article className="prose">
       <ContentSection title="Какие задачи решаем"><BulletList items={gas.tasks} /></ContentSection>
       <ContentSection title="Исходные данные для подбора"><BulletList items={gas.inputs} /></ContentSection>

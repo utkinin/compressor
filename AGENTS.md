@@ -50,6 +50,16 @@ technical explanations. Remove private supplier names and internal manufacturer 
 - The complete earlier ban on private supplier names and internal manufacturer acronyms remains in force throughout own source, comments, metadata, tests, documentation and archives. A narrower exception in the attached discussion does not override the user's direct ban.
 - Implement technical/RFQ safeguards and the commercial homepage/content restructuring as separate reviewable stages. Do not claim a PR exists, a live request was delivered, or a check passed before verifying it.
 
+## Visual system v2 precedence
+- The approved visual migration is documented in docs/VISUAL_SYSTEM_V2.md. Earlier image plans are deprecated and do not mandate SVG-only heroes.
+- Start with visible equipment or its application, then explain the process, then show detailed engineering. HeroVisual, ProcessVisual and topic-specific deep figures have separate roles.
+- Content entities reference the public visual registry by ID. Keep image dimensions, meaningful alt text, approval, mobile/card sources and concept captions with the asset record.
+- Original equipment renders are illustrative layouts, not photographs of approved models, proof of compatibility or delivered projects. Never invent labels, model numbers or performance values inside imagery.
+- Product/application images sit on light neutral backgrounds. Keep dark branding for the footer, CTA bands and small accents. Do not restore the removed universal dark diagram component.
+- The nine primary homepage content blocks remain; a separate light process band follows the product hero. Preserve scenario links, knowledge filters, existing URLs and honest RFQ behavior during visual changes.
+- Hero images load eagerly with high fetch priority and stable dimensions; below-fold images load lazily. Keep image labels editable in HTML/SVG and turn long process flows into vertical mobile steps.
+- Run asset integrity and responsive delivery checks as well as build/typecheck/lint/unit/browser checks. Compare measured image payload, LCP and CLS with the saved baseline before claiming performance results.
+
 ## Editorial architecture
 - Main navigation is Equipment, Solutions, Technological gases, Knowledge, About and Contacts, with a separate compressor-selection CTA. Use «База знаний» as the public Knowledge label.
 - No content means no public page. Do not create document, certificate, drawing, model, case, article or news placeholders. The compressor questionnaire is a real interactive tool, not an empty document page.

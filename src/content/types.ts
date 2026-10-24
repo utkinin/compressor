@@ -2,6 +2,25 @@ export type EditorialState = "draft" | "review" | "approved" | "published";
 export type EvidenceStatus = "engineering-verified" | "source-transcribed" | "draft";
 export type GasId = "n2" | "he" | "h2" | "o2" | "co2" | "mixtures";
 
+/** Public imagery describes equipment principles, never an unapproved model. */
+export type VisualAsset = {
+  id: string;
+  kind: "product" | "application" | "process" | "infographic" | "editorial";
+  src: string;
+  alt: string;
+  aspectRatio: string;
+  width: number;
+  height: number;
+  cardSrc?: string;
+  mobileSrc?: string;
+  focalPoint?: string;
+  responsiveSources?: { src: string; width: number }[];
+  cardWidth?: number;
+  approvedForPublic: boolean;
+  depiction?: "concept" | "principle";
+  caption?: string;
+};
+
 export interface Entity {
   id: string;
   slug: string;
@@ -25,6 +44,8 @@ export interface TechnicalProperty {
 }
 
 export interface Gas extends Entity {
+  heroVisualId: string;
+  processVisualId: string;
   id: GasId;
   symbol: string;
   tasks: string[];
@@ -38,6 +59,8 @@ export interface Gas extends Entity {
 }
 
 export interface Solution extends Entity {
+  heroVisualId: string;
+  processVisualId: string;
   gasIds: GasId[];
   intent: string;
   inputs: string[];
@@ -46,10 +69,11 @@ export interface Solution extends Entity {
   supply: string[];
   equipmentIds: string[];
   articleIds: string[];
-  diagram: string;
 }
 
 export interface Equipment extends Entity {
+  heroVisualId: string;
+  processVisualId: string;
   externalReference?: { name: string; url: string };
   kind: "equipment-direction";
   gas: GasId | "sf6";
@@ -69,12 +93,13 @@ export interface Equipment extends Entity {
   rfqGas: GasId;
   /** Navigation associations are engineering topics, not an approval of gas compatibility. */
   gasIds: GasId[];
-  diagram: string;
 }
 
 export type KnowledgeTopic = "selection" | "gas-properties" | "configuration" | "operation";
 
 export interface KnowledgeArticle extends Entity {
+  heroVisualId: string;
+  figureIds?: string[];
   sections: { title: string; body: string }[];
   gasIds: GasId[];
   solutionIds: string[];
@@ -94,6 +119,8 @@ export interface Industry extends Entity {
 export type CaseKind = "real-project" | "reference-working-point" | "typical-engineering-scenario";
 
 export interface Case extends Entity {
+  heroVisualId: string;
+  processVisualId: string;
   kind: CaseKind;
   input: string;
   approach: string[];

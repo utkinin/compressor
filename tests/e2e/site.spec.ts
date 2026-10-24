@@ -3,7 +3,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { briefFile, expectBriefIntake, fillBriefContact } from "../support/brief-v21";
 import { expect, test, type Page } from "@playwright/test";
-import { expectProjectLandings } from "../support/landing-v21";
+import { expectLaserArchitectures, expectProjectLandings } from "../support/landing-v21";
 import { expectHomeV21 } from "../support/home-v21";
 import { sourceModels } from "../../src/content/internal/source-model-registry";
 
@@ -76,9 +76,7 @@ test("problem-first homepage preserves selection depth and the laser supply alte
   await expectHomeV21(page);
   await page.goto("/industries/laser-cutting/");
   await expect(page.locator("main h1")).toHaveText("Газоснабжение лазерного станка");
-  const alternatives = page.locator(".laser-supply-options");
-  await expect(alternatives).toContainText("компрессор → ресивер → осушитель → фильтрация → лазер");
-  await expect(alternatives).toContainText("источник N₂ / генератор → бустер → ресивер → лазер");
+  await expectLaserArchitectures(page);
   await expect(page.locator("main")).toContainText("Азот не является универсально лучшим вариантом");
   await expect(page.locator("main")).not.toContainText(/15\s*(?:→|-)\s*40/);
   await page.goto("/knowledge/what-to-specify-for-gas-compressor/");
