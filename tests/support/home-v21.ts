@@ -4,10 +4,14 @@ import { expect, type Page } from "@playwright/test";
 export async function expectHomeV21(page: Page, mount = "") {
   const hero = page.locator(".hero");
   await expect(hero.getByRole("heading", { level: 1 })).toHaveText("Компрессоры и бустеры для технологических газов");
-  await expect(hero).toContainText("Азот после генератора");
-  await expect(hero).toContainText("возврат гелия");
+  await expect(hero).toContainText("Не хватает давления после генератора N₂");
+  await expect(hero).toContainText("Нужно вернуть гелий в процесс");
   await expect(hero.getByRole("link", { name: "Подобрать компрессор" })).toHaveAttribute("href", new RegExp(`${mount}/rfq(?:/|\\?)`));
   await expect(hero.getByRole("link", { name: "Отправить ТЗ или параметры" })).toHaveAttribute("href", /intake=brief/);
+  const painLinks = hero.locator(".home-pain-link");
+  await expect(painLinks).toHaveCount(5);
+  const painDestinations = ["nitrogen-booster-after-generator", "nitrogen-for-laser-cutting", "helium-recovery", "process-gas-compressor", "equipment-integration"];
+  for (const [index, slug] of painDestinations.entries()) await expect(painLinks.nth(index)).toHaveAttribute("href", new RegExp(`${mount}/solutions/${slug}/?$`));
   await expect(hero).not.toContainText(/рабочая точка|(?<![\p{L}\p{N}])(?:H₂|O₂|SF₆)(?![\p{L}\p{N}])|ПЭТ/iu);
   const sections = page.locator("main > section[data-home-section]");
   await expect(sections).toHaveCount(9);
