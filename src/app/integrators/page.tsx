@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Breadcrumbs, BulletList, ContentSection } from "@/components/content-page";
 import { CommercialHero } from "@/components/commercial-hero";
-import { HeroVisual } from "@/components/hero-visual";
 import { ProcessVisual } from "@/components/process-visual";
 import { JsonLd } from "@/components/json-ld";
 import { absoluteUrl, pageMetadata } from "@/lib/seo";
@@ -16,22 +15,18 @@ const directions = [
   {
     title: "Безмасляные поршневые компрессорные модули",
     text: "Для встраивания в машины, газогенераторы, лабораторные и испытательные установки. Конкретное исполнение подбирается по режиму, питанию, охлаждению, габаритам и интерфейсам.",
-    visualId: "equipment-nitrogen-compressor",
   },
   {
     title: "Компактные безмасляные компрессорные системы",
     text: "Компрессор с необходимыми функциями охлаждения, управления, накопления и подготовки воздуха — только в составе, который действительно требуется проекту.",
-    visualId: "equipment-range",
   },
   {
     title: "Безмасляные вакуумные модули",
     text: "Для технологических, аналитических и лабораторных установок, где вакуумный узел является частью оборудования интегратора. Параметры и применимость подтверждаются для конкретной задачи.",
-    visualId: "equipment-process-gas",
   },
   {
     title: "Компрессорные модули для транспорта и спецтехники",
-    text: "Электрический или гидравлический привод, компактная установка на машине и воздухоснабжение пневматических потребителей. Железнодорожное направление в публичный фокус не входит.",
-    visualId: "solution-integration",
+    text: "Электрический или гидравлический привод, компактная установка на машине и воздухоснабжение пневматических потребителей. Тип компрессора и исполнение определяются требованиями конкретной машины.",
   },
 ] as const;
 
@@ -81,8 +76,8 @@ export default function IntegratorsPage() {
     </section>
 
     <section className="section" aria-labelledby="integrator-directions-title"><div className="container">
-      <div className="section-heading"><div><p className="eyebrow">Направления</p><h2 id="integrator-directions-title">Что можно встроить в оборудование</h2></div><p>Публично показываем функциональные направления Lanfor, без внутренних серий поставщиков и без фиктивных модельных обозначений.</p></div>
-      <div className="integrator-direction-grid">{directions.map((direction) => <article key={direction.title} className="integrator-direction-card"><HeroVisual id={direction.visualId} variant="card" caption={false} /><div><h3>{direction.title}</h3><p>{direction.text}</p></div></article>)}</div>
+      <div className="section-heading"><div><p className="eyebrow">Направления</p><h2 id="integrator-directions-title">Что можно встроить в оборудование</h2></div><p>Направления сгруппированы по функции и задаче. Конкретное исполнение, характеристики и документация определяются после инженерного подбора.</p></div>
+      <div className="integrator-direction-grid">{directions.map((direction, index) => <article key={direction.title} className="integrator-direction-card"><span className="integrator-direction-index" aria-hidden="true">0{index + 1}</span><div><h3>{direction.title}</h3><p>{direction.text}</p></div></article>)}</div>
     </div></section>
 
     <section className="section integrator-interface-section" id="integration-data" aria-labelledby="integration-data-title"><div className="container integrator-interface-layout">
