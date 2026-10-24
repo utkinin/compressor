@@ -15,7 +15,7 @@ export function GET() {
   const body = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><title>Analytics adapter</title></head><body><script>
 "use strict";
 const config = ${configuration};
-const allowedKeys = new Set(["step","gas","field","entity_id","path","solution","equipment","document","unit","delivery","code","mode"]);
+const allowedKeys = new Set(["step","gas","field","entity_id","path","solution","equipment","document","unit","delivery","code","mode","pain","position","source_page","destination"]);
 const safeUrl = location.origin + "/analytics/events";
 if (config.ga) {
   window.dataLayer = [];

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { articles } from "@/content";
-import { TrackedLink } from "@/components/tracked-link";
+import { HomeHeroV3 } from "@/components/home-hero-v3";
 import { pageMetadata } from "@/lib/seo";
 import "./home-page.css";
 
@@ -60,25 +60,7 @@ export default function HomePage() {
   const featuredIds = ["how-to-select-nitrogen-booster", "booster-vs-source", "pressure-after-nitrogen-generator", "oil-free-compression", "what-to-specify-for-gas-compressor", "normal-and-actual-flow"];
   const featuredArticles = featuredIds.flatMap(id => articles.filter(article => article.id === id));
   return <>
-    <section className="hero v21-hero" data-home-section="hero">
-      <div className="container hero-grid v21-hero-grid">
-        <div className="hero-copy">
-          <p className="eyebrow">БЕЗМАСЛЯНЫЕ КОМПРЕССОРЫ И БУСТЕРЫ · ТЕХНОЛОГИЧЕСКИЕ ГАЗЫ</p>
-          <h1>Компрессоры и бустеры для <span>технологических газов</span></h1>
-          <p className="hero-description">Подбираем оборудование для повышения давления, подачи и возврата технологических газов. Азот после генератора, газоснабжение лазерных установок, возврат гелия, CO₂, газовые смеси и компрессорные модули для встраивания в оборудование.</p>
-          <p className="v21-hero-supply">От отдельного компрессора или бустера до комплектной системы с необходимым охлаждением, ресивером, КИП, автоматикой и обвязкой.</p>
-          <div className="hero-actions"><TrackedLink event="hero_rfq_click" className="button" href={parameterRfq}>Подобрать компрессор <span aria-hidden="true">→</span></TrackedLink><TrackedLink event="hero_rfq_click" className="button button-secondary" href={briefRfq}>Отправить ТЗ или параметры <span aria-hidden="true">→</span></TrackedLink></div>
-          <p className="v21-hero-parameters">Газ · P₁ · P₂ · Q · режим работы</p>
-          <p className="v21-hero-note"><strong>Не знаете все параметры?</strong> Начните с ТЗ, паспорта оборудования, модели установки, фото шильды или существующей схемы. Определим, каких данных не хватает для расчёта.</p>
-        </div>
-        <aside className="v21-process" aria-label="От источника газа к вашей задаче">
-          <p className="eyebrow">Сначала — ваша задача</p>
-          <ol className="v21-process-flow"><li><strong>Источник газа</strong><span>Генератор, магистраль или возврат из процесса</span></li><li><strong>Компрессор или бустер</strong><span>Под требуемое давление, расход и режим</span></li><li><strong>Ваше оборудование</strong><span>Согласованная подача газа к потребителю</span></li></ol>
-          <p className="v21-process-caption">Необходимые буферы, подготовку газа и управление определяем по условиям процесса.</p>
-          <Link href="#tasks" className="v21-process-link">Выбрать свою задачу <span aria-hidden="true">↓</span></Link>
-        </aside>
-      </div>
-    </section>
+    <HomeHeroV3 />
 
     <section className="section v21-scenarios" id="tasks" aria-labelledby="tasks-title" data-home-section="scenarios"><div className="container">
       <div className="section-heading"><div><p className="eyebrow">01 / Задача</p><h2 id="tasks-title">Что требуется решить?</h2></div><p>Выберите ближайшую задачу. На странице решения — схема, данные для подбора и необходимые проверки.</p></div>
