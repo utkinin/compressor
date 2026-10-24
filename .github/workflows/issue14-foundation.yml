@@ -26,6 +26,7 @@ jobs:
         run: |
           python3 scripts/apply-issue14-foundation.py
           python3 scripts/apply-issue14-integration.py
+          python3 scripts/fix-issue14-integration.py
       - run: npm ci
       - name: Validate source
         run: |
