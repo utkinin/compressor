@@ -1,15 +1,16 @@
 import Link from "next/link";
-import type { Equipment } from "@/content";
+import type { Equipment, GasId } from "@/content";
+import { GasBadge } from "@/components/gas-badge";
 import { HeroVisual } from "@/components/hero-visual";
 import { ProcessVisual } from "@/components/process-visual";
 import "./equipment-catalog.css";
 
-const categoryLabels: Record<string, { symbol: string; task: string; cta: string }> = {
-  "nitrogen-compressors": { symbol: "N₂", task: "Сжатие и повышение давления", cta: "Подобрать компрессор для азота" },
-  "nitrogen-boosters": { symbol: "N₂", task: "Дожатие газа от источника", cta: "Подобрать бустер азота" },
-  "helium-compressors": { symbol: "He", task: "Сжатие, перекачка и возврат", cta: "Подобрать компрессор для гелия" },
-  "co2-compressors": { symbol: "CO₂", task: "Подбор с учётом состояния газа", cta: "Подобрать компрессор для CO₂" },
-  "process-gas-compressors": { symbol: "Газ / смесь", task: "Индивидуальное рассмотрение состава", cta: "Отправить параметры газа" },
+const categoryLabels: Record<string, { gas: GasId; task: string; cta: string }> = {
+  "nitrogen-compressors": { gas: "n2", task: "Сжатие и повышение давления", cta: "Подобрать компрессор для азота" },
+  "nitrogen-boosters": { gas: "n2", task: "Дожатие газа от источника", cta: "Подобрать бустер азота" },
+  "helium-compressors": { gas: "he", task: "Сжатие, перекачка и возврат", cta: "Подобрать компрессор для гелия" },
+  "co2-compressors": { gas: "co2", task: "Подбор с учётом состояния газа", cta: "Подобрать компрессор для CO₂" },
+  "process-gas-compressors": { gas: "mixtures", task: "Индивидуальное рассмотрение состава", cta: "Отправить параметры газа" },
 };
 
 export function equipmentRfqHref(equipment: Equipment, sourcePage = `/equipment/${equipment.slug}/`): string {
@@ -27,7 +28,7 @@ export function EquipmentCards({ items, sourcePage = "/equipment/", headingLevel
     const label = categoryLabels[item.id];
     return <article className="equipment-catalog-card" key={item.id}>
       <Link className="equipment-card-illustration" href={`/equipment/${item.slug}/`} aria-label={`Открыть: ${item.title}`}><HeroVisual id={item.heroVisualId} variant="card" caption={false} /></Link>
-      <div className="equipment-card-copy"><p className="eyebrow">{label?.task ?? "Подбор под параметры процесса"}</p><Heading><Link href={`/equipment/${item.slug}/`}>{item.title}</Link></Heading><p>{item.summary.split(/(?<=\.)\s+/)[0]}</p><ul className="equipment-card-tags" aria-label="Назначение"><li>{label?.symbol ?? "Газ"}</li><li>Подбор по параметрам</li></ul><Link className="equipment-card-detail" href={`/equipment/${item.slug}/`}>Назначение и варианты исполнения <span aria-hidden="true">→</span></Link><Link className="equipment-card-rfq" href={equipmentRfqHref(item, sourcePage)}>{equipmentActionLabel(item)} <span aria-hidden="true">→</span></Link></div>
+      <div className="equipment-card-copy"><p className="eyebrow">{label?.task ?? "Подбор под параметры процесса"}</p><Heading><Link href={`/equipment/${item.slug}/`}>{item.title}</Link></Heading><p>{item.summary.split(/(?<=\.)\s+/)[0]}</p><ul className="equipment-card-tags" aria-label="Назначение"><li>{label ? <GasBadge gas={label.gas} /> : "Газ"}</li><li>Безмасляное сжатие</li><li>Подбор по параметрам</li></ul><Link className="equipment-card-detail" href={`/equipment/${item.slug}/`}>Назначение и варианты исполнения <span aria-hidden="true">→</span></Link><Link className="equipment-card-rfq" href={equipmentRfqHref(item, sourcePage)}>{equipmentActionLabel(item)} <span aria-hidden="true">→</span></Link></div>
     </article>;
   })}</div>;
 }

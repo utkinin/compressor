@@ -3,7 +3,7 @@ import { expect, type Page } from "@playwright/test";
 /** The commercial sequence and preserved links are acceptance requirements. */
 export async function expectHomeV21(page: Page, mount = "") {
   const hero = page.locator(".hero");
-  await expect(hero.getByRole("heading", { level: 1 })).toHaveText("Компрессоры и бустеры для технологических газов");
+  await expect(hero.getByRole("heading", { level: 1 })).toHaveText("Безмасляные компрессоры и бустеры для технологических газов");
   await expect(hero).toContainText("Не хватает давления после генератора N₂");
   await expect(hero).toContainText("Нужно вернуть гелий в процесс");
   await expect(hero.getByRole("link", { name: "Подобрать компрессор" })).toHaveAttribute("href", new RegExp(`${mount}/rfq(?:/|\\?)`));

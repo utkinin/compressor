@@ -6,6 +6,7 @@ import { Breadcrumbs, BulletList, ContentSection, Faq, RelatedLinks, RfqPanel } 
 import { CommercialHero } from "@/components/commercial-hero";
 import { ProcessVisual } from "@/components/process-visual";
 import { ContentView } from "@/components/content-events";
+import { GasBadge, gasCtaLabel } from "@/components/gas-badge";
 
 export async function generateStaticParams() { const { gases } = await contentRepository.getSnapshot(); return gases.map(({ slug }) => ({ slug })); }
 
@@ -29,13 +30,15 @@ export default async function GasPage({ params }: { params: Promise<{ slug: stri
   const query = new URLSearchParams({ gas: gas.id, source: `/gases/${gas.slug}/` });
   if (projectReview) query.set("intake", "brief");
   const rfqHref = `/rfq/?${query.toString()}`;
-  const actionLabel = projectReview ? `Обсудить применимость для ${gas.symbol}` : `Подобрать компрессор для ${gas.symbol}`;
+  const gasForAction = gasCtaLabel(gas.id);
+  const actionLabel = projectReview ? `Обсудить применимость для ${gasForAction}` : `Подобрать компрессор для ${gasForAction}`;
   return <>
     <ContentView event="gas_view" id={gas.id} />
     <Breadcrumbs items={[{ label: "Технологические газы", href: "/gases/" }, { label: gas.title, href: `/gases/${gas.slug}/` }]} />
-    <CommercialHero eyebrow={`${gas.symbol} / ${projectReview ? "проектное рассмотрение" : "подбор компрессора"}`} title={gas.title} summary={gas.summary} visualId={gas.heroVisualId} action={<Link className="button" href={rfqHref}>{actionLabel} →</Link>} />
+    <CommercialHero eyebrow={<><GasBadge gas={gas.id} /> <span>{projectReview ? "проектное рассмотрение" : "безмасляное сжатие / подбор"}</span></>} title={gas.title} summary={gas.summary} visualId={gas.heroVisualId} action={<Link className="button" href={rfqHref}>{actionLabel} →</Link>} />
     {projectReview && <section className="container prose"><ContentSection id="project-review" title="Проектное рассмотрение"><p>{projectReview}</p></ContentSection></section>}
     <section className="container commercial-process-section" aria-label="Принцип процесса"><ProcessVisual id={gas.processVisualId} /></section>
+    {!projectReview && <section className="container prose"><ContentSection title="Безмасляное сжатие"><p>В основных газовых направлениях Lanfor масло не подаётся в камеру сжатия компрессора. Это снижает риск внесения масла самим компрессором, но не заменяет требования к чистоте трубопровода, уплотнений и остальной системы.</p><Link className="text-link" href="/knowledge/oil-free-compression/">Что означает безмасляный компрессор <span aria-hidden="true">→</span></Link></ContentSection></section>}
     <div className="container detail-layout"><article className="prose">
       <ContentSection title="Какие задачи решаем"><BulletList items={gas.tasks} /></ContentSection>
       <ContentSection title="Исходные данные для подбора"><BulletList items={gas.inputs} /></ContentSection>
@@ -49,6 +52,6 @@ export default async function GasPage({ params }: { params: Promise<{ slug: stri
       <RelatedLinks title="Примеры расчётных задач" items={cases.filter((item) => item.gasIds.includes(gas.id)).map((item) => ({ title: item.title, href: `/cases/${item.slug}/` }))} />
       <RelatedLinks title="Опросный лист" items={documents.filter((item) => item.access === "public" && item.href && item.type === "Questionnaire").map((item) => ({ title: item.title, href: `/documents/${item.slug}/` }))} />
       <Faq items={gas.faq} />
-    </article><RfqPanel href={rfqHref} sourcePage={`/gases/${gas.slug}/`} title={projectReview ? `Рассмотреть задачу с ${gas.symbol}` : `Подобрать компрессор для ${gas.symbol}`} /></div>
+    </article><RfqPanel href={rfqHref} sourcePage={`/gases/${gas.slug}/`} title={projectReview ? `Рассмотреть задачу для ${gasForAction}` : `Подобрать компрессор для ${gasForAction}`} /></div>
   </>;
 }

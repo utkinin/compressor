@@ -24,8 +24,8 @@ export function HomeHeroV3() {
     <div className="container home-hero-v3-grid">
       <div className="home-hero-v3-copy">
         <p className="eyebrow">БЕЗМАСЛЯНЫЕ КОМПРЕССОРЫ И БУСТЕРЫ · ТЕХНОЛОГИЧЕСКИЕ ГАЗЫ</p>
-        <h1 id="home-hero-title">Компрессоры и бустеры для <span>технологических газов</span></h1>
-        <p className="home-hero-v3-lead">Нужно повысить давление газа, вернуть его в процесс или подать в оборудование? Подберём компрессор или бустер по газу, P₁, P₂, расходу и режиму работы.</p>
+        <h1 id="home-hero-title">Безмасляные компрессоры и бустеры для <span>технологических газов</span></h1>
+        <p className="home-hero-v3-lead">Нужно повысить давление газа, вернуть его в процесс или подать в оборудование? Подбираем компрессор или бустер по газу, P₁, P₂, расходу и режиму работы — без подачи масла в камеру сжатия.</p>
         <div className="home-hero-v3-actions">
           <Link className="button" href={parameterRfq} onClick={() => track("hero_primary_cta_click", { source_page: "/", destination: "/rfq/" })}>Подобрать компрессор <span aria-hidden="true">→</span></Link>
           <Link className="button button-secondary" href={briefRfq} onClick={() => track("hero_secondary_cta_click", { source_page: "/", destination: "/rfq/" })}>Отправить ТЗ или параметры</Link>

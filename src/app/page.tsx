@@ -3,12 +3,14 @@ import { articles, solutions } from "@/content";
 import { HomeHeroV3 } from "@/components/home-hero-v3";
 import { HeroVisual } from "@/components/hero-visual";
 import { ProcessVisual } from "@/components/process-visual";
+import { GasBadge } from "@/components/gas-badge";
+import type { GasId } from "@/content";
 import { pageMetadata } from "@/lib/seo";
 import "./home-page.css";
 
 export const metadata = pageMetadata(
-  "Компрессоры и бустеры для технологических газов",
-  "Дожатие азота после генератора, газоснабжение лазерного станка, возврат гелия, сжатие CO₂ и газовых смесей. Подбор компрессора и необходимой комплектации.",
+  "Безмасляные компрессоры и бустеры для технологических газов",
+  "Безмасляное сжатие N₂, He, CO₂ и газовых смесей: дожатие азота после генератора, возврат гелия, подача газа в оборудование и проектный подбор.",
   "/",
 );
 
@@ -37,11 +39,11 @@ const supplyFormats = [
   { title: "Комплектная система", text: "Компрессор, буфер, арматура, автоматика, фильтрация и обвязка в согласованных границах поставки. Общая рама — при необходимости." },
 ];
 
-const gases = [
-  { symbol: "N₂", title: "Азот", text: "Дожатие после генератора, накопление и подача в оборудование.", href: "/equipment/nitrogen-compressors/" },
-  { symbol: "He", title: "Гелий", text: "Сжатие и возврат с учётом герметичности и допустимых потерь.", href: "/equipment/helium-compressors/" },
-  { symbol: "CO₂", title: "Диоксид углерода", text: "Подбор с проверкой температуры и фазового состояния.", href: "/equipment/co2-compressors/" },
-  { symbol: "Газ / смесь", title: "Другие технологические газы", text: "Индивидуальная проверка состава, материалов и применимости.", href: "/equipment/process-gas-compressors/" },
+const gases: { id: GasId; symbol: string; title: string; text: string; href: string }[] = [
+  { id: "n2", symbol: "N₂", title: "Азот", text: "Дожатие после генератора, накопление и подача в оборудование.", href: "/equipment/nitrogen-compressors/" },
+  { id: "he", symbol: "He", title: "Гелий", text: "Сжатие и возврат с учётом герметичности и допустимых потерь.", href: "/equipment/helium-compressors/" },
+  { id: "co2", symbol: "CO₂", title: "Диоксид углерода", text: "Подбор с проверкой температуры и фазового состояния.", href: "/equipment/co2-compressors/" },
+  { id: "mixtures", symbol: "Газ / смесь", title: "Другие технологические газы", text: "Индивидуальная проверка состава, материалов и применимости.", href: "/equipment/process-gas-compressors/" },
 ];
 
 const engineeringSteps = [
@@ -89,7 +91,7 @@ export default function HomePage() {
 
     <section className="section gas-section v21-gases" aria-labelledby="gases-title" data-home-section="gases"><div className="container">
       <div className="section-heading"><div><p className="eyebrow">03 / Среда и условия</p><h2 id="gases-title">Технологические газы требуют разного исполнения</h2></div><p>Состав, чистота, температура и требования к герметичности учитываются вместе с давлением, расходом и режимом.</p></div>
-      <div className="v21-gas-grid">{gases.map(gas => <Link key={gas.symbol} href={gas.href} className="gas-tile v21-gas"><span className="gas-symbol">{gas.symbol}</span><span className="gas-tile-title">{gas.title}</span><small>{gas.text}</small><span className="link-arrow" aria-hidden="true">→</span></Link>)}</div>
+      <div className="v21-gas-grid">{gases.map(gas => <Link key={gas.symbol} href={gas.href} className="gas-tile v21-gas"><GasBadge gas={gas.id} /><span className="gas-tile-title">{gas.title}</span><small>{gas.text}</small><span className="link-arrow" aria-hidden="true">→</span></Link>)}</div>
       <div className="v21-specialized"><p>Оборудование для работы с элегазом (SF₆) представлено в специализированном направлении SF6RUS.</p><a href="https://www.sf6rus.ru/products/0000004/" target="_blank" rel="noopener noreferrer">Оборудование и решения для работы с SF₆ — SF6RUS <span aria-hidden="true">↗</span><span className="sr-only"> (откроется в новой вкладке)</span></a></div>
       <div className="v21-section-links"><Link href="/gases/">Особенности технологических газов <span aria-hidden="true">→</span></Link></div>
     </div></section>

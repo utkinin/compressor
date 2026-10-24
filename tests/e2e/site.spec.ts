@@ -54,7 +54,7 @@ const coreRoutes = [
 
 const gasBranches = [
   { gas: "n2", expected: "Источник азота", fields: ["source", "purity", "inletRange", "flowProfile"] },
-  { gas: "he", expected: "Свежий газ или recovery?", fields: ["mode", "recoveryScheme", "leakageSensitivity"] },
+  { gas: "he", expected: "Источник гелия", fields: ["mode", "recoveryScheme", "leakageSensitivity"] },
   { gas: "h2", expected: "Состав и чистота водорода", fields: ["composition", "exRequirements", "hazardousArea", "leakageRequirements", "temperature"] },
   { gas: "o2", expected: "Требования к кислородной совместимости", fields: ["purity", "oxygenCompatibility", "cleanliness"] },
   { gas: "co2", expected: "Температура CO₂ на входе", fields: ["inletTemperature", "phase", "operatingRange"] },
@@ -66,7 +66,7 @@ test("Hero v3 is broad, zero-scroll and routes to five explicit pains", async ({
   await page.goto("/");
   await expectHomeV21(page);
   const hero = page.locator(".home-hero-v3");
-  await expect(hero.getByRole("heading", { level: 1 })).toHaveText("Компрессоры и бустеры для технологических газов");
+  await expect(hero.getByRole("heading", { level: 1 })).toHaveText("Безмасляные компрессоры и бустеры для технологических газов");
   await expect(hero.locator(".home-product-visual")).toBeVisible();
   const painLinks = hero.locator(".home-pain-link");
   await expect(painLinks).toHaveCount(5);
@@ -161,7 +161,7 @@ test("published route graph has no broken links, fake document pages or develope
 
 test("equipment catalog exposes public intents only and keeps schema conservative", async ({ page, request }) => {
   await page.goto("/equipment/");
-  await expect(page.locator("main h1")).toHaveText("Компрессоры и бустеры для технологических газов");
+  await expect(page.locator("main h1")).toHaveText("Безмасляные компрессоры и бустеры для технологических газов");
   await expect(page.locator(".equipment-catalog-card")).toHaveCount(5);
   await expect(page.locator(".equipment-card-grid")).not.toContainText("SF₆");
   for (const route of equipmentRoutes) {
@@ -262,7 +262,7 @@ test("qualified RFQ is physically disabled until explicit consent and then persi
   const submitted: unknown[] = [];
   page.on("request", (request) => { if (request.url().endsWith("/api/rfq") && request.method() === "POST") submitted.push(request.postDataJSON() as unknown); });
   await page.goto("/gases/nitrogen/?utm_source=e2e");
-  await page.getByRole("link", { name: /Подобрать компрессор для N₂/ }).click();
+  await page.getByRole("link", { name: /Подобрать компрессор для азота/ }).click();
   await fillNitrogen(page);
   await page.getByRole("button", { name: "Продолжить" }).click();
   await page.getByLabel("Давление на входе P₁", { exact: true }).fill("6");

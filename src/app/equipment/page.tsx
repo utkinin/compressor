@@ -7,7 +7,7 @@ import { HeroVisual } from "@/components/hero-visual";
 import { EquipmentCards, EquipmentSelection } from "@/components/equipment-catalog";
 import { JsonLd } from "@/components/json-ld";
 
-const title = "Компрессоры и бустеры для технологических газов";
+const title = "Безмасляные компрессоры и бустеры для технологических газов";
 const description = "Безмасляные компрессоры и бустеры для азота, гелия, CO₂ и других технологических газов. Подбор по давлению на входе, требуемому давлению, расходу и режиму работы.";
 
 export const metadata = pageMetadata(title, description, "/equipment/");
@@ -20,7 +20,7 @@ export default async function EquipmentPage() {
   const applications = solutionIds.flatMap((id) => solutions.filter((solution) => solution.id === id));
   return <>
     <Breadcrumbs items={[{ label: "Оборудование", href: "/equipment/" }]} />
-    <CommercialHero eyebrow="Оборудование / назначение и подбор" title={title} summary={description} visualId="equipment-range" action={<Link className="button" href="/rfq/?source=%2Fequipment%2F">Подобрать компрессор <span aria-hidden="true">→</span></Link>} />
+    <CommercialHero eyebrow="Безмасляное сжатие / оборудование и подбор" title={title} summary={description} visualId="equipment-range" action={<Link className="button" href="/rfq/?source=%2Fequipment%2F">Подобрать компрессор <span aria-hidden="true">→</span></Link>} />
     <section className="container equipment-catalog-section" aria-label="Каталог оборудования"><EquipmentCards items={directions} /></section>
     <section className="container content-section" aria-label="Специализированные направления">{references.map((item) => <div className="equipment-reference-panel" key={item.id}><HeroVisual id={item.heroVisualId} variant="card" caption={false} /><div><p className="eyebrow">Специализированное направление</p><h2><Link href={`/equipment/${item.slug}/`}>{item.title}</Link></h2><p>Оборудование для работы с элегазом представлено в специализированном направлении SF6RUS.</p><Link className="text-link" href={`/equipment/${item.slug}/`}>Перейти к справочному разделу <span aria-hidden="true">→</span></Link></div></div>)}</section>
     <section className="section equipment-solutions-section" aria-labelledby="equipment-solutions-title"><div className="container">
