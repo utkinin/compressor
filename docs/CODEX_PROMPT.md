@@ -10,14 +10,36 @@ You are continuing the Lanfor Gas Systems website in this repository.
 5. `docs/IMPLEMENTED_CONTENT_MODEL.md`
 6. `docs/QUANTITATIVE_EVIDENCE.md`
 7. `docs/V21_IMPLEMENTATION.md`
-8. GitHub Issue #6: `PR #2 — Visual System v2: заменить тёмные чертежи на product-first графику`
+8. `docs/HERO_V3_ZERO_SCROLL.md`
+9. `docs/HERO_V3_IMPLEMENTATION_CHECKLIST.md`
+10. GitHub Issue #6: `PR #2 — Visual System v2: заменить тёмные чертежи на product-first графику`
+11. GitHub Issue #8: `PR #3 — Hero v3: zero-scroll боли на главной + one-pain hero на Solutions`
 
-## Current active task
-The current implementation priority is GitHub Issue #6.
+## Current active tasks
+Complete Issue #6 visual-system migration and integrate Issue #8 as the final homepage/solution hero behavior.
 
-Implement it completely. Do not return another concept/design plan. Do not stop after Wave 1 and do not ask for confirmation between waves.
+Do not treat Issue #8 as permission to restore the old dark schematic style. Where the two issues overlap, Issue #8 refines homepage information architecture while Issue #6 remains the source of truth for visual language.
 
-Core visual rule:
+Do not return another concept/design plan. Implement the code.
+
+## Final homepage rule
+The homepage is NOT a single-pain nitrogen landing page.
+
+Keep broad H1:
+`Компрессоры и бустеры для технологических газов`
+
+Within the first viewport, without scrolling, expose the main customer pain paths:
+- pressure after N₂ generator;
+- laser gas supply;
+- helium recovery;
+- CO₂ / other process gas compression;
+- compressor integration.
+
+Use the light product-first `home-compressor-system` visual on the right. The pain navigator and primary CTA must be visible above the fold on a typical 1366×768 viewport.
+
+Dedicated Solution pages should use problem-led H1s per Issue #8.
+
+## Core visual rule
 
 **PRODUCT FIRST → APPLICATION → PROCESS → ENGINEERING DETAIL**
 
@@ -40,21 +62,35 @@ Current dark `TechnicalDiagram` / pseudo-CAD visuals must stop being the default
 - Do not solve the task by recoloring the old SVGs.
 - Do not use dark blueprint placeholders when final image assets are missing.
 - Keep labels/callouts in HTML/SVG rather than baking Russian text into raster artwork.
-- Check 1440 / 1280 / 1024 / 768 / 390 layouts.
-- Preserve the current customer-side content architecture unless a visual integration change requires a small layout adjustment.
+- Check 1440 / 1366 / 1280 / 1024 / 768 / 390 layouts.
+- Preserve the current customer-side content architecture except for the explicit Hero v3 zero-scroll changes.
 
 ## Required implementation order
-1. Home hero and home task cards.
-2. Equipment hub.
-3. Nitrogen compressor and nitrogen booster pages.
-4. Nitrogen-after-generator solution.
-5. Laser-cutting solution.
-6. Helium recovery solution.
-7. Remaining He / CO₂ / SF₆ / other process-gas equipment visuals.
-8. Equipment integration and supply-format progression.
-9. Knowledge visuals.
-10. Legacy `TechnicalDiagram` cleanup.
-11. Update visual-system documentation.
+1. Visual System v2 foundation/components/asset registry from Issue #6.
+2. Hero v3 homepage zero-scroll pain navigator from Issue #8.
+3. Problem-led hero on the five target Solution pages from Issue #8.
+4. Home task-card visuals.
+5. Equipment hub.
+6. Nitrogen compressor and nitrogen booster pages.
+7. Nitrogen-after-generator solution visual/process details.
+8. Laser-cutting visual/process details.
+9. Helium recovery visual/process details.
+10. Remaining He / CO₂ / SF₆ / other process-gas equipment visuals.
+11. Equipment integration and supply-format progression.
+12. Knowledge visuals.
+13. Legacy `TechnicalDiagram` cleanup.
+14. Update visual-system documentation.
+
+## Analytics
+Implement/preserve:
+- `hero_view`
+- `hero_primary_cta_click`
+- `hero_secondary_cta_click`
+- `hero_pain_click`
+
+`hero_pain_click` must include pain, position and source_page.
+
+Do not automatically switch the homepage to another single pain based only on an arbitrary 4–8 week window; report actual sample sizes and RFQ attribution.
 
 ## Acceptance criteria
 Run the actual project equivalents of:
@@ -68,6 +104,10 @@ Run the actual project equivalents of:
 - `npm run preview:test`
 
 Final result must satisfy:
+- 1366×768 homepage shows broad H1, primary CTA, 4+ pain paths and product visual without scrolling;
+- 390px homepage surfaces pain paths before long explanatory content;
+- no dynamic/session-based homepage H1 substitution;
+- five target Solution pages use their specific problem-led H1s;
 - no legacy dark diagram as hero on major commercial pages;
 - no legacy dark diagram in Equipment cards;
 - no legacy dark diagram as default Solution visual;
@@ -79,12 +119,16 @@ Final result must satisfy:
 
 ## Final report
 Return:
-1. migration table PAGE / OLD VISUAL / NEW VISUAL / STATUS;
-2. new/changed components;
-3. visual asset manifest;
-4. remaining `TechnicalDiagram` usages and rationale;
-5. responsive QA results;
-6. performance/image payload impact where measurable;
-7. build/typecheck/lint/test/e2e/preview results.
+1. homepage before/after summary;
+2. 1366×768 and 390px hero QA;
+3. pain navigator implementation and analytics event;
+4. Solution hero changes;
+5. migration table PAGE / OLD VISUAL / NEW VISUAL / STATUS;
+6. new/changed components;
+7. visual asset manifest;
+8. remaining `TechnicalDiagram` usages and rationale;
+9. responsive QA results;
+10. performance/image payload impact where measurable;
+11. build/typecheck/lint/test/e2e/preview results.
 
-Do not add new unrelated CMS/backend work before Issue #6 is complete.
+Do not add unrelated CMS/backend work before Issues #6 and #8 are complete.
