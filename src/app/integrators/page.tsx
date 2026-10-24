@@ -22,7 +22,7 @@ const directions = [
   },
   {
     title: "Безмасляные вакуумные модули",
-    text: "Для технологических, аналитических и лабораторных установок, где вакуумный узел является частью оборудования интегратора. Параметры и применимость подтверждаются для конкретной задачи.",
+    text: "Для технологических, аналитических и лабораторных установок, где вакуумный модуль является частью оборудования интегратора. Параметры и применимость подтверждаются для конкретной задачи.",
   },
   {
     title: "Компрессорные модули для транспорта и спецтехники",
@@ -31,14 +31,14 @@ const directions = [
 ] as const;
 
 const inputs = [
-  "Тип машины или системы и функция компрессорного узла.",
+  "Тип машины или системы и функция компрессорного модуля.",
   "Среда: воздух или технологический газ; известные требования к чистоте.",
   "Давление на входе, требуемое давление и производительность — если уже известны.",
   "Режим работы: непрерывный, периодический или заданный цикл.",
   "Питание или тип привода, доступное охлаждение и условия окружающей среды.",
   "Габаритные ограничения, монтажное положение и требования к шуму или вибрации, если они критичны.",
   "Интерфейсы управления, сигналы готовности, блокировки и требования к автоматике.",
-  "Стадия проекта: концепт, прототип, испытания, серия или замена существующего узла.",
+  "Стадия проекта: концепт, прототип, испытания, серия или замена существующего оборудования.",
 ];
 
 const deliverables = [
@@ -71,8 +71,8 @@ export default function IntegratorsPage() {
 
     <section className="container integrator-focus" aria-labelledby="integrator-focus-title">
       <p className="eyebrow">Фокус Lanfor</p>
-      <h2 id="integrator-focus-title">Проектные и повторяемые поставки вместо розничного каталога</h2>
-      <p>Основной сценарий — компрессорный или пневматический узел становится частью вашей машины, стенда или технологической системы. Мы не строим этот раздел вокруг сравнения единичного компрессора по цене.</p>
+      <h2 id="integrator-focus-title">Проектные и повторяемые поставки для оборудования и машин</h2>
+      <p>Основной сценарий — компрессорный или пневматический модуль становится частью вашей машины, стенда или технологической системы. Прорабатываем конфигурацию под конкретный проект и сохраняем её для следующих поставок.</p>
     </section>
 
     <section className="section" aria-labelledby="integrator-directions-title"><div className="container">
@@ -81,7 +81,7 @@ export default function IntegratorsPage() {
     </div></section>
 
     <section className="section integrator-interface-section" id="integration-data" aria-labelledby="integration-data-title"><div className="container integrator-interface-layout">
-      <div><p className="eyebrow">Границы интеграции</p><h2 id="integration-data-title">Компрессорный модуль как часть вашей системы</h2><p>Узел согласуется не только по производительности. Для повторяемой интеграции заранее фиксируем подключения и ограничения по четырём основным интерфейсам.</p><ProcessVisual id="process-integration" /></div>
+      <div><p className="eyebrow">Границы интеграции</p><h2 id="integration-data-title">Компрессорный модуль как часть вашей системы</h2><p>Модуль согласуется не только по производительности. Для повторяемой интеграции заранее фиксируем подключения и ограничения по четырём основным интерфейсам.</p><ProcessVisual id="process-integration" /></div>
       <ContentSection title="Что передать для начала"><BulletList items={inputs} /></ContentSection>
     </div></section>
 
@@ -90,7 +90,7 @@ export default function IntegratorsPage() {
       <div><p className="eyebrow">От первого образца к серии</p><h2 id="integrator-result-title">Одна конфигурация — понятный путь проекта</h2><div className="integrator-stage-grid">{projectStages.map(([stage, text], index) => <article key={stage}><span aria-hidden="true">0{index + 1}</span><h3>{stage}</h3><p>{text}</p></article>)}</div></div>
     </div></section>
 
-    <section className="container integrator-cta" aria-labelledby="integrator-cta-title"><div><p className="eyebrow">Начать проект</p><h2 id="integrator-cta-title">Передайте ТЗ, схему или данные существующего узла</h2><p>Если давления и расхода пока нет, достаточно описать функцию узла, машину, ограничения по установке и стадию проекта. Недостающие параметры уточним в процессе проработки.</p></div><Link className="button" href={rfq}>Передать ТЗ на интеграцию <span aria-hidden="true">→</span></Link></section>
+    <section className="container integrator-cta" aria-labelledby="integrator-cta-title"><div><p className="eyebrow">Начать проект</p><h2 id="integrator-cta-title">Передайте ТЗ, схему или данные существующего оборудования</h2><p>Если давления и расхода пока нет, достаточно описать функцию компрессорного модуля, машину, ограничения по установке и стадию проекта. Недостающие параметры уточним в процессе проработки.</p></div><Link className="button" href={rfq}>Передать ТЗ на интеграцию <span aria-hidden="true">→</span></Link></section>
 
     <JsonLd data={{ "@context": "https://schema.org", "@type": "WebPage", name: title, description, url: absoluteUrl("/integrators/"), inLanguage: "ru-RU", about: { "@type": "Thing", name: "Компрессорные модули для интеграции в оборудование" } }} />
   </>;
