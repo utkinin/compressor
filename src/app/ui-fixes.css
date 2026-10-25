@@ -8,11 +8,15 @@
 .rfq-brief-form .field,.rfq-brief-form label,.rfq-brief-form p,.rfq-brief-form h2,.rfq-brief-form h3{min-width:0;overflow-wrap:anywhere}
 .rfq-brief-form input,.rfq-brief-form select,.rfq-brief-form textarea{min-width:0;max-width:100%}
 
-/* Contacts: keep the operational details compact and avoid blank paragraph gaps. */
+/* Contacts: labels sit directly above their values; only the two logical groups are separated. */
 .contact-notice h2{margin-bottom:12px}
 .contact-notice .contact-primary{display:grid;gap:3px;margin-bottom:10px}
 .contact-notice .contact-primary p{margin:0}
-.contact-notice .contact-address-schedule{margin:0;line-height:1.65}
+.contact-notice .contact-details{margin:0}
+.contact-notice .contact-detail-group{display:grid;gap:0;line-height:1.55}
+.contact-notice .contact-detail-group strong{display:block;margin:0;line-height:1.35}
+.contact-notice .contact-detail-group span{display:block;margin:0}
+.contact-notice .contact-detail-group+.contact-detail-group{margin-top:14px}
 .contact-notice .contact-note{margin-top:14px}
 .contact-notice .contact-legal-link{display:inline-block;margin-top:12px}
 
