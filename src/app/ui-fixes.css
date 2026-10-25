@@ -25,14 +25,17 @@
 .contact-notice .contact-note{margin-top:14px}
 .contact-notice .contact-legal-link{display:inline-block;margin-top:12px}
 
-/* This three-step engineering figure was too narrow in the article column when
-   rendered as three cards. Keep the same content, but use readable full-width rows. */
-.knowledge-detail-figure[data-visual-id="knowledge-detail-why-process-gas-compressors-need-task-specific-selection"] .knowledge-detail-steps{grid-template-columns:1fr;gap:18px}
-.knowledge-detail-figure[data-visual-id="knowledge-detail-why-process-gas-compressors-need-task-specific-selection"] .knowledge-detail-steps li{display:grid;grid-template-columns:104px minmax(0,1fr);align-items:center;gap:18px;padding:18px 20px}
-.knowledge-detail-figure[data-visual-id="knowledge-detail-why-process-gas-compressors-need-task-specific-selection"] .knowledge-detail-steps li>svg{width:104px;height:78px}
-.knowledge-detail-figure[data-visual-id="knowledge-detail-why-process-gas-compressors-need-task-specific-selection"] .knowledge-detail-steps h3{margin:0 0 6px;font-size:1.08rem;overflow-wrap:anywhere}
-.knowledge-detail-figure[data-visual-id="knowledge-detail-why-process-gas-compressors-need-task-specific-selection"] .knowledge-detail-steps p{overflow-wrap:anywhere}
-.knowledge-detail-figure[data-visual-id="knowledge-detail-why-process-gas-compressors-need-task-specific-selection"] .knowledge-detail-steps li:not(:last-child)::after{content:"↓";left:50%;top:calc(100% + 1px);transform:translateX(-50%);line-height:20px}
+/* Knowledge engineering figures with layout="steps" share the same narrow article
+   column. Render every such sequence as full-width rows instead of three compact
+   columns so headings and notes never escape their cards. Comparison, factors,
+   components and loop figures keep their own layouts. */
+figure.knowledge-detail-steps>.knowledge-detail-steps{grid-template-columns:1fr;gap:18px}
+figure.knowledge-detail-steps>.knowledge-detail-steps>li{display:grid;grid-template-columns:104px minmax(0,1fr);align-items:center;gap:18px;padding:18px 20px;min-width:0}
+figure.knowledge-detail-steps>.knowledge-detail-steps>li>svg{width:104px;height:78px}
+figure.knowledge-detail-steps>.knowledge-detail-steps>li>div{min-width:0}
+figure.knowledge-detail-steps>.knowledge-detail-steps h3{margin:0 0 6px;font-size:1.08rem;overflow-wrap:break-word;word-break:normal;min-width:0}
+figure.knowledge-detail-steps>.knowledge-detail-steps p{overflow-wrap:break-word;word-break:normal;min-width:0}
+figure.knowledge-detail-steps>.knowledge-detail-steps>li:not(:last-child)::after{content:"↓";left:50%;top:calc(100% + 1px);transform:translateX(-50%);line-height:20px}
 
 @media(max-width:1180px){
   .detail-layout:has(> .rfq-brief-form){grid-template-columns:minmax(250px,.7fr) minmax(0,1.3fr);gap:34px}
@@ -45,7 +48,8 @@
 }
 
 @media(max-width:767px){
-  .knowledge-detail-figure[data-visual-id="knowledge-detail-why-process-gas-compressors-need-task-specific-selection"] .knowledge-detail-steps li{grid-template-columns:72px minmax(0,1fr);gap:13px;padding:15px}
-  .knowledge-detail-figure[data-visual-id="knowledge-detail-why-process-gas-compressors-need-task-specific-selection"] .knowledge-detail-steps li>svg{width:72px;height:66px}
-  .knowledge-detail-figure[data-visual-id="knowledge-detail-why-process-gas-compressors-need-task-specific-selection"] .knowledge-detail-steps h3{font-size:1rem}
+  figure.knowledge-detail-steps>.knowledge-detail-steps{gap:25px}
+  figure.knowledge-detail-steps>.knowledge-detail-steps>li{grid-template-columns:72px minmax(0,1fr);gap:13px;padding:15px}
+  figure.knowledge-detail-steps>.knowledge-detail-steps>li>svg{width:72px;height:66px}
+  figure.knowledge-detail-steps>.knowledge-detail-steps h3{font-size:1rem}
 }
