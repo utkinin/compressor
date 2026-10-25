@@ -36,6 +36,8 @@ export const RFQ_SOLUTION_CONTEXTS: Record<string, { title: string; gases?: Gas[
   "equipment-integration": { title: "Встраивание компрессора в оборудование" },
   "gas-transfer-recovery": { title: "Перекачка и возврат газа" },
   "buffer-receiver-charging": { title: "Заполнение буфера и ресивера" },
+  "pet-high-pressure-air": { title: "Безмасляный воздух высокого давления для выдува ПЭТ" },
+  "refrigerant-transfer-compression": { title: "Перекачка и фасовка хладагентов" },
 };
 
 export const RFQ_DOCUMENT_CONTEXTS: Record<string, { title: string }> = {
