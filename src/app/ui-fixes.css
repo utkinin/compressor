@@ -7,6 +7,10 @@
 .detail-layout>.rfq-brief-form .field-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
 .rfq-brief-form .field,.rfq-brief-form label,.rfq-brief-form p,.rfq-brief-form h2,.rfq-brief-form h3{min-width:0;overflow-wrap:anywhere}
 .rfq-brief-form input,.rfq-brief-form select,.rfq-brief-form textarea{min-width:0;max-width:100%}
+/* Consent is prose, not a narrow field label: never allow it to collapse letter-by-letter. */
+.rfq-brief-form .rfq-consent label{display:grid;grid-template-columns:20px minmax(0,1fr);align-items:start;gap:12px;width:100%;overflow-wrap:normal;word-break:normal}
+.rfq-brief-form .rfq-consent label>span{display:block;min-width:0;overflow-wrap:normal;word-break:normal;white-space:normal}
+.rfq-brief-form .rfq-consent a{overflow-wrap:normal;word-break:normal}
 
 /* Contacts: labels sit directly above their values; only the two logical groups are separated. */
 .contact-notice h2{margin-bottom:12px}
