@@ -23,7 +23,9 @@ jobs:
           node-version-file: .node-version
           cache: npm
       - name: Apply integrator equipment patch
-        run: python3 scripts/apply-issue14-air-equipment.py
+        run: |
+          python3 scripts/apply-issue14-air-equipment.py
+          python3 scripts/fix-issue14-air-equipment-types.py
       - run: npm ci
       - name: Validate source
         run: |
