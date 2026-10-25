@@ -17,7 +17,7 @@ export default async function RfqPage({ searchParams }: { searchParams: Promise<
   const initialGas = GAS_OPTIONS.find((option) => option.value === query.gas)?.value;
   const initialRequest = sanitizeRfqContext(query);
   const selection = initialRfqSelection(initialGas, initialRequest.equipment);
-  const intake = query.intake === "brief" ? "brief" : "parameters";
+  const intake = query.intake === "integration" ? "integration" : query.intake === "brief" ? "brief" : "parameters";
   const formKey = [intake, selection.gas, initialRequest.solution, initialRequest.equipment, initialRequest.document].join(":");
   const configuration = getRfqConfiguration();
   const mode = configuration.staging ? "staging" : configuration.enabled ? "live" : "disabled";

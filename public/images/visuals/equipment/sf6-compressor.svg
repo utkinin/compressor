@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1200" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Обобщённая компоновка газового компрессора</title>
+  <desc id="desc">Условное предметное изображение компрессора с электроприводом на светлом фоне. Не изображает конкретную модель.</desc>
+  <defs>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#edf0ee"/><stop offset=".5" stop-color="#c4cbc7"/><stop offset="1" stop-color="#a0aaa4"/></linearGradient>
+    <linearGradient id="cover" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#eff2ef"/><stop offset="1" stop-color="#b6c0b8"/></linearGradient>
+    <linearGradient id="drive" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#68756d"/><stop offset="1" stop-color="#3e4d44"/></linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="#fffefa"/>
+  <ellipse cx="601" cy="644" rx="438" ry="45" fill="#e6eae3"/>
+  <path d="M154 579 777 642 1045 501 425 452Z" fill="#d2d9d1" stroke="#b6c0b6" stroke-width="3"/>
+  <path d="M154 579 777 642 777 682 154 617Z" fill="#aeb9af"/>
+  <path d="M777 642 1045 501 1045 539 777 682Z" fill="#929f94"/>
+  <path d="M191 612v28l61 8v-27M697 666v27l67 6v-24M978 540v30l49-27v-30" fill="#89988b"/>
+  <path d="M645 482 724 493 725 565 645 556ZM862 482 916 479 916 547 862 555Z" fill="#a6b2a7"/>
+  <path d="M681 328 856 307 938 361 760 385Z" fill="#728075"/>
+  <path d="M681 328 760 385 760 527 681 473Z" fill="#4c5c50"/>
+  <path d="M760 385 938 361 938 499 760 527Z" fill="url(#drive)"/>
+  <g stroke="#9ca79c" stroke-width="6" stroke-linecap="round"><path d="m777 394 144-18M777 414l144-18M777 434l144-18M777 454l144-18M777 474l144-18M777 494l144-18"/></g>
+  <path d="M732 307 811 297 849 323 770 333Z" fill="#99a298"/>
+  <path d="M770 333v32l79-11v-31Z" fill="#65766a"/>
+  <path d="M732 307v32l38 26v-32Z" fill="#829184"/>
+  <path d="M608 374 684 362 722 392 646 405Z" fill="#c37c54"/>
+  <path d="M646 405 722 392 722 482 646 495Z" fill="#ad6541"/>
+  <path d="M608 374 646 405 646 495 608 464Z" fill="#d29269"/>
+  <path d="M312 330 505 272 647 350 647 480 450 551 312 473Z" fill="url(#metal)" stroke="#9ba99d" stroke-width="3"/>
+  <path d="M312 330 505 272 647 350 450 414Z" fill="#e5eae3"/>
+  <path d="M450 414 647 350 647 480 450 551Z" fill="#b3bfb3"/>
+  <ellipse cx="386" cy="431" rx="109" ry="118" fill="#99a89b"/>
+  <ellipse cx="370" cy="423" rx="109" ry="118" fill="url(#cover)" stroke="#8fa192" stroke-width="4"/>
+  <ellipse cx="370" cy="423" rx="72" ry="78" fill="#d7dfd6" stroke="#a0b09e" stroke-width="3"/>
+  <g fill="#839684"><circle cx="370" cy="321" r="7"/><circle cx="441" cy="350" r="7"/><circle cx="465" cy="422" r="7"/><circle cx="438" cy="495" r="7"/><circle cx="370" cy="525" r="7"/><circle cx="301" cy="493" r="7"/><circle cx="274" cy="423" r="7"/><circle cx="300" cy="351" r="7"/></g>
+  <path d="M383 304v-51l57-18 38 22v48l-58 19Z" fill="#c6d0c4" stroke="#99a99a" stroke-width="3"/>
+  <path d="M383 253 440 235 478 257 420 276Z" fill="#e5ebe1"/>
+  <path d="M420 276v48l58-19v-48Z" fill="#adbcae"/>
+  <path d="M530 292v-41l37-12 29 16v42l-38 12Z" fill="#b6c4b7" stroke="#99a99a" stroke-width="3"/>
+  <path d="M443 235v-36q0-20 23-20h77q22 0 22 21v39" fill="none" stroke="#99ab9a" stroke-width="17" stroke-linejoin="round"/>
+  <path d="M443 235v-36q0-20 23-20h77q22 0 22 21v39" fill="none" stroke="#d3ddd0" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M307 518v58l51 6v-57M536 524v76l48-18v-75" fill="#99aa9c"/>
+  <path d="M269 566 368 575 368 595 269 584M514 590l86-25v22l-86 25" fill="#7e9382"/>
+</svg>

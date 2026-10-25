@@ -3,6 +3,8 @@ import type { KnowledgeArticle } from "./types";
 export const articles: KnowledgeArticle[] = [
   {
     "id": "how-to-select-nitrogen-booster",
+    heroVisualId: "knowledge-nitrogen-selection",
+    figureIds: ["knowledge-detail-how-to-select-nitrogen-booster"],
     "slug": "how-to-select-nitrogen-booster",
     "title": "Как подобрать бустер азота по давлению и расходу",
     "editorialState": "review",
@@ -58,7 +60,8 @@ export const articles: KnowledgeArticle[] = [
     ]
   },
   {
-    id:"normal-and-actual-flow",slug:"normal-and-actual-flow",title:"Чем Nm³/h отличается от m³/h",editorialState:"review",updated:"2026-10-22",
+    id:"normal-and-actual-flow",
+    heroVisualId: "knowledge-flow-conditions",slug:"normal-and-actual-flow",title:"Чем Nm³/h отличается от m³/h",editorialState:"review",updated:"2026-10-22",
     summary:"Одинаковое число кубометров в час может описывать разное количество газа. Всегда указывайте давление, температуру и базовые условия.",gasIds:["n2","he","h2","o2","co2","mixtures"],solutionIds:["process-gas-compressor","buffer-receiver-charging"],
     sections:[
       {title:"Объёмный расход зависит от состояния",body:"m³/h — объём за час при указанных фактических условиях. Nm³/h — объём того же количества газа, приведённый к согласованным нормальным условиям. Обозначение N не гарантирует одинаковую базу у разных поставщиков: температуру и абсолютное давление нормальных условий нужно записать явно."},
@@ -67,7 +70,8 @@ export const articles: KnowledgeArticle[] = [
     ],
   },
   {
-    id:"bar-g-and-bar-a",slug:"bar-g-and-bar-a",title:"bar(g) и bar(a): как не ошибиться с давлением",editorialState:"review",updated:"2026-10-22",
+    id:"bar-g-and-bar-a",
+    heroVisualId: "knowledge-pressure-reference",slug:"bar-g-and-bar-a",title:"bar(g) и bar(a): как не ошибиться с давлением",editorialState:"review",updated:"2026-10-22",
     summary:"Избыточное и абсолютное давление нельзя смешивать. Степень сжатия рассчитывают по абсолютным давлениям.",gasIds:["n2","he","h2","o2","co2","mixtures"],solutionIds:["oil-free-gas-booster","nitrogen-pressure-boosting"],
     sections:[
       {title:"Две разные точки отсчёта",body:"bar(g) показывает превышение над местным атмосферным давлением, bar(a) отсчитывается от абсолютного вакуума. Связь: Pabs = Pgauge + Patm. Для ориентировочной проверки часто используют стандартную атмосферу 1,01325 bar, но для точного расчёта берут условия площадки."},
@@ -76,7 +80,8 @@ export const articles: KnowledgeArticle[] = [
     ],
   },
   {
-    id:"oil-free-compression",slug:"oil-free-compression",title:"Что означает безмасляный компрессор",editorialState:"review",updated:"2026-10-22",
+    id:"oil-free-compression",
+    heroVisualId: "knowledge-oil-free",slug:"oil-free-compression",title:"Что означает безмасляный компрессор",editorialState:"review",updated:"2026-10-22",
     summary:"Что подразумевается под безмасляным сжатием, как задаются требования к газовому тракту и почему это не заменяет подтверждение чистоты и совместимости.",gasIds:["n2","he","o2","mixtures"],solutionIds:["oil-free-gas-booster","oxygen-compression"],
     sections:[
       {title:"Что означает Oil-Free",body:"В контексте компрессорного узла Oil-Free означает отсутствие подачи масла в камеру сжатия. Привод и механические узлы вне газового тракта могут иметь собственную смазку. Конструкция разделения должна проверяться по документации конкретного оборудования."},
@@ -86,7 +91,8 @@ export const articles: KnowledgeArticle[] = [
     ],
   },
   {
-    id:"compressor-vs-booster",slug:"compressor-vs-booster",title:"Компрессор и бустер: в чём разница",editorialState:"review",updated:"2026-10-22",
+    id:"compressor-vs-booster",
+    heroVisualId: "knowledge-compressor-booster",slug:"compressor-vs-booster",title:"Компрессор и бустер: в чём разница",editorialState:"review",updated:"2026-10-22",
     summary:"Booster описывает задачу дожатия уже сжатого газа. Название не определяет привод, конструкцию или гарантированный расход.",gasIds:["n2","he","mixtures"],solutionIds:["oil-free-gas-booster","process-gas-compressor"],
     sections:[
       {title:"Назначение и конструкция",body:"Компрессор повышает давление газа; booster — распространённое название компрессорной функции дожатия источника, уже находящегося под давлением. По одному слову booster нельзя определить, является ли устройство поршневым, как устроен привод и нужен ли ему отдельный источник энергии."},
@@ -96,6 +102,8 @@ export const articles: KnowledgeArticle[] = [
   },
   {
     "id": "what-to-specify-for-gas-compressor",
+    heroVisualId: "knowledge-five-parameters",
+    figureIds: ["knowledge-detail-what-to-specify-for-gas-compressor"],
     "slug": "what-to-specify-for-gas-compressor",
     "title": "Какие данные нужны для подбора компрессора",
     "editorialState": "review",
@@ -159,7 +167,9 @@ export const articles: KnowledgeArticle[] = [
     ]
   },
   {
-    id:"booster-vs-source",slug:"booster-vs-source",title:"Когда бустер помогает, а когда не хватает источника газа",editorialState:"review",updated:"2026-10-22",
+    id:"booster-vs-source",
+    heroVisualId: "knowledge-booster-source",
+    figureIds: ["knowledge-detail-booster-vs-source"],slug:"booster-vs-source",title:"Когда бустер помогает, а когда не хватает источника газа",editorialState:"review",updated:"2026-10-22",
     summary:"Разделяем нехватку давления и дефицит производительности. Бустер повышает давление, ресивер сглаживает пик, а газовый баланс всё равно должен сходиться.",gasIds:["n2","he","mixtures"],solutionIds:["nitrogen-booster-after-generator","nitrogen-pressure-boosting","buffer-receiver-charging"],
     sections:[
       {title:"Давления недостаточно, расход есть",body:"Если источник выдаёт необходимое количество газа при нужной чистоте, но P₁ ниже требуемого давления потребителя, компрессорная ступень может решить задачу дожатия. Сначала проверяют доступный расход источника при минимальном P₁ и потери между источником, бустером и потребителем. Само наличие давления без измерения расхода ещё не подтверждает запас производительности."},
@@ -169,7 +179,8 @@ export const articles: KnowledgeArticle[] = [
     ],
   },
   {
-    id:"pressure-after-nitrogen-generator",slug:"pressure-after-nitrogen-generator",title:"Давление после генератора азота",editorialState:"review",updated:"2026-10-22",
+    id:"pressure-after-nitrogen-generator",
+    heroVisualId: "knowledge-generator-pressure",slug:"pressure-after-nitrogen-generator",title:"Давление после генератора азота",editorialState:"review",updated:"2026-10-22",
     summary:"Для подбора бустера важно давление, реально доступное под нагрузкой при требуемой чистоте.",gasIds:["n2"],solutionIds:["nitrogen-booster-after-generator"],
     sections:[
       {title:"Что измерять на источнике",body:"Зафиксируйте давление на выходе генератора и на входе бустера при минимальном, номинальном и максимальном потреблении. Между точками есть потери на фильтрах, арматуре и трубопроводе. Отдельно укажите чистоту, при которой получен расход генератора."},
@@ -178,7 +189,8 @@ export const articles: KnowledgeArticle[] = [
     ],
   },
   {
-    id:"continuous-vs-intermittent",slug:"continuous-vs-intermittent",title:"Непрерывный и периодический режим",editorialState:"review",updated:"2026-10-22",
+    id:"continuous-vs-intermittent",
+    heroVisualId: "knowledge-duty-cycle",slug:"continuous-vs-intermittent",title:"Непрерывный и периодический режим",editorialState:"review",updated:"2026-10-22",
     summary:"Часы работы в сутки не описывают всю нагрузку. Нужны длительность цикла, паузы, пики и частота пусков.",gasIds:["n2","he","h2","o2","co2","mixtures"],solutionIds:["nitrogen-for-laser-cutting","buffer-receiver-charging"],
     sections:[
       {title:"Тепловой и ресурсный профиль",body:"Continuous 24/7 означает длительную непрерывную работу в согласованных условиях. Для intermittent указывают длительность работы и паузы. Duty cycle без периода неоднозначен: одинаковая доля включения за минуту и за несколько часов может давать разные температуры и частоту пусков."},
@@ -187,7 +199,8 @@ export const articles: KnowledgeArticle[] = [
     ],
   },
   {
-    id:"why-a-receiver",slug:"why-a-receiver",title:"Зачем нужен ресивер в газовой системе",editorialState:"review",updated:"2026-10-22",
+    id:"why-a-receiver",
+    heroVisualId: "knowledge-receiver",slug:"why-a-receiver",title:"Зачем нужен ресивер в газовой системе",editorialState:"review",updated:"2026-10-22",
     summary:"Ресивер накапливает ограниченный запас, разделяет циклы и может сглаживать колебания. Он не создаёт дополнительный газ.",gasIds:["n2","he","mixtures"],solutionIds:["buffer-receiver-charging","nitrogen-for-laser-cutting"],
     sections:[
       {title:"Полезный запас и геометрический объём",body:"Количество доступного газа зависит от объёма сосуда, верхнего и нижнего абсолютных давлений и температуры. Разрешённое нижнее давление определяется потребителем. Поэтому один и тот же ресивер при узком окне давления хранит меньший полезный запас, чем при широком."},
@@ -196,7 +209,8 @@ export const articles: KnowledgeArticle[] = [
     ],
   },
   {
-    id:"air-vs-water-cooling",slug:"air-vs-water-cooling",title:"Воздушное или водяное охлаждение",editorialState:"review",updated:"2026-10-22",
+    id:"air-vs-water-cooling",
+    heroVisualId: "knowledge-cooling",slug:"air-vs-water-cooling",title:"Воздушное или водяное охлаждение",editorialState:"review",updated:"2026-10-22",
     summary:"Выбор определяется тепловой нагрузкой, климатом, доступной водой и температурой газа на границе процесса.",gasIds:["n2","he","h2","o2","co2","mixtures"],solutionIds:["compressor-skid","co2-compression"],
     sections:[
       {title:"Воздушная схема",body:"Нужны максимальная температура окружающего воздуха, вентиляция, допустимый шум и возможность отвести тепло. В закрытом помещении нагретый воздух нельзя бесконтрольно возвращать на вход охладителя. Зимняя эксплуатация также требует проверки минимальных температур и регулирования."},
@@ -205,7 +219,8 @@ export const articles: KnowledgeArticle[] = [
     ],
   },
   {
-    id:"different-gases-different-performance",slug:"different-gases-different-performance",title:"Почему N₂, H₂ и He дают разные характеристики",editorialState:"review",updated:"2026-10-22",
+    id:"different-gases-different-performance",
+    heroVisualId: "knowledge-gas-properties",slug:"different-gases-different-performance",title:"Почему N₂, H₂ и He дают разные характеристики",editorialState:"review",updated:"2026-10-22",
     summary:"Характеристики компрессора зависят от свойств газа, материалов и теплового режима. Геометрически похожий компрессор не означает одинаковый диапазон.",gasIds:["n2","he","h2"],solutionIds:["helium-compression","hydrogen-compression","process-gas-compressor"],
     sections:[
       {title:"Плотность и сжатие",body:"Молярная масса, теплоёмкости и коэффициент сжимаемости влияют на массовый расход, работу сжатия и температуру нагнетания. Объёмный расход на всасывании и приведённый расход — разные величины. Сравнение каталогов возможно только при одинаково заданных условиях."},
@@ -214,7 +229,9 @@ export const articles: KnowledgeArticle[] = [
     ],
   },
   {
-    id:"how-working-point-is-calculated",slug:"how-working-point-is-calculated",title:"Как рассчитываются параметры компрессора",editorialState:"review",updated:"2026-10-22",
+    id:"how-working-point-is-calculated",
+    heroVisualId: "knowledge-multistage",
+    figureIds: ["knowledge-detail-how-working-point-is-calculated"],slug:"how-working-point-is-calculated",title:"Как рассчитываются параметры компрессора",editorialState:"review",updated:"2026-10-22",
     summary:"Параметры компрессора — набор взаимосвязанных условий, а не пересечение двух максимальных чисел из каталога.",gasIds:["n2","he","h2","o2","co2","mixtures"],solutionIds:["process-gas-compressor","nitrogen-pressure-boosting","gas-transfer-recovery"],
     sections:[
       {title:"Согласовать исходные единицы",body:"Начинают с состава газа, абсолютных давлений, температуры и явно определённого расхода. Проверяют, где должны обеспечиваться P₂ и Q: на выходном фланце, в ресивере либо у потребителя. Потери по трассе и температурные условия учитывают до сравнения вариантов."},
@@ -224,6 +241,8 @@ export const articles: KnowledgeArticle[] = [
   },
   {
     "id": "what-is-in-compressor-skid",
+    heroVisualId: "knowledge-system-components",
+    figureIds: ["knowledge-detail-what-is-in-compressor-skid"],
     "slug": "what-is-in-compressor-skid",
     "title": "Из чего состоит комплектная компрессорная система",
     "editorialState": "review",
@@ -288,7 +307,8 @@ export const articles: KnowledgeArticle[] = [
     ]
   },
   {
-    id:"co2-phase-and-compression",slug:"co2-phase-and-compression",title:"CO₂: почему важны температура и фаза",editorialState:"review",updated:"2026-10-22",
+    id:"co2-phase-and-compression",
+    heroVisualId: "knowledge-co2-conditions",slug:"co2-phase-and-compression",title:"CO₂: почему важны температура и фаза",editorialState:"review",updated:"2026-10-22",
     summary:"Для CO₂ давление без температуры не определяет состояние. Нужно проверить весь маршрут сжатия, охлаждения и сброса.",gasIds:["co2"],solutionIds:["co2-compression"],
     sections:[
       {title:"Сначала фазовое состояние",body:"Входящие P₁ и температура рассматриваются вместе с составом. Если источник жидкий или состояние неизвестно, нельзя сразу назначать газовый компрессор. Сначала определяют испарение, сепарацию и гарантированные параметры газовой фазы либо иной класс оборудования."},
@@ -297,7 +317,9 @@ export const articles: KnowledgeArticle[] = [
     ],
   },
   {
-    id:"helium-recovery-principles",slug:"helium-recovery-principles",title:"Как устроен возврат гелия",editorialState:"review",updated:"2026-10-22",
+    id:"helium-recovery-principles",
+    heroVisualId: "knowledge-helium-recovery",
+    figureIds: ["knowledge-detail-helium-recovery-principles"],slug:"helium-recovery-principles",title:"Как устроен возврат гелия",editorialState:"review",updated:"2026-10-22",
     summary:"Сборный буфер, компрессор и очистка выполняют разные функции. Эффективность подтверждается балансом полного цикла.",gasIds:["he"],solutionIds:["helium-recovery","gas-transfer-recovery"],
     sections:[
       {title:"Принять пиковый сброс",body:"Процесс может отдавать газ за короткое время, тогда как компрессору требуется более длительный цикл. Сборный буфер принимает этот пик. Его объём и допустимое давление определяют по профилю сброса, а не только по часовому расходу компрессора."},
@@ -307,6 +329,8 @@ export const articles: KnowledgeArticle[] = [
   },
   {
     "id": "why-process-gas-compressors-need-task-specific-selection",
+    heroVisualId: "knowledge-task-specific",
+    figureIds: ["knowledge-detail-why-process-gas-compressors-need-task-specific-selection"],
     "slug": "why-process-gas-compressors-need-task-specific-selection",
     "title": "Почему компрессор для технологического газа подбирают под конкретную задачу",
     "editorialState": "review",
@@ -372,6 +396,8 @@ export const articles: KnowledgeArticle[] = [
   },
   {
     "id": "sf6-compressor-service-life",
+    heroVisualId: "knowledge-sf6-life",
+    figureIds: ["knowledge-detail-sf6-compressor-service-life"],
     "slug": "sf6-compressor-service-life",
     "title": "От чего зависит срок службы компрессора SF₆",
     "editorialState": "review",
@@ -423,6 +449,8 @@ export const articles: KnowledgeArticle[] = [
   },
   {
     "id": "compressors-for-gas-mixtures",
+    heroVisualId: "knowledge-gas-mixtures",
+    figureIds: ["knowledge-detail-compressors-for-gas-mixtures"],
     "slug": "compressors-for-gas-mixtures",
     "title": "Компрессоры для газовых смесей и сложных технологических газов",
     "editorialState": "review",

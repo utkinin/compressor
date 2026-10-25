@@ -1,0 +1,55 @@
+/* Targeted layout corrections found during the first Netlify production review. */
+
+/* Static Netlify RFQ: the form is a direct child of detail-layout. Give it a real
+   working width instead of the narrow sidebar column used by normal detail pages. */
+.detail-layout:has(> .rfq-brief-form){grid-template-columns:minmax(280px,.72fr) minmax(560px,1.28fr);gap:48px}
+.detail-layout>.rfq-brief-form{width:100%;max-width:none;min-width:0}
+.detail-layout>.rfq-brief-form .field-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.rfq-brief-form .field,.rfq-brief-form label,.rfq-brief-form p,.rfq-brief-form h2,.rfq-brief-form h3{min-width:0;overflow-wrap:anywhere}
+.rfq-brief-form input,.rfq-brief-form select,.rfq-brief-form textarea{min-width:0;max-width:100%}
+/* Consent is prose, not a narrow field label: never allow it to collapse letter-by-letter. */
+.rfq-brief-form .rfq-consent label{display:grid;grid-template-columns:20px minmax(0,1fr);align-items:start;gap:12px;width:100%;overflow-wrap:normal;word-break:normal}
+.rfq-brief-form .rfq-consent label>span{display:block;min-width:0;overflow-wrap:normal;word-break:normal;white-space:normal}
+.rfq-brief-form .rfq-consent a{overflow-wrap:normal;word-break:normal}
+
+/* Contacts: align the card with the first content block and keep the internal groups compact. */
+.contact-notice{align-self:start;margin-top:0}
+.contact-notice h2{margin-bottom:12px}
+.contact-notice .contact-primary{display:grid;gap:3px;margin-bottom:10px}
+.contact-notice .contact-primary p{margin:0}
+.contact-notice .contact-details{margin:0}
+.contact-notice .contact-detail-group{display:grid;gap:0;line-height:1.55}
+.contact-notice .contact-detail-group strong{display:block;margin:0;line-height:1.35}
+.contact-notice .contact-detail-group span{display:block;margin:0}
+.contact-notice .contact-detail-group+.contact-detail-group{margin-top:14px}
+.contact-notice .contact-note{margin-top:14px}
+.contact-notice .contact-legal-link{display:inline-block;margin-top:12px}
+
+/* Knowledge engineering figures with layout="steps" share the same narrow article
+   column. Render every such sequence as full-width rows instead of three compact
+   columns so headings and notes never escape their cards. Comparison, factors,
+   components and loop figures keep their own layouts. */
+figure.knowledge-detail-steps>.knowledge-detail-steps{grid-template-columns:1fr;gap:18px}
+figure.knowledge-detail-steps>.knowledge-detail-steps>li{display:grid;grid-template-columns:104px minmax(0,1fr);align-items:center;gap:18px;padding:18px 20px;min-width:0}
+figure.knowledge-detail-steps>.knowledge-detail-steps>li>svg{width:104px;height:78px}
+figure.knowledge-detail-steps>.knowledge-detail-steps>li>div{min-width:0}
+figure.knowledge-detail-steps>.knowledge-detail-steps h3{margin:0 0 6px;font-size:1.08rem;overflow-wrap:break-word;word-break:normal;min-width:0}
+figure.knowledge-detail-steps>.knowledge-detail-steps p{overflow-wrap:break-word;word-break:normal;min-width:0}
+figure.knowledge-detail-steps>.knowledge-detail-steps>li:not(:last-child)::after{content:"↓";left:50%;top:calc(100% + 1px);transform:translateX(-50%);line-height:20px}
+
+@media(max-width:1180px){
+  .detail-layout:has(> .rfq-brief-form){grid-template-columns:minmax(250px,.7fr) minmax(0,1.3fr);gap:34px}
+  .detail-layout>.rfq-brief-form .field-row{grid-template-columns:1fr;gap:0}
+}
+
+@media(max-width:1023px){
+  .detail-layout:has(> .rfq-brief-form){grid-template-columns:1fr;gap:30px}
+  .detail-layout>.rfq-brief-form{max-width:760px}
+}
+
+@media(max-width:767px){
+  figure.knowledge-detail-steps>.knowledge-detail-steps{gap:25px}
+  figure.knowledge-detail-steps>.knowledge-detail-steps>li{grid-template-columns:72px minmax(0,1fr);gap:13px;padding:15px}
+  figure.knowledge-detail-steps>.knowledge-detail-steps>li>svg{width:72px;height:66px}
+  figure.knowledge-detail-steps>.knowledge-detail-steps h3{font-size:1rem}
+}

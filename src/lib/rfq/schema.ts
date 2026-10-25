@@ -19,7 +19,10 @@ export const RFQ_EQUIPMENT_CONTEXTS = {
   "helium-compressors": { title: "Компрессор для гелия", gas: "he" },
   "co2-compressors": { title: "Компрессор для CO₂", gas: "co2" },
   "process-gas-compressors": { title: "Компрессор для технологических газов", gas: "mixtures" },
-} as const satisfies Record<string, { title: string; gas: Gas }>;
+  "oil-free-piston-compressor-modules": { title: "Безмасляные поршневые компрессорные модули", intake: "integration" },
+  "compact-oil-free-air-systems": { title: "Компактные безмасляные компрессорные системы", intake: "integration" },
+  "oil-free-vacuum-modules": { title: "Безмасляные вакуумные модули", intake: "integration" },
+} as const satisfies Record<string, { title: string; gas?: Gas; intake?: "integration" }>;
 
 export const RFQ_SOLUTION_CONTEXTS: Record<string, { title: string; gases?: Gas[] }> = {
   "nitrogen-booster-after-generator": { title: "Дожатие азота после генератора", gases: ["n2"] },
@@ -36,6 +39,8 @@ export const RFQ_SOLUTION_CONTEXTS: Record<string, { title: string; gases?: Gas[
   "equipment-integration": { title: "Встраивание компрессора в оборудование" },
   "gas-transfer-recovery": { title: "Перекачка и возврат газа" },
   "buffer-receiver-charging": { title: "Заполнение буфера и ресивера" },
+  "pet-high-pressure-air": { title: "Безмасляный воздух высокого давления для выдува ПЭТ" },
+  "refrigerant-transfer-compression": { title: "Перекачка и фасовка хладагентов" },
 };
 
 export const RFQ_DOCUMENT_CONTEXTS: Record<string, { title: string }> = {
@@ -89,7 +94,7 @@ export function sanitizeRfqContext(raw: Partial<Record<RfqContextKind, unknown>>
   return context;
 }
 
-export function equipmentRfqContext(id?: string): { title: string; gas: Gas } | undefined {
+export function equipmentRfqContext(id?: string): { title: string; gas?: Gas; intake?: "integration" } | undefined {
   return id && Object.hasOwn(RFQ_EQUIPMENT_CONTEXTS, id)
     ? RFQ_EQUIPMENT_CONTEXTS[id as keyof typeof RFQ_EQUIPMENT_CONTEXTS]
     : undefined;
@@ -113,7 +118,7 @@ export const GAS_FIELDS: Record<Gas, GasField[]> = {
     { key: "flowProfile", label: "Средний и пиковый расход", help: "Расход, длительность пика и единицы либо «требует уточнения»" },
   ],
   he: [
-    { key: "mode", label: "Свежий газ или recovery?" },
+    { key: "mode", label: "Источник гелия", help: "Свежий гелий, возвратный газ из процесса или смешанный поток." },
     { key: "recoveryScheme", label: "Предполагаемая схема возврата", help: "Источники возврата, газгольдер, очистка, буфер либо «требует разработки»" },
     { key: "leakageSensitivity", label: "Требования к утечкам и герметичности" },
   ],
@@ -126,7 +131,7 @@ export const GAS_FIELDS: Record<Gas, GasField[]> = {
   ],
   o2: [
     { key: "purity", label: "Чистота кислорода" },
-    { key: "oxygenCompatibility", label: "Требования к кислородной совместимости", help: "Материалы и требования проекта; Oil-Free само по себе недостаточно" },
+    { key: "oxygenCompatibility", label: "Требования к кислородной совместимости", help: "Материалы и требования проекта; безмасляного исполнения само по себе недостаточно" },
     { key: "cleanliness", label: "Требования к чистоте и обезжириванию" },
   ],
   co2: [

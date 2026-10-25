@@ -1,9 +1,12 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { contentRepository } from "@/content";
 import { pageMetadata } from "@/lib/seo";
 import { Breadcrumbs, BulletList, ContentSection, PageIntro, Procurement, RelatedLinks, RfqPanel } from "@/components/content-page";
 import { LegacyAlias } from "@/components/legacy-alias";
 import { legacyDestination, legacySlugs } from "@/lib/legacy-paths";
+import { CommercialHero } from "@/components/commercial-hero";
+import { ProcessVisual } from "@/components/process-visual";
 
 export async function generateStaticParams() {
   const { industries } = await contentRepository.getSnapshot();
@@ -26,14 +29,12 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
   const { industries, gases, solutions, articles } = await contentRepository.getSnapshot();
   const industry = industries.find((item) => item.slug === slug);
   if (!industry) notFound();
+  const laserSolution = industry.id === "laser-cutting" ? solutions.find((item) => item.id === "nitrogen-for-laser-cutting") : undefined;
   return <>
     <Breadcrumbs items={[{ label: "Применения", href: "/industries/" }, { label: industry.title, href: `/industries/${industry.slug}/` }]} />
-    <PageIntro eyebrow="Применение оборудования" title={industry.title} summary={industry.summary} />
+    {laserSolution ? <CommercialHero eyebrow="Применение оборудования" title={industry.title} summary={industry.summary} visualId={laserSolution.heroVisualId} action={<Link className="button" href="/rfq/?intake=brief&source=%2Findustries%2Flaser-cutting%2F">Обсудить газоснабжение станка <span aria-hidden="true">→</span></Link>} /> : <PageIntro eyebrow="Применение оборудования" title={industry.title} summary={industry.summary} />}
     <div className="container detail-layout"><article className="prose">
-      {industry.id === "laser-cutting" && <ContentSection title="Два варианта газоснабжения"><div className="laser-supply-options">{industry.tasks.slice(0, 2).map((task) => {
-        const separator = task.indexOf(": ");
-        return <section key={task}><h3>{task.slice(0, separator)}</h3><p>{task.slice(separator + 2)}</p></section>;
-      })}</div></ContentSection>}
+      {laserSolution && <ContentSection title="Два варианта газоснабжения"><ProcessVisual id={laserSolution.processVisualId} /><p>Давление, расход и качество газа определяются требованиями станка, материалом, толщиной и технологией резки. Буфер, подготовка и повышение давления согласуются по условиям задачи.</p></ContentSection>}
       <ContentSection title="Какие газовые задачи возникают"><BulletList items={industry.id === "laser-cutting" ? industry.tasks.slice(2) : industry.tasks} /></ContentSection>
       <ContentSection title="Что учитываем при подборе"><BulletList items={industry.constraints} /></ContentSection>
       <ContentSection title="Какие данные нужны для расчёта"><p>Схема подключения, состав и источник газа, минимальное и максимальное давление на входе, требуемые давление и расход у потребителя, режим, температуры и требования площадки. Для встраивания компрессора также важны доступные энергоресурсы и подключения к системе управления.</p></ContentSection>

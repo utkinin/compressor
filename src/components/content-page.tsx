@@ -54,7 +54,7 @@ export function BulletList({ items }: { items: readonly string[] }) {
   return <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>;
 }
 
-export function EntityCard({ title, summary, href, label }: { title: string; summary: string; href: string; label?: string }) {
+export function EntityCard({ title, summary, href, label }: { title: string; summary: string; href: string; label?: ReactNode }) {
   return (
     <article className="content-card entity-card">
       {label ? <p className="eyebrow">{label}</p> : null}
@@ -75,17 +75,17 @@ export function RelatedLinks({ title, items }: { title: string; items: { title: 
   );
 }
 
-export function RfqPanel({ href = "/rfq/", title = "Подберём компрессор для вашей задачи", sourcePage = "/" }: { href?: string; title?: string; sourcePage?: string }) {
+export function RfqPanel({ href = "/rfq/", title = "Подберём компрессор для вашей задачи", sourcePage = "/", variant = "parameters" }: { href?: string; title?: string; sourcePage?: string; variant?: "parameters" | "integration" }) {
   const target = new URL(href, "https://lanfor.example");
   target.searchParams.set("source", sourcePage);
   const contextualHref = `${target.pathname}${target.search}`;
   return (
     <aside className="rfq-panel">
-      <p className="eyebrow">Gas · P₁ · P₂ · Q · режим</p>
+      <p className="eyebrow">{variant === "integration" ? "PROJECT · INTERFACES · REPEATABILITY" : "Gas · P₁ · P₂ · Q · режим"}</p>
       <h2>{title}</h2>
-      <p>Расскажите, какой газ нужно сжимать, откуда он поступает и что требуется потребителю. Известные давления, расход и режим помогут уточнить подходящее оборудование.</p>
-      <Link className="button" href={contextualHref}>Подобрать компрессор <span aria-hidden="true">→</span></Link>
-      <p className="small-text">Исполнение и параметры подтвердит инженер после расчёта.</p>
+      <p>{variant === "integration" ? "Опишите машину или установку, функцию компрессорного или вакуумного модуля, известные рабочие параметры, питание, габариты и интерфейсы. Недостающие данные уточним при проработке." : "Расскажите, какой газ нужно сжимать, откуда он поступает и что требуется потребителю. Известные давления, расход и режим помогут уточнить подходящее оборудование."}</p>
+      <Link className="button" href={contextualHref}>{variant === "integration" ? "Передать ТЗ проекта" : "Подобрать компрессор"} <span aria-hidden="true">→</span></Link>
+      <p className="small-text">{variant === "integration" ? "Конфигурацию и интерфейсы подтвердит инженер после проверки исходных данных." : "Исполнение и параметры подтвердит инженер после расчёта."}</p>
     </aside>
   );
 }

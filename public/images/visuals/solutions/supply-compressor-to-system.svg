@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+<title id="title">От компрессора к согласованной комплектации</title>
+<desc id="desc">Три варианта: компрессор, компрессор с необходимыми охлаждением и КИП, комплектная система. Дополнительные элементы показаны пунктиром.</desc>
+<defs>
+<g id="compressor"><path d="M10 145 35 130h185l20 15-25 18H30Z" fill="#dbe3d6" stroke="#657b60" stroke-width="3"/><rect x="30" y="86" width="75" height="53" rx="17" fill="#55705d"/><ellipse cx="31" cy="112" rx="14" ry="23" fill="#9eb59d" stroke="#46634b" stroke-width="3"/><path d="M47 92v41m13-43v43m13-43v43m13-43v43" stroke="#b3c2ab" stroke-width="3"/><rect x="107" y="96" width="24" height="30" rx="3" fill="#bf6843"/><rect x="135" y="74" width="70" height="63" rx="5" fill="#e4ebe0" stroke="#657b60" stroke-width="3"/><path d="M152 74V28h35v46" fill="#e2b995" stroke="#657b60" stroke-width="3"/><path d="M147 35h45m-45 10h45m-45 10h45" stroke="#8c9c80" stroke-width="4"/><path d="M168 28V13h43v29" fill="none" stroke="#8a9f80" stroke-width="7"/><path d="M45 162v12m155-12v12" stroke="#657b60" stroke-width="5"/></g>
+<g id="cooler"><rect width="61" height="90" rx="4" fill="#edf2e8" stroke="#657b60" stroke-width="3"/><circle cx="30" cy="43" r="21" fill="#d8e4ce" stroke="#657b60" stroke-width="3"/><path d="M30 25v36M12 43h36" stroke="#6e8566" stroke-width="5"/></g>
+<g id="control"><rect width="41" height="78" rx="3" fill="#edf2e8" stroke="#87977c" stroke-width="3" stroke-dasharray="6 4"/><rect x="8" y="13" width="25" height="20" fill="#ccd9c2"/><circle cx="13" cy="51" r="4" fill="#b74726"/><circle cx="28" cy="51" r="4" fill="#657b60"/></g>
+</defs>
+<rect width="1200" height="800" fill="#fafbf7"/>
+<g fill="#fff" stroke="#d4ddcd" stroke-width="2"><rect x="30" y="132" width="350" height="490" rx="4"/><rect x="425" y="132" width="350" height="490" rx="4"/><rect x="820" y="132" width="350" height="490" rx="4"/></g>
+<g font-family="Arial,sans-serif" fill="#263d2b" font-size="28" font-weight="600" text-anchor="middle"><text x="205" y="92">Компрессор</text><text x="600" y="70">Компрессор</text><text x="600" y="105">+ опции</text><text x="995" y="70">Комплектная</text><text x="995" y="105">система</text></g>
+<use href="#compressor" x="75" y="300"/>
+<use href="#compressor" x="450" y="300"/><use href="#cooler" x="697" y="320"/>
+<path d="M670 300v-26h50v45" fill="none" stroke="#87977c" stroke-width="5"/><rect x="676" y="252" width="34" height="24" rx="3" fill="#e2b995" stroke="#657b60" stroke-width="2"/>
+<path d="M838 486h312v31H838Z" fill="#e4ebdd" stroke="#87977c" stroke-width="3" stroke-dasharray="7 5"/>
+<use href="#compressor" transform="translate(836 304) scale(.88)"/><use href="#cooler" x="1047" y="342"/><use href="#control" x="1115" y="344"/>
+<rect x="1083" y="204" width="57" height="116" rx="26" fill="#f1f5ec" stroke="#87977c" stroke-width="3" stroke-dasharray="7 5"/>
+<path d="M1065 342v-24h45" stroke="#87977c" stroke-width="4" stroke-dasharray="7 5" fill="none"/>
+<g stroke="#a54425" stroke-width="4" fill="none"><path d="M387 365h29m-12-11 12 11-12 11"/><path d="M782 365h29m-12-11 12 11-12 11"/></g>
+<g font-family="Arial,sans-serif" fill="#4c6146" font-size="23" text-anchor="middle"><text x="205" y="566">Для интеграции</text><text x="205" y="597">в существующую систему</text><text x="600" y="566">Необходимые</text><text x="600" y="597">охлаждение и КИП</text><text x="995" y="566">Согласованный состав</text><text x="995" y="597">и границы поставки</text></g>
+<rect x="138" y="681" width="924" height="69" rx="3" fill="#f7f2e8" stroke="#a8946f" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="600" y="724" font-family="Arial,sans-serif" font-size="25" fill="#614d2f" text-anchor="middle">Ресивер, управление и общая рама — по необходимости</text>
+</svg>

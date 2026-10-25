@@ -102,17 +102,18 @@ describe("working point server schema", () => {
 });
 
 describe("public RFQ catalogue context", () => {
-  it("keeps five own equipment contexts aligned and excludes the specialist reference", () => {
-    expect(Object.keys(RFQ_EQUIPMENT_CONTEXTS)).toHaveLength(5);
+  it("keeps eight own equipment contexts aligned and excludes the specialist reference", () => {
+    expect(Object.keys(RFQ_EQUIPMENT_CONTEXTS)).toHaveLength(8);
     expect(Object.keys(RFQ_EQUIPMENT_CONTEXTS).sort()).toEqual(equipment.filter((item) => item.id !== "sf6-compressors").map((item) => item.id).sort());
     for (const item of equipment.filter((item) => item.id !== "sf6-compressors")) {
-      expect(initialRfqSelection(undefined, item.id).gas).toBe(item.rfqGas);
+      if (item.rfqGas) expect(initialRfqSelection(undefined, item.id).gas).toBe(item.rfqGas);
+      else expect(RFQ_EQUIPMENT_CONTEXTS[item.id as keyof typeof RFQ_EQUIPMENT_CONTEXTS]).toMatchObject({ intake: "integration" });
       expect(publicRfqContextLabel("equipment", item.id)).toBeTruthy();
     }
   });
 
-  it("accepts the fourteen public solutions and only public or requestable documents", () => {
-    expect(Object.keys(RFQ_SOLUTION_CONTEXTS)).toHaveLength(14);
+  it("accepts the sixteen public solutions and only public or requestable documents", () => {
+    expect(Object.keys(RFQ_SOLUTION_CONTEXTS)).toHaveLength(16);
     expect(Object.keys(RFQ_SOLUTION_CONTEXTS).sort()).toEqual(solutions.map((item) => item.id).sort());
     for (const solution of solutions) expect(publicRfqContextLabel("solution", solution.id)).toBe(solution.title);
     const publicDocumentIds = documents.filter((item) => item.access !== "internal").map((item) => item.id);
