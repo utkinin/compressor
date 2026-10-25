@@ -28,6 +28,7 @@ jobs:
           python3 scripts/fix-issue14-air-equipment-types.py
           python3 scripts/fix-issue14-air-equipment-contracts.py
           python3 scripts/fix-issue14-vacuum-language.py
+          python3 scripts/fix-issue14-air-equipment-e2e.py
       - run: npm ci
       - name: Validate source
         run: |
