@@ -96,6 +96,15 @@ export const processSpecs: ProcessSpec[] = [
     ], caption: "Дополнительное оборудование определяем по условиям задачи.",
   },
   { id: "process-five-parameters", title: "Пять исходных параметров для подбора", layout: "parameters", callouts: parameters },
+  {
+    id: "process-vacuum-integration", title: "Вакуумная функция внутри оборудования", layout: "flow",
+    steps: [
+      { id: "process", label: "Камера / процесс", detail: "Объём и требуемое остаточное давление", icon: "consumer" },
+      { id: "protection", label: "Подготовка потока", detail: "Если требуется по среде", icon: "filter", optional: true },
+      { id: "vacuum", label: "Безмасляный вакуумный модуль", detail: "Под режим и производительность", icon: "compressor" },
+      { id: "control", label: "Контроль и автоматика", detail: "Датчики и блокировки по проекту", icon: "control", optional: true },
+    ], caption: "Состав среды, риск конденсации и допустимость конкретного насоса проверяются до выбора исполнения.",
+  },
   { id: "process-selection", title: "Как подбирается оборудование", layout: "parameters", callouts: parameters },
   {
     id: "process-nitrogen-after-generator", title: "Дожатие азота после источника", layout: "flow",

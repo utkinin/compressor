@@ -76,7 +76,7 @@ export interface Equipment extends Entity {
   processVisualId: string;
   externalReference?: { name: string; url: string };
   kind: "equipment-direction";
-  gas: GasId | "sf6";
+  gas: GasId | "air" | "vacuum" | "sf6";
   technology: string;
   scope: string[];
   checks: string[];
@@ -90,7 +90,7 @@ export interface Equipment extends Entity {
   solutionIds: string[];
   articleIds: string[];
   verifiedCapabilities: TechnicalProperty[];
-  rfqGas: GasId;
+  rfqGas?: GasId;
   /** Navigation associations are engineering topics, not an approval of gas compatibility. */
   gasIds: GasId[];
 }

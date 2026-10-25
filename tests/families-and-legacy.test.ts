@@ -8,10 +8,14 @@ import { PublicEquipmentPage } from "../src/components/public-equipment-page";
 import EquipmentPage, { generateStaticParams as equipmentParams } from "../src/app/equipment/[slug]/page";
 import { legacyDestination, legacyPathPairs, legacySlugs } from "../src/lib/legacy-paths";
 
-const equipmentSlugs = [
+const legacyEquipmentSlugs = [
   "nitrogen-compressors", "nitrogen-boosters", "helium-compressors",
   "co2-compressors", "sf6-compressors", "process-gas-compressors",
 ];
+const integrationEquipmentSlugs = [
+  "oil-free-piston-compressor-modules", "compact-oil-free-air-systems", "oil-free-vacuum-modules",
+];
+const equipmentSlugs = [...legacyEquipmentSlugs, ...integrationEquipmentSlugs];
 
 function structuredDataTypes(value: unknown): string[] {
   if (Array.isArray(value)) return value.flatMap(structuredDataTypes);
@@ -22,7 +26,7 @@ function structuredDataTypes(value: unknown): string[] {
 }
 
 describe("public equipment catalogue and canonical intent preservation", () => {
-  it("preserves all six equipment URLs without source-model or removed category routes", async () => {
+  it("preserves legacy equipment URLs and adds only the three approved integration-category routes", async () => {
     const { equipment } = await contentRepository.getSnapshot();
     const params = await equipmentParams();
     expect(equipment.map((item) => item.slug)).toEqual(equipmentSlugs);
@@ -41,10 +45,15 @@ describe("public equipment catalogue and canonical intent preservation", () => {
       const headings = [...html.matchAll(/<h1\b[^>]*>(.*?)<\/h1>/g)];
       expect(headings).toHaveLength(1);
       expect(headings[0]?.[1]).toBe(equipment.title);
-      for (const label of ["Что это и для каких задач", "Начнём с 5 основных параметров", "Газ", "Давление на входе P₁", "Требуемое давление P₂", "Расход Q", "Режим работы", "Исполнение и необходимая комплектация", "По необходимости"]) {
-        expect(html).toContain(label);
+      for (const label of ["Что это и для каких задач", "Исполнение и необходимая комплектация", "По необходимости"]) expect(html).toContain(label);
+      if (equipment.rfqGas) {
+        for (const label of ["Начнём с 5 основных параметров", "Газ", "Давление на входе P₁", "Требуемое давление P₂", "Расход Q", "Режим работы"]) expect(html).toContain(label);
+        expect(html.indexOf("Начнём с 5 основных параметров")).toBeLessThan(html.indexOf("Исполнение и необходимая комплектация"));
+      } else {
+        expect(html).toContain("Проектный подбор для встраивания");
+        expect(html).toContain("Передать ТЗ проекта");
+        expect(html).not.toContain("Начнём с 5 основных параметров");
       }
-      expect(html.indexOf("Начнём с 5 основных параметров")).toBeLessThan(html.indexOf("Исполнение и необходимая комплектация"));
       for (const application of equipment.applications) expect(html).toContain(application);
       for (const configuration of equipment.configurations) expect(html).toContain(configuration);
       expect(html).not.toContain("Подтверждённые параметры исполнения");
@@ -52,9 +61,9 @@ describe("public equipment catalogue and canonical intent preservation", () => {
         .map((match) => match[1].replaceAll("&amp;", "&"))
         .filter((href) => href.startsWith("/rfq"))
         .map((href) => new URL(href, "https://example.test"));
-      expect(rfqLinks.map((url) => Object.fromEntries(url.searchParams))).toContainEqual({
-        equipment: equipment.id, gas: equipment.rfqGas, source: `/equipment/${equipment.slug}/`,
-      });
+      const contexts = rfqLinks.map((url) => Object.fromEntries(url.searchParams));
+      if (equipment.rfqGas) expect(contexts).toContainEqual({ equipment: equipment.id, gas: equipment.rfqGas, source: `/equipment/${equipment.slug}/` });
+      else expect(contexts).toContainEqual({ equipment: equipment.id, source: `/equipment/${equipment.slug}/`, intake: "integration" });
     }
   });
 
