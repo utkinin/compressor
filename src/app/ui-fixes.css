@@ -12,7 +12,8 @@
 .rfq-brief-form .rfq-consent label>span{display:block;min-width:0;overflow-wrap:normal;word-break:normal;white-space:normal}
 .rfq-brief-form .rfq-consent a{overflow-wrap:normal;word-break:normal}
 
-/* Contacts: labels sit directly above their values; only the two logical groups are separated. */
+/* Contacts: align the card with the first content block and keep the internal groups compact. */
+.contact-notice{align-self:start;margin-top:0}
 .contact-notice h2{margin-bottom:12px}
 .contact-notice .contact-primary{display:grid;gap:3px;margin-bottom:10px}
 .contact-notice .contact-primary p{margin:0}
