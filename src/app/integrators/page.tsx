@@ -14,14 +14,17 @@ export const metadata = pageMetadata(title, description, "/integrators/");
 const directions = [
   {
     title: "Безмасляные поршневые компрессорные модули",
+    href: "/equipment/oil-free-piston-compressor-modules/",
     text: "Для встраивания в машины, газогенераторы, лабораторные и испытательные установки. Конкретное исполнение подбирается по режиму, питанию, охлаждению, габаритам и интерфейсам.",
   },
   {
     title: "Компактные безмасляные компрессорные системы",
+    href: "/equipment/compact-oil-free-air-systems/",
     text: "Компрессор с необходимыми функциями охлаждения, управления, накопления и подготовки воздуха — только в составе, который действительно требуется проекту.",
   },
   {
     title: "Безмасляные вакуумные модули",
+    href: "/equipment/oil-free-vacuum-modules/",
     text: "Для технологических, аналитических и лабораторных установок, где вакуумный модуль является частью оборудования интегратора. Параметры и применимость подтверждаются для конкретной задачи.",
   },
   {
@@ -77,7 +80,7 @@ export default function IntegratorsPage() {
 
     <section className="section" aria-labelledby="integrator-directions-title"><div className="container">
       <div className="section-heading"><div><p className="eyebrow">Направления</p><h2 id="integrator-directions-title">Что можно встроить в оборудование</h2></div><p>Направления сгруппированы по функции и задаче. Конкретное исполнение, характеристики и документация определяются после инженерного подбора.</p></div>
-      <div className="integrator-direction-grid">{directions.map((direction, index) => <article key={direction.title} className="integrator-direction-card"><span className="integrator-direction-index" aria-hidden="true">0{index + 1}</span><div><h3>{direction.title}</h3><p>{direction.text}</p></div></article>)}</div>
+      <div className="integrator-direction-grid">{directions.map((direction, index) => <article key={direction.title} className="integrator-direction-card"><span className="integrator-direction-index" aria-hidden="true">0{index + 1}</span><div><h3>{"href" in direction ? <Link href={direction.href}>{direction.title}</Link> : direction.title}</h3><p>{direction.text}</p>{"href" in direction && <Link className="text-link" href={direction.href}>Подробнее о направлении <span aria-hidden="true">→</span></Link>}</div></article>)}</div>
     </div></section>
 
     <section className="section integrator-interface-section" id="integration-data" aria-labelledby="integration-data-title"><div className="container integrator-interface-layout">

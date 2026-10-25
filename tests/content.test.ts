@@ -43,7 +43,7 @@ describe("content evidence and editorial safety", () => {
     ]) expect(publicProperties([{ ...fixture, source }])).toEqual([]);
   });
 
-  it("preserves five equipment directions and the SF₆ specialist reference without unsupported claims", () => {
+  it("preserves process-gas directions, the SF₆ specialist reference and three project-integration directions without unsupported claims", () => {
     expect(equipment.map((item) => [item.id, item.title])).toEqual([
       ["nitrogen-compressors", "Компрессоры для азота"],
       ["nitrogen-boosters", "Бустеры азота высокого давления"],
@@ -51,6 +51,9 @@ describe("content evidence and editorial safety", () => {
       ["co2-compressors", "Компрессоры для CO₂"],
       ["sf6-compressors", "Оборудование для SF₆ — SF6RUS"],
       ["process-gas-compressors", "Компрессоры для технологических газов"],
+      ["oil-free-piston-compressor-modules", "Безмасляные поршневые компрессорные модули"],
+      ["compact-oil-free-air-systems", "Компактные безмасляные компрессорные системы"],
+      ["oil-free-vacuum-modules", "Безмасляные вакуумные модули"],
     ]);
     expect(equipment.every((item) => item.kind === "equipment-direction" && item.id === item.slug)).toBe(true);
     expect(equipment.every((item) => item.source.status === "draft")).toBe(true);
@@ -109,10 +112,11 @@ describe("content evidence and editorial safety", () => {
 
   it("uses many-to-many research links without asserting verified model selection", () => {
     const publicIds = new Set(equipment.map((item) => item.id));
+    const legacyResearchIds = new Set(["nitrogen-compressors", "nitrogen-boosters", "helium-compressors", "co2-compressors", "sf6-compressors", "process-gas-compressors"]);
     const sourceIds = new Set(sourceModels.map((item) => item.id));
     expect(equipmentCapabilityLinks).toHaveLength(5);
     expect(equipmentCapabilityLinks.every((link) => link.status === "draft" && link.selectionStatus === "requires-engineering-review")).toBe(true);
-    expect(equipmentCapabilityLinks.flatMap((link) => link.publicEquipmentIds).sort()).toEqual([...publicIds].sort());
+    expect(equipmentCapabilityLinks.flatMap((link) => link.publicEquipmentIds).sort()).toEqual([...legacyResearchIds].sort());
     for (const link of equipmentCapabilityLinks) {
       expect(link.publicEquipmentIds.every((id) => publicIds.has(id))).toBe(true);
       expect(link.sourceModelIds.every((id) => sourceIds.has(id))).toBe(true);
@@ -123,6 +127,10 @@ describe("content evidence and editorial safety", () => {
     expect(nitrogenLink?.sourceModelIds.length).toBeGreaterThan(1);
     expect(equipmentCapabilityLinks.find((link) => link.publicEquipmentIds.includes("sf6-compressors"))?.sourceModelIds).toEqual([]);
     expect(equipmentCapabilityLinks.find((link) => link.publicEquipmentIds.includes("process-gas-compressors"))?.sourceModelIds).toEqual([]);
+    for (const id of ["oil-free-piston-compressor-modules", "compact-oil-free-air-systems", "oil-free-vacuum-modules"]) {
+      expect(publicIds.has(id)).toBe(true);
+      expect(equipmentCapabilityLinks.some((link) => link.publicEquipmentIds.includes(id))).toBe(false);
+    }
   });
 
   it("accounts for all ten removed public entries without inventing replacement models", () => {
@@ -179,7 +187,7 @@ describe("content graph and repository", () => {
     }
     for (const item of equipment) {
       expect(item.gasIds.every((id) => identifiers.gases.has(id))).toBe(true);
-      expect(identifiers.gases.has(item.rfqGas)).toBe(true);
+      if (item.rfqGas) expect(identifiers.gases.has(item.rfqGas)).toBe(true);
       expect(item.solutionIds.every((id) => identifiers.solutions.has(id))).toBe(true);
       expect(item.articleIds.every((id) => identifiers.articles.has(id))).toBe(true);
     }
@@ -207,7 +215,7 @@ describe("content graph and repository", () => {
   });
 
   it("has substantive intent pages and a useful engineering article set", () => {
-    expect(equipment).toHaveLength(6);
+    expect(equipment).toHaveLength(9);
     expect(equipment.every((item) => item.applications.length >= 3 && item.inputs.length >= 5 && item.approach.length >= 3)).toBe(true);
     expect(equipment.every((item) => item.configurations.length >= 3 && item.options.length >= 3)).toBe(true);
     expect(solutions).toHaveLength(16);

@@ -19,7 +19,10 @@ export const RFQ_EQUIPMENT_CONTEXTS = {
   "helium-compressors": { title: "Компрессор для гелия", gas: "he" },
   "co2-compressors": { title: "Компрессор для CO₂", gas: "co2" },
   "process-gas-compressors": { title: "Компрессор для технологических газов", gas: "mixtures" },
-} as const satisfies Record<string, { title: string; gas: Gas }>;
+  "oil-free-piston-compressor-modules": { title: "Безмасляные поршневые компрессорные модули", intake: "integration" },
+  "compact-oil-free-air-systems": { title: "Компактные безмасляные компрессорные системы", intake: "integration" },
+  "oil-free-vacuum-modules": { title: "Безмасляные вакуумные модули", intake: "integration" },
+} as const satisfies Record<string, { title: string; gas?: Gas; intake?: "integration" }>;
 
 export const RFQ_SOLUTION_CONTEXTS: Record<string, { title: string; gases?: Gas[] }> = {
   "nitrogen-booster-after-generator": { title: "Дожатие азота после генератора", gases: ["n2"] },
@@ -91,7 +94,7 @@ export function sanitizeRfqContext(raw: Partial<Record<RfqContextKind, unknown>>
   return context;
 }
 
-export function equipmentRfqContext(id?: string): { title: string; gas: Gas } | undefined {
+export function equipmentRfqContext(id?: string): { title: string; gas?: Gas; intake?: "integration" } | undefined {
   return id && Object.hasOwn(RFQ_EQUIPMENT_CONTEXTS, id)
     ? RFQ_EQUIPMENT_CONTEXTS[id as keyof typeof RFQ_EQUIPMENT_CONTEXTS]
     : undefined;

@@ -44,7 +44,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const primaryEquipment = relatedEquipment[0];
   const specialistReference = primaryEquipment?.externalReference;
   const rfqParams = new URLSearchParams({ source: sourcePage });
-  if (primaryEquipment) { rfqParams.set("equipment", primaryEquipment.id); rfqParams.set("gas", primaryEquipment.rfqGas); }
+  if (primaryEquipment) { rfqParams.set("equipment", primaryEquipment.id); if (primaryEquipment.rfqGas) rfqParams.set("gas", primaryEquipment.rfqGas); else rfqParams.set("intake", "integration"); }
   else if (article.gasIds.length === 1) rfqParams.set("gas", article.gasIds[0]);
   if (relatedSolutions.length === 1) rfqParams.set("solution", relatedSolutions[0].id);
   const rfqHref = `/rfq/?${rfqParams}`;

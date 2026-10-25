@@ -161,9 +161,9 @@ test("published route graph has no broken links, fake document pages or develope
 
 test("equipment catalog exposes public intents only and keeps schema conservative", async ({ page, request }) => {
   await page.goto("/equipment/");
-  await expect(page.locator("main h1")).toHaveText("Безмасляные компрессоры и бустеры для технологических газов");
-  await expect(page.locator(".equipment-catalog-card")).toHaveCount(5);
-  await expect(page.locator(".equipment-card-grid")).not.toContainText("SF₆");
+  await expect(page.locator("main h1")).toHaveText("Безмасляные компрессоры, бустеры и модули для оборудования");
+  await expect(page.locator(".equipment-catalog-card")).toHaveCount(8);
+  await expect(page.locator(".equipment-card-grid").filter({ hasText: "SF₆" })).toHaveCount(0);
   for (const route of equipmentRoutes) {
     const response = await request.get(route);
     expect(response.status(), route).toBe(200);
