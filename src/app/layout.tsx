@@ -8,6 +8,7 @@ import { siteConfig } from "@/config/site";
 import { absoluteUrl, isIndexable, pageMetadata, siteUrl } from "@/lib/seo";
 import { isStaticPreview } from "@/lib/preview";
 import "./globals.css";
+import "./ui-fixes.css";
 
 export const metadata: Metadata = {
   ...pageMetadata("Безмасляные компрессоры и бустеры для технологических газов", "Безмасляные компрессоры и бустеры для N₂, He, CO₂ и других технологических газов. Подбор оборудования для сжатия, повышения давления и перекачки газа.", "/"),
