@@ -26,5 +26,10 @@ replace_once(
     '  await expect(page.locator("main h1")).toHaveText("Безмасляные компрессоры и бустеры для технологических газов");\n  await expect(page.locator(".equipment-catalog-card")).toHaveCount(5);',
     '  await expect(page.locator("main h1")).toHaveText("Безмасляные компрессоры, бустеры и модули для оборудования");\n  await expect(page.locator(".equipment-catalog-card")).toHaveCount(8);',
 )
+replace_once(
+    "tests/e2e/site.spec.ts",
+    '  await expect(page.locator(".equipment-card-grid")).not.toContainText("SF₆");',
+    '  await expect(page.locator(".equipment-card-grid").filter({ hasText: "SF₆" })).toHaveCount(0);',
+)
 
 print("Issue #14 integrator equipment E2E acceptance aligned")
