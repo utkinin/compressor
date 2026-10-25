@@ -12,9 +12,12 @@ import type { RfqFormMode } from "./rfq-intake";
 type Errors = Record<string, string>;
 type Receipt = { id: string; delivery: "preview" | "local-staging" | "webhook" | "outbox" };
 
-export function BriefRfqForm({ mode, initialGas, initialRequest = {} }: { mode: RfqFormMode; initialGas?: Gas; initialRequest?: RfqRequestContext }) {
+export function BriefRfqForm({ mode, initialGas, initialRequest = {}, variant = "brief" }: { mode: RfqFormMode; initialGas?: Gas; initialRequest?: RfqRequestContext; variant?: "brief" | "integration" }) {
+  const integration = variant === "integration";
   const [description, setDescription] = useState("");
   const [model, setModel] = useState("");
+  const [projectStage, setProjectStage] = useState("");
+  const [plannedQuantity, setPlannedQuantity] = useState("");
   const [gas, setGas] = useState<Gas | "">(initialGas ?? "");
   const [files, setFiles] = useState<File[]>([]);
   const [name, setName] = useState("");
@@ -32,7 +35,7 @@ export function BriefRfqForm({ mode, initialGas, initialRequest = {} }: { mode: 
   const heading = useRef<HTMLHeadingElement>(null);
   const context = sanitizeRfqContext(initialRequest);
 
-  function event(name: string, delivery?: string) { if (mode !== "preview") track(name, { mode, code: "brief", ...(delivery ? { delivery } : {}) }); }
+  function event(name: string, delivery?: string) { if (mode !== "preview") track(name, { mode, code: integration ? "integration" : "brief", ...(delivery ? { delivery } : {}) }); }
   function changed() {
     key.current = null;
     setFailure("");
@@ -55,8 +58,9 @@ export function BriefRfqForm({ mode, initialGas, initialRequest = {} }: { mode: 
     const query = new URLSearchParams(window.location.search);
     const source = query.get("source");
     const sourcePage = source?.startsWith("/") && !source.startsWith("//") ? source.split(/[?#]/)[0].slice(0, 300) : window.location.pathname;
+    const integrationDetails = integration && description.trim() ? [`Стадия проекта: ${projectStage || "не указана"}`, `Планируемая повторяемость / количество: ${plannedQuantity.trim() || "не указано"}`, "", description].join("\n") : description;
     const candidate = {
-      intake: "brief", description, ...(model.trim() ? { model } : {}), ...(gas ? { gas } : {}), attachmentCount: files.length,
+      intake: "brief", description: integrationDetails, ...(model.trim() ? { model } : {}), ...(gas ? { gas } : {}), attachmentCount: files.length,
       contact: { name, company, email, ...(phone.trim() ? { phone } : {}) },
       consent: { accepted: consent, version: CONSENT_VERSION },
       attribution: { sourcePage, landingPage: window.location.pathname },
@@ -108,12 +112,13 @@ export function BriefRfqForm({ mode, initialGas, initialRequest = {} }: { mode: 
 
   return <form className="rfq-brief-form" onSubmit={submit} noValidate aria-busy={sending}>
     <fieldset disabled={sending}>
-      <h2 className="rfq-title" ref={heading} tabIndex={-1}>Опишите задачу или приложите ТЗ</h2>
-      <p>Расскажите, откуда поступает газ, для какого оборудования он нужен и что требуется изменить. Давление и расход можно уточнить позже.</p>
+      <h2 className="rfq-title" ref={heading} tabIndex={-1}>{integration ? "Передайте ТЗ проекта" : "Опишите задачу или приложите ТЗ"}</h2>
+      <p>{integration ? "Опишите машину или систему, функцию компрессорного узла и ограничения по интеграции. Давление, расход и точную конфигурацию можно уточнить при проработке." : "Расскажите, откуда поступает газ, для какого оборудования он нужен и что требуется изменить. Давление и расход можно уточнить позже."}</p>
       {mode !== "live" && <div className="notice"><strong>{mode === "preview" ? "Демонстрационный режим" : mode === "staging" ? "Тестовый режим · локальная проверка" : "Отправка запросов пока отключена"}</strong><p>{mode === "preview" ? "Форма работает только в памяти браузера. Файлы не загружаются, контакты не передаются. Используйте тестовые данные." : mode === "staging" ? "Запрос и файлы сохраняются только в тестовой среде и не отправляются инженеру. Используйте тестовые данные." : "Можно подготовить описание. Отправка доступна после подключения приёма заявок и утверждения условий обработки данных."}</p></div>}
       {Object.keys(context).length > 0 && <p className="rfq-help">{(["equipment", "solution", "document"] as const).map(kind => context[kind] ? publicRfqContextLabel(kind, context[kind]!) : undefined).filter(Boolean).join(" · ")}</p>}
-      <div className="field"><label htmlFor="brief-description">Задача и известные параметры</label><textarea id="brief-description" rows={6} maxLength={12000} value={description} onChange={e => { changed(); setDescription(e.target.value); }} aria-invalid={Boolean(errors.description)} aria-describedby="brief-description-help brief-description-error" /><span className="rfq-help" id="brief-description-help">Достаточно описания, модели установки или приложенного документа. Неизвестные P₁, P₂ и Q уточним при проработке.</span>{error("description")}</div>
-      <div className="field-row"><div className="field"><label htmlFor="brief-model">Модель вашего станка или установки <span className="rfq-optional">(при наличии)</span></label><input id="brief-model" value={model} maxLength={300} onChange={e => { changed(); setModel(e.target.value); }} aria-invalid={Boolean(errors.model)} />{error("model")}</div><div className="field"><label htmlFor="brief-gas">Газ <span className="rfq-optional">(если известен)</span></label><select id="brief-gas" value={gas} onChange={e => { changed(); setGas(e.target.value as Gas | ""); }}><option value="">Нужно уточнить</option>{GAS_OPTIONS.map(item => <option value={item.value} key={item.value}>{item.label}</option>)}</select></div></div>
+      <div className="field"><label htmlFor="brief-description">{integration ? "Машина, функция узла и известные параметры" : "Задача и известные параметры"}</label><textarea id="brief-description" rows={6} maxLength={12000} value={description} onChange={e => { changed(); setDescription(e.target.value); }} aria-invalid={Boolean(errors.description)} aria-describedby="brief-description-help brief-description-error" /><span className="rfq-help" id="brief-description-help">{integration ? "Укажите среду, функцию узла, известные P₁ / P₂ / Q, режим, питание или привод, охлаждение, габариты и интерфейсы — только то, что уже известно." : "Достаточно описания, модели установки или приложенного документа. Неизвестные P₁, P₂ и Q уточним при проработке."}</span>{error("description")}</div>
+      <div className="field-row"><div className="field"><label htmlFor="brief-model">{integration ? "Модель машины или установки" : "Модель вашего станка или установки"} <span className="rfq-optional">(при наличии)</span></label><input id="brief-model" value={model} maxLength={300} onChange={e => { changed(); setModel(e.target.value); }} aria-invalid={Boolean(errors.model)} />{error("model")}</div><div className="field"><label htmlFor="brief-gas">Газ <span className="rfq-optional">(если известен)</span></label><select id="brief-gas" value={gas} onChange={e => { changed(); setGas(e.target.value as Gas | ""); }}><option value="">{integration ? "Воздух / нужно уточнить" : "Нужно уточнить"}</option>{GAS_OPTIONS.map(item => <option value={item.value} key={item.value}>{item.label}</option>)}</select></div></div>
+      {integration && <div className="field-row"><div className="field"><label htmlFor="brief-project-stage">Стадия проекта</label><select id="brief-project-stage" value={projectStage} onChange={e => { changed(); setProjectStage(e.target.value); }}><option value="">Нужно уточнить</option><option value="Концепт">Концепт</option><option value="Прототип">Прототип</option><option value="Испытания">Испытания</option><option value="Серия">Серия</option><option value="Замена существующего узла">Замена существующего узла</option></select></div><div className="field"><label htmlFor="brief-planned-quantity">Планируемое количество / повторяемость <span className="rfq-optional">(при наличии)</span></label><input id="brief-planned-quantity" value={plannedQuantity} maxLength={200} onChange={e => { changed(); setPlannedQuantity(e.target.value); }} placeholder="Например: опытный образец, затем 20 машин в год" /></div></div>}
       <div className="field"><label htmlFor="brief-files">ТЗ, паспорт, схема или фото шильды <span className="rfq-optional">(при наличии)</span></label><input id="brief-files" type="file" accept={ATTACHMENT_ACCEPT} multiple onChange={e => chooseFiles(Array.from(e.target.files ?? []))} aria-invalid={Boolean(errors.files || errors.attachmentCount)} aria-describedby="brief-files-help brief-files-error" /><span className="rfq-help" id="brief-files-help">До 3 файлов PDF, JPG, PNG или TXT: до 5 МБ каждый и до 10 МБ вместе. Не прикладывайте коммерческую тайну или персональные данные третьих лиц.</span>{error("files")}{error("attachmentCount")}</div>
       {files.length > 0 && <ul className="brief-files-list">{files.map((file, index) => <li key={`${file.name}-${index}`}><span>{file.name} · {Math.ceil(file.size / 1024)} КБ</span><button type="button" onClick={() => { changed(); setFiles(files.filter((_, i) => i !== index)); }} aria-label={`Убрать файл ${file.name}`}>Убрать</button></li>)}</ul>}
       <h3>Кому направить уточнения</h3>
