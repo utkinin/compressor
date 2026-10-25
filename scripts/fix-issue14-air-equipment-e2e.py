@@ -12,11 +12,12 @@ def replace_once(path: str, old: str, new: str) -> None:
     target.write_text(text.replace(old, new, 1), encoding="utf-8")
 
 
-# Scope the project CTA assertion to main content so the global header RFQ cannot satisfy the locator.
+# The global header RFQ intentionally stays generic. Assert the page-level integration CTA
+# by its actual contextual URL, not by a broad visible-label match.
 replace_once(
     "tests/e2e/integrator-equipment.spec.ts",
-    '    const cta = page.getByRole("link", { name: /Подобрать|Обсудить/ }).first();',
-    '    const cta = page.locator("main").getByRole("link", { name: /Подобрать|Обсудить|Передать ТЗ проекта/ }).first();',
+    '    const cta = page.getByRole("link", { name: /Подобрать|Обсудить/ }).first();\n    await expect(cta).toHaveAttribute("href", /intake=integration/);',
+    '    const cta = page.locator(\'main a[href*="intake=integration"]\').first();\n    await expect(cta).toBeVisible();\n    await expect(cta).toHaveAttribute("href", /intake=integration/);',
 )
 
 # The catalog now deliberately contains five process-gas cards plus three integration-module cards.
