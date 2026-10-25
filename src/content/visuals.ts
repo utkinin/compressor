@@ -50,6 +50,8 @@ export const visualAssets: VisualAsset[] = [
   sceneAsset("solution-supply", "supply", "Компрессор с отдельно показанными возможными элементами комплектации"),
   sceneAsset("solution-helium-compression", "helium-compression", "Компрессор между источником гелия и приёмной ёмкостью"),
   sceneAsset("solution-process-gas", "process-gas", "Компрессор и оборудование процесса для технологического газа или смеси"),
+  sceneAsset("solution-pet", "supply", "Компрессорная система и оборудование линии выдува ПЭТ — принцип проектной комплектации"),
+  sceneAsset("solution-refrigerant", "transfer", "Перенос хладагента между источником и приёмной системой с помощью компрессора или бустера"),
   {
     id: "supply-compressor-to-system", kind: "infographic", src: "/images/visuals/solutions/supply-compressor-to-system.svg",
     alt: "От отдельного компрессора к необходимым опциям и комплектной системе; дополнительные элементы показаны как варианты",
@@ -153,6 +155,26 @@ export const processSpecs: ProcessSpec[] = [
   },
   { id: "process-supply", title: "От компрессора до комплектной системы", layout: "progression", steps: supplySteps, caption: "Показаны варианты комплектации. Дополнительные элементы и общая рама включаются только по необходимости и в согласованных границах поставки." },
   { id: "supply-compressor-to-system", title: "Компрессор → необходимые опции → комплектная система", layout: "progression", steps: supplySteps, caption: "Состав определяем после выбора компрессора. Охлаждение, КИП, ресивер, управление и рама не являются обязательным набором для каждой задачи." },
+  {
+    id: "process-pet", title: "Контур высокого давления для выдува ПЭТ", layout: "flow",
+    steps: [
+      { id: "source", label: "Источник воздуха", detail: "Существующая сеть или отдельный источник", icon: "source" },
+      { id: "preparation", label: "Подготовка", detail: "По требованиям линии", icon: "dryer" },
+      { id: "compressor", label: "Безмасляный дожим", detail: "Под фактический цикл потребления", icon: "compressor" },
+      { id: "receiver", label: "Буфер", detail: "Объём определяется расчётом", icon: "receiver", optional: true },
+      { id: "machine", label: "Выдувной автомат", icon: "machine" },
+    ], caption: "Давление, расход, подготовка воздуха и объём буфера определяются требованиями конкретной линии; схема не задаёт фиксированную комплектацию.",
+  },
+  {
+    id: "process-refrigerant", title: "Перекачка хладагента между системами", layout: "flow",
+    steps: [
+      { id: "source", label: "Источник / контур", icon: "source" },
+      { id: "conditions", label: "Проверка среды", detail: "Состав, температура, давление и фаза", icon: "conditions" },
+      { id: "compressor", label: "Компрессор / бустер", icon: "compressor" },
+      { id: "cooling", label: "Охлаждение", detail: "Если требуется режимом", icon: "cooling", optional: true },
+      { id: "storage", label: "Приёмная ёмкость / фасовка", icon: "storage" },
+    ], caption: "Допустимый режим работы и совместимость подтверждаются для конкретного хладагента и выбранного исполнения оборудования.",
+  },
   {
     id: "process-gas", title: "От исходных условий к подаче газа", layout: "flow",
     steps: [

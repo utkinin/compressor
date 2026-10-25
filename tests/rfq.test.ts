@@ -111,8 +111,8 @@ describe("public RFQ catalogue context", () => {
     }
   });
 
-  it("accepts the fourteen public solutions and only public or requestable documents", () => {
-    expect(Object.keys(RFQ_SOLUTION_CONTEXTS)).toHaveLength(14);
+  it("accepts the sixteen public solutions and only public or requestable documents", () => {
+    expect(Object.keys(RFQ_SOLUTION_CONTEXTS)).toHaveLength(16);
     expect(Object.keys(RFQ_SOLUTION_CONTEXTS).sort()).toEqual(solutions.map((item) => item.id).sort());
     for (const solution of solutions) expect(publicRfqContextLabel("solution", solution.id)).toBe(solution.title);
     const publicDocumentIds = documents.filter((item) => item.access !== "internal").map((item) => item.id);

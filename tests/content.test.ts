@@ -210,7 +210,7 @@ describe("content graph and repository", () => {
     expect(equipment).toHaveLength(6);
     expect(equipment.every((item) => item.applications.length >= 3 && item.inputs.length >= 5 && item.approach.length >= 3)).toBe(true);
     expect(equipment.every((item) => item.configurations.length >= 3 && item.options.length >= 3)).toBe(true);
-    expect(solutions).toHaveLength(14);
+    expect(solutions).toHaveLength(16);
     expect(solutions.find((item) => item.id === "nitrogen-for-laser-cutting")?.title).toBe("Система подачи азота для лазерной резки");
     expect(equipment.some((item) => item.title === "Система подачи азота для лазерной резки")).toBe(false);
     expect(articles).toHaveLength(19);
